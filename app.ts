@@ -10,19 +10,41 @@ function Character (x, y) {
     else if (keyboard.a) { x-=2}
    // character.drawOutline ()
    rectangle (x,y,50,100,"red")
-   return x 
+   return x     
+}
+function jump () {
+    for (let i=0; i<5; i++) {
+        y -= 2
+    }
+    for (let i=0; i<5; i++) {
+        y += 2
+
+    }
+jumping = false
+
+}
+
+let jumping = false
+if (keyboard.space) {jumping = true}
+if (jumping == true) {
+
 }
 
 let x = 50
+let y = 400
+
 update = () => {
     clear()
     rectangle(0,500, 5000, 5000, "green")
     ground.drawOutline ()
-    x = Character(x, 400)
+    x = Character(x, y) 
     
-
-
-
+    
+    if (keyboard.space && jumping == false) {
+        jumping = true 
+        jump()
+    }
+    
       
 } 
  
