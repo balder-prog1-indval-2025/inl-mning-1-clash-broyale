@@ -28,4 +28,3 @@ else if(m==1 || m>2) {ctx.drawImage(stoneblock1,i,525,25,25)}
 }
 
 
-
