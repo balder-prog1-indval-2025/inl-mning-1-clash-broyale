@@ -41,22 +41,26 @@ return 0
 }
 
 function dash () {
-    
-    if (dashing && keyboard.d && dash_time < 200 && amount_dashes>0) {
-        dash_time += deltaTime
-        
+    if (dashing) {
+    dash_time += deltaTime
+    //console.log (amount_dashes)
+    if ( keyboard.d && dash_time < 200 && amount_dashes>0) {
+        //dash_time += deltaTime
+        console.log (dash_time)
         return 10 
-    } else if (dashing && keyboard.a && dash_time < 200 && amount_dashes>0) {
-        dash_time += deltaTime
+    } else if (keyboard.a && dash_time < 200 && amount_dashes>0) {
+        //dash_time += deltaTime
         
         return -10
-    }else if (dashing && dash_time >= 200) {
+    }else if ( dash_time >= 200) {
         amount_dashes--
         dash_time = 0
         dashing = false
         after_dash = true
         
     }
+}
+   
     return 0
 }
 
