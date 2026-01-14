@@ -55,46 +55,56 @@ else if(lager_4[i]==1 || lager_4[i]>2) {ctx.drawImage(stoneblock1,i*25,525,25,25
 
 }
 let hitboxii = new Hitbox (0, 450, 25*lager_3.length, 125 )
+
 function jump () {
     if (dashing && (keyboard.d || keyboard.a) && amount_dashes > 0 ) {
         
         return 0
-    } else if(after_dash && char_y < 401) {
+    } else if(after_dash && !character.intersects(hitboxii)) {
         jump_time = 350
         after_dash = false
         
     } 
-    else if(jumping && char_y <= 400 && after_dash == false) {
+    else if(jumping && !character.intersects(hitboxii) && after_dash == false) {
         
         jump_time += deltaTime
    return -10 + 10 * jump_time/350
     
 } else if (character.intersects (hitboxii)) {
-    console.log("intersect")
+    //console.log("intersect")
     jumping = false
     dashing = false
-    char_y = hitboxii[1] -50
+    //char_y - 100
     jump_time = 0
+    movement_y= 0
+    movement_x =0
     amount_jumps = 2
     amount_dashes = 2
-    return 0
+   // console.log(char_x, char_y)
+    
+    return -1
+}
+else if (!jumping && !character.intersects(hitboxii)) {
+    jump_time += deltaTime
+   return 10 * jump_time/350
 }
 return 0
 }
 
 function dash () {
     if (dashing) {
-    dash_time += deltaTime
+    //dash_time += deltaTime
     //console.log (amount_dashes)
-    if ( keyboard.d && dash_time < 200 && amount_dashes>0) {
-        //dash_time += deltaTime
+    if ( keyboard.d && dash_time < 100 && amount_dashes>0) {
+        dash_time += deltaTime
         //console.log (dash_time)
-        return 10 
-    } else if (keyboard.a && dash_time < 200 && amount_dashes>0) {
-        //dash_time += deltaTime
         
-        return -10
-    }else if ( dash_time >= 200) {
+        return 25 
+    } else if (keyboard.a && dash_time < 100 && amount_dashes>0) {
+        dash_time += deltaTime
+        
+        return -25
+    } if ( dash_time >= 100) {
         amount_dashes--
         dash_time = 0
         dashing = false
@@ -140,7 +150,7 @@ hitbox.drawOutline()
 
 
 
-let ground = new Hitbox(0,500,5000,5000)
+
 
 update = () => {
     clear()
@@ -166,7 +176,7 @@ update = () => {
     if (keyboard.space) {
         keyboard.space = false 
     
-    if (amount_jumps == 1 && jumping) {
+     if (amount_jumps == 1 && jumping) {
         jump_time = 0
     }
     else {
