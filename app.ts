@@ -84,15 +84,15 @@ function jump () {
     
     return -1
 }
-else if (!jumping && !character.intersects(hitboxii)) {
+/*else if (!jumping && !character.intersects(hitboxii)) {
     jump_time += deltaTime
    return 10 * jump_time/350
-}
+}*/
 return 0
 }
 
 function dash () {
-    if (dashing) {
+    if (dashing && !character.intersects(hitboxii)) {
     //dash_time += deltaTime
     //console.log (amount_dashes)
     if ( keyboard.d && dash_time < 100 && amount_dashes>0) {
@@ -112,6 +112,7 @@ function dash () {
         
     }
 }
+else if (dashing && character.intersects(hitboxii)) {return 0}
    
     return 0
 }
@@ -130,7 +131,8 @@ function walk () {
         return movement_x + 0.2
     } else if (movement_x > 0.1) {
         return movement_x - 0.2
-    } else {
+    } else if (dashing && character.intersects(hitboxii)) {return 0} 
+    else {
         return 0
 }
 }
