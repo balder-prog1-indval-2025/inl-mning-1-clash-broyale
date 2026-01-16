@@ -74,15 +74,15 @@ function jump () {
     //console.log("intersect")
     jumping = false
     dashing = false
-    //char_y - 100
+    
     jump_time = 0
     movement_y= 0
     movement_x =0
     amount_jumps = 2
     amount_dashes = 2
-   // console.log(char_x, char_y)
+    //console.log(char_x, char_y)
     
-    return -1
+    return 0
 }
 /*else if (!jumping && !character.intersects(hitboxii)) {
     jump_time += deltaTime
@@ -95,15 +95,15 @@ function dash () {
     if (dashing && !character.intersects(hitboxii)) {
     //dash_time += deltaTime
     //console.log (amount_dashes)
-    if ( keyboard.d && dash_time < 100 && amount_dashes>0) {
+    if ( keyboard.d && dash_time < 100 && amount_dashes>0 && !character.intersects(hitboxii)) {
         dash_time += deltaTime
         //console.log (dash_time)
         
-        return 25 
-    } else if (keyboard.a && dash_time < 100 && amount_dashes>0) {
+        return 5 
+    } else if (keyboard.a && dash_time < 100 && amount_dashes>0 && !character.intersects(hitboxii)) {
         dash_time += deltaTime
         
-        return -25
+        return -5
     } if ( dash_time >= 100) {
         amount_dashes--
         dash_time = 0
@@ -112,10 +112,15 @@ function dash () {
         
     }
 }
-else if (dashing && character.intersects(hitboxii)) {return 0}
+else if (dashing && character.intersects(hitboxii)) {
+   dashing = false
+    movement_x = 0
+   
+}
    
     return 0
 }
+    
 
 
 
@@ -127,17 +132,12 @@ function walk () {
         return -5
     }else if (keyboard.d ) {
         return 5
-    }else if (movement_x < -0.1) {
-        return movement_x + 0.2
-    } else if (movement_x > 0.1) {
-        return movement_x - 0.2
-    } else if (dashing && character.intersects(hitboxii)) {return 0} 
-    else {
+   } else {
         return 0
 }
 }
 function updatePosition () {
-char_x += movement_x + dash()
+char_x += movement_x 
 char_y += movement_y
 }
 
@@ -158,11 +158,7 @@ update = () => {
     clear()
     
     draw_map()
-    
-    //rectangle(300, 450,50,50, "red")
-    //rectangle(0,500, 5000, 5000, "green")
-    //ground.drawOutline ()
-    movement_x = walk() //+ dash()
+    movement_x = walk() + dash()
     movement_y = jump() 
     if (keyboard.shift && (keyboard.a || keyboard.d)) {
         keyboard.shift = false
