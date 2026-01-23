@@ -8,7 +8,7 @@ let movement_x = 0
 let movement_y = 0
 let jumping = false
 let jump_time = 0
-let character = new Hitbox (char_x,char_y, 25, 50)
+let character = new Hitbox (char_x,char_y, 25, 25)
 let dash_time = 0
 let dashing = false
 let after_dash = false
@@ -20,12 +20,7 @@ let grassblock1 = await fetchImage("images/Block1.png")
 let stoneblock1 = await fetchImage("images/stoneblock1.png")
 let Dirtoverlayblock = await fetchImage("images/Dirtoverlayblock.png")
 let Dirtblock = await fetchImage("Images/Dirtblock.png")
-let Dirtblockhitbox = new Hitbox(Dirtblock[0], Dirtblock[1], Dirtblock[2], Dirtblock[3])
-let hitboxDirtoverlayblock = new Hitbox (Dirtoverlayblock[0], Dirtoverlayblock[1], Dirtoverlayblock[2], Dirtoverlayblock[3])
-let hitboxGrassblock1 = new Hitbox(grassblock1[0], grassblock1[1], 25, 25)
-let hitboxStoneblock1 = new Hitbox(stoneblock1[0], stoneblock1[1], stoneblock1[2], stoneblock1[3])
-let hitbox_a = new Hitbox(250,250,25,25)
-let hitbox_b = new Hitbox(300,250,25,25)
+
 let a: Hitbox[] = []
 
 let hitbox = new Hitbox(
@@ -34,10 +29,7 @@ let hitbox = new Hitbox(
     grassblock1[2], // width
     grassblock1[3]  // height
 )
-for (let i = 0; i < 20 ; i++) {
 
-
-}
 
 for(let i = 0; i<= 48; i++) {
     lager_3.push (random(1, 5))
@@ -68,11 +60,11 @@ else if(lager_4[i]==1 || lager_4[i]>2) {ctx.drawImage(stoneblock1,i*25,525,25,25
 
 }
 
-let hitboxii = new Hitbox (0, 450, 25*lager_3.length, 125 )
+
 
 function jump () {
     let return_movement = 0
-    for (let i = 0; i < 20 ; i++){
+    for (let i = 0; i < 43 ; i++){
         if (dashing && (keyboard.d || keyboard.a) && amount_dashes > 0 ) {
             
             return_movement = 0
@@ -84,8 +76,9 @@ function jump () {
         else if(jumping && !character.intersects(a[i]) && after_dash == false) {
             
             jump_time += deltaTime
-            return_movement = -10 + 10 * jump_time/8000
-    
+            if(jump_time <16000) {
+            return_movement = -12 + 12 * jump_time/8000
+        } else {return_movement = 6 * jump_time/8000}
         } else if (character.intersects (a[i])) {
             console.log("intersect")
             jumping = false
@@ -109,29 +102,35 @@ function jump () {
     return return_movement
 }
 function dash () {
-    if (dashing && !character.intersects(hitboxii)) {
-    //dash_time += deltaTime
-    //console.log (amount_dashes)
-    if ( keyboard.d && dash_time < 100 && amount_dashes>0) {
-        dash_time += deltaTime
-        //console.log (dash_time)
+    let return_dash = 0
+    for (let i = 0; i < 43 ; i++){
+        if (dashing && !character.intersects(a[i])) {
+        //dash_time += deltaTime
+        //console.log (amount_dashes)
+            if ( keyboard.d && dash_time < 100 && amount_dashes>0) {
+            dash_time += deltaTime
+            //console.log (dash_time)
         
-        return 15 
-    } else if (keyboard.a && dash_time < 100 && amount_dashes>0) {
-        dash_time += deltaTime
+             return_dash = 2
+             return return_dash
+            } else if (keyboard.a && dash_time < 100 && amount_dashes>0) {
+            dash_time += deltaTime
         
-        return -25
-    } if ( dash_time >= 100) {
-        amount_dashes--
-        dash_time = 0
-        dashing = false
-        after_dash = true
+            return_dash = -2
+            return return_dash
+            } if ( dash_time >= 100) {
+            amount_dashes--
+            dash_time = 0
+            dashing = false
+            after_dash = true
         
-    }
+            }
+        }
+        else if (dashing && character.intersects(a[i])) {
+            dashing = false
+            return_dash = 0}
 }
-else if (dashing && character.intersects(hitboxii)) {return 0}
-   
-    return 0
+    return return_dash
 }
 
 
@@ -156,12 +155,12 @@ function walk () {
 }
 }
 function updatePosition () {
-char_x += movement_x + dash()
+char_x += movement_x 
 char_y += movement_y
 }
 
 function updateCharacter(x:number, y:number, hitbox:Hitbox) {
-rectangle(x, y, 25, 50, "red")  
+rectangle(x, y, 25, 25, "red")  
 hitbox.x = x
 hitbox.y = y
 hitbox.drawOutline()
@@ -178,14 +177,15 @@ update = () => {
     
     
     draw_map()
-    for (let i = 0; i <= 48 ; i++) {
-        console.log (a.length)
+    for (let i = 0; i <= 42 ; i++) {
+        if(i<10 || i>15) {
+        //console.log (a.length)
         a[i].drawOutline()
-    }
+    }}
     //rectangle(300, 450,50,50, "red")
     //rectangle(0,500, 5000, 5000, "green")
     //ground.drawOutline ()
-    movement_x = walk() //+ dash()
+    movement_x = walk() + dash()
     movement_y = jump() 
     if (keyboard.shift && (keyboard.a || keyboard.d)) {
         keyboard.shift = false
@@ -202,7 +202,7 @@ update = () => {
         keyboard.space = false 
     
      if (amount_jumps == 1 && jumping) {
-        jump_time = 0
+        jump_time = -3000
     }
     else {
         jumping = true
