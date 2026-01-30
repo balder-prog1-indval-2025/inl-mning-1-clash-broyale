@@ -6,7 +6,7 @@ let movement_x = 0
 let movement_y = 0
 let jumping = false
 let jump_time = 0
-let character = new Hitbox (char_x,char_y, 25, 25)
+let character = new Hitbox (char_x,char_y, 25, 40)
 let dash_time = 0
 let dashing = false
 let after_dash = false
@@ -19,7 +19,8 @@ let grassblock1 = await fetchImage("images/Block1.png")
 let stoneblock1 = await fetchImage("images/stoneblock1.png")
 let Dirtoverlayblock = await fetchImage("images/Dirtoverlayblock.png")
 let Dirtblock = await fetchImage("Images/Dirtblock.png")
-
+let Character_RevertedImage = await fetchImage ("images/Character_reverted.png")
+let Character_Image = await fetchImage ("images/Character.png")
 let a: Hitbox[] = []
 
 
@@ -31,7 +32,7 @@ for(let i = 0; i<= 51; i++) {
 }
 function draw_map () {
 for (let i = 0; i<=51; i++) {
-if(i<10 || i>15) {
+if(i<10 || i>15 && i<30 || i>35 ) {
 ctx.drawImage(grassblock1, i*25, 450, 25,25)
 ctx.drawImage(stoneblock1, i*25, 550, 25, 25)
 ctx.drawImage(Dirtblock, i*25, 500, 25, 25)
@@ -68,7 +69,7 @@ else if(lager_4[i]==1 || lager_4[i]>2) {ctx.drawImage(stoneblock1,i*25,525,25,25
 
 function jump () {
     let return_movement = 0
-    for (let i = 0; i < 45 ; i++){
+    for (let i = 0; i < 40 ; i++){
         if (dashing && (keyboard.d || keyboard.a) && amount_dashes > 0 ) {
             
             return_movement = 0
@@ -84,7 +85,7 @@ function jump () {
                 return_movement = -12 + 12 * jump_time/8000
         } else {return_movement = 6 * jump_time/8000}
         } else if (character.intersects (a[i])) { // när karaktären inträffar hitboxen (marken).
-            console.log("intersect")
+            //dconsole.log("intersect")
             jumping = false // när karaktären inträffar hitboxen kan den inte hoppa...
             dashing = false // ... eller "dasha"
             fall_time = 0
@@ -112,7 +113,7 @@ function jump () {
 }
 function dash () {
     let return_dash = 0
-    for (let i = 0; i < 45 ; i++){
+    for (let i = 0; i < 40 ; i++){
         if (dashing && !character.intersects(a[i])) {
         
             if ( keyboard.d && dash_time < 100 && amount_dashes>0) {
@@ -121,7 +122,7 @@ function dash () {
         
              return_dash = 2
              return return_dash
-            } else if (keyboard.a && dash_time < 100 && amount_dashes>0) {
+            } else if (keyboard.d && dash_time < 100 && amount_dashes>0) {
             dash_time += deltaTime
              return_dash = 2
              return return_dash
@@ -137,13 +138,7 @@ function dash () {
             after_dash = true
             return_dash = -2
             return return_dash
-            } if ( dash_time >= 100) {
-            amount_dashes--
-            dash_time = 0
-            dashing = false
-            after_dash = true
-        
-            }
+            } 
         }
         else if (dashing && character.intersects(a[i])) {
             dashing = false
@@ -151,7 +146,7 @@ function dash () {
         }
 }
     return return_dash
-    return return_dash
+    
 }
     
 
@@ -202,11 +197,6 @@ hitbox.drawOutline()
 /*function shoot () {
     if (keyboard.)
 }
-
-/*function shoot () {
-    if (keyboard.)
-}
-
 */
 
 
@@ -218,7 +208,7 @@ update = () => {
     
     
     draw_map()
-    for (let i = 0; i <= 44 ; i++) {
+    for (let i = 0; i <= a.length -1 ; i++) {
         a[i].drawOutline()
     }
     movement_x = walk() + dash()
@@ -256,86 +246,3 @@ update = () => {
 
 
 export { }
-/*
-let grassblock1 = await fetchImage("images/Block1.png")
- 
-
-
-export { }
-
-
-let grassblock1 = await fetchImage("images/Block1.png")
-let stoneblock1 = await fetchImage("images/stoneblock1.png")
-let Dirtoverlayblock = await fetchImage("images/Dirtoverlayblock.png")
-let Dirtblock = await fetchImage("Images/Dirtblock.png")
-
-ctx.drawImage(grassblock1, 0, 450, 25,25)
-ctx.drawImage(grassblock1, 25, 450, 25,25)
-ctx.drawImage(grassblock1, 50, 450, 25,25)
-ctx.drawImage(grassblock1, 75, 425, 25,25)
-ctx.drawImage(grassblock1, 100, 425, 25,25)
-ctx.drawImage(grassblock1, 100, 325, 25,25)
-ctx.drawImage(grassblock1, 75, 325, 25,25)
-ctx.drawImage(grassblock1, 50, 325, 25,25)
-ctx.drawImage(Dirtblock, 25, 325, 25, 25)
-ctx.drawImage(Dirtblock, 0, 325, 25, 25)
-ctx.drawImage(Dirtblock, 25, 300, 25, 25)
-ctx.drawImage(Dirtblock, 0, 300, 25, 25)
-ctx.drawImage(Dirtblock, 25, 275, 25, 25)
-ctx.drawImage(Dirtblock, 0, 275, 25, 25)
-ctx.drawImage(Dirtblock, 25, 350, 25, 25)
-ctx.drawImage(Dirtblock, 0, 350, 25, 25)
-ctx.drawImage(Dirtblock, 50, 350, 25, 25)
-
-ctx.drawImage(grassblock1, 0, 450, 25,25)
-ctx.drawImage(grassblock1, 25, 450, 25,25)
-ctx.drawImage(grassblock1, 50, 450, 25,25)
-ctx.drawImage(grassblock1, 75, 450, 25,25)
-
-// NERÅT (jord)
-ctx.drawImage(Dirtblock, 0, 475, 25,25)
-ctx.drawImage(Dirtblock, 25, 475, 25,25)
-ctx.drawImage(Dirtblock, 50, 475, 25,25)
-ctx.drawImage(Dirtblock, 75, 475, 25,25)
-
-// FÖRSTA HOPPET UPP
-ctx.drawImage(grassblock1, 125, 425, 25,25)
-ctx.drawImage(grassblock1, 150, 425, 25,25)
-
-ctx.drawImage(Dirtblock, 125, 450, 25,25)
-ctx.drawImage(Dirtblock, 150, 450, 25,25)
-
-// ANDRA PLATTFORMEN (lite högre)
-ctx.drawImage(grassblock1, 200, 375, 25,25)
-ctx.drawImage(grassblock1, 225, 375, 25,25)
-
-ctx.drawImage(Dirtblock, 200, 400, 25,25)
-ctx.drawImage(Dirtblock, 225, 400, 25,25)
-
-// NEDÅT IGEN (fall)
-ctx.drawImage(grassblock1, 275, 450, 25,25)
-
-// LÅNG PLATTFORM ÅT HÖGER
-ctx.drawImage(grassblock1, 325, 425, 25,25)
-ctx.drawImage(grassblock1, 350, 425, 25,25)
-ctx.drawImage(grassblock1, 375, 425, 25,25)
-ctx.drawImage(grassblock1, 400, 425, 25,25)
-
-// TRAPPA UPP (klassisk IWBTG)
-ctx.drawImage(grassblock1, 450, 400, 25,25)
-ctx.drawImage(grassblock1, 475, 375, 25,25)
-ctx.drawImage(grassblock1, 500, 350, 25,25)
-ctx.drawImage(grassblock1, 525, 325, 25,25)
-
-// LITEN SÄKER YTA (lurar spelaren)
-ctx.drawImage(grassblock1, 575, 325, 25,25)
-ctx.drawImage(grassblock1, 600, 325, 25,25)
-
-// FALL NER IGEN
-ctx.drawImage(grassblock1, 650, 450, 25,25)
-
-// SLUTPLATTFORM
-ctx.drawImage(grassblock1, 700, 425, 25,25)
-ctx.drawImage(grassblock1, 725, 425, 25,25)
-ctx.drawImage(grassblock1, 750, 425, 25,25)
-//Värden på skärmen: x = 0-1250 y = 0-575 kordinater, alla block ska vara 25 wide och hög.
