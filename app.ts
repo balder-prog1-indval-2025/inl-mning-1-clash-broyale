@@ -1,28 +1,29 @@
 
-
+ /*STAAAA
 let amount_jumps = 2
 let amount_dashes = 2
 let char_x = 50
-let char_y = 400
 let char_y = 400
 let movement_x = 0
 let movement_y = 0
 let jumping = false
 let jump_time = 0
-let character = new Hitbox (char_x,char_y, 25, 25)
+let character = new Hitbox (char_x,char_y, 25, 40)
 let dash_time = 0
 let dashing = false
 let after_dash = false
 let lager_3 = []
 let lager_4 = [] 
+let char_Direction = false
 
-
+let Character_RevertedImage = await fetchImage("images/Character_reverted.png")
+let Character_Image = await fetchImage("images/Character.png")
 let grassblock1 = await fetchImage("images/Block1.png")
 let stoneblock1 = await fetchImage("images/stoneblock1.png")
 let Dirtoverlayblock = await fetchImage("images/Dirtoverlayblock.png")
 let Dirtblock = await fetchImage("Images/Dirtblock.png")
-
 let a: Hitbox[] = []
+
 
 let hitbox = new Hitbox(
     grassblock1[0], // x
@@ -32,13 +33,12 @@ let hitbox = new Hitbox(
 )
 
 
-for(let i = 0; i<= 48; i++) {
+for(let i = 0; i<= 49; i++) {
     lager_3.push (random(1, 5))
     lager_4.push (random(1, 5))
 }
 function draw_map () {
-for (let i = 0; i<=48; i++) {
-if(i<10 || i>15) {
+for (let i = 0; i<=49; i++) {
 ctx.drawImage(grassblock1, i*25, 450, 25,25)
 ctx.drawImage(stoneblock1, i*25, 550, 25, 25)
 ctx.drawImage(Dirtblock, i*25, 500, 25, 25)
@@ -59,13 +59,13 @@ else if(lager_4[i]==1 || lager_4[i]>2) {ctx.drawImage(stoneblock1,i*25,525,25,25
 
 
 
-}
+
 
 
 
 function jump () {
     let return_movement = 0
-    for (let i = 0; i < 43 ; i++){
+    for (let i = 0; i < 44 ; i++){
         if (dashing && (keyboard.d || keyboard.a) && amount_dashes > 0 ) {
             
             return_movement = 0
@@ -98,13 +98,13 @@ function jump () {
         jump_time += deltaTime
     return 10 * jump_time/350
     }*/
-        
+/*STAAAAA
     }
     return return_movement
 }
 function dash () {
     let return_dash = 0
-    for (let i = 0; i < 43 ; i++){
+    for (let i = 0; i < 44 ; i++){
         if (dashing && !character.intersects(a[i])) {
         //dash_time += deltaTime
         //console.log (amount_dashes)
@@ -152,6 +152,7 @@ function walk () {
         return movement_x - 0.2
     } else if (dashing && character.intersects(hitboxii)) {return 0} 
     */
+ /*STAAA
    else {
         return 0
 }
@@ -162,9 +163,23 @@ char_y += movement_y
 }
 
 function updateCharacter(x:number, y:number, hitbox:Hitbox) {
-rectangle(x, y, 25, 25, "red")  
+if (keyboard.d){
+    char_Direction = false
+    let c = ctx.drawImage(Character_RevertedImage, x -11, y-21, 50, 50)
+}
+else if (keyboard.a){
+    char_Direction = true
+    let c = ctx.drawImage(Character_Image, x -11, y-21, 50, 50)
+}
+if (!char_Direction) {
+    let c = ctx.drawImage(Character_RevertedImage, x -11, y-21, 50, 50)
+}
+else if(char_Direction) {
+    let c = ctx.drawImage(Character_Image, x -11, y-21, 50, 50)
+}
+ 
 hitbox.x = x
-hitbox.y = y
+hitbox.y = y -15
 hitbox.drawOutline()
 
 
@@ -181,14 +196,10 @@ update = () => {
     
     
     draw_map()
-    for (let i = 0; i <= 42 ; i++) {
-        if(i<10 || i>15) {
-        //console.log (a.length)
+    for (let i = 0; i <= 43 ; i++) {
+       
         a[i].drawOutline()
-    }}
-    //rectangle(300, 450,50,50, "red")
-    //rectangle(0,500, 5000, 5000, "green")
-    //ground.drawOutline ()
+    }
     movement_x = walk() + dash()
     movement_y = jump() 
     if (keyboard.shift && (keyboard.a || keyboard.d)) {
@@ -260,3 +271,80 @@ else if(m==1 || m>2) {ctx.drawImage(stoneblock1,i,525,25,25)}
 }
 
 */
+
+
+let grassblock1 = await fetchImage("images/Block1.png")
+let stoneblock1 = await fetchImage("images/stoneblock1.png")
+let Dirtoverlayblock = await fetchImage("images/Dirtoverlayblock.png")
+let Dirtblock = await fetchImage("Images/Dirtblock.png")
+
+ctx.drawImage(grassblock1, 0, 450, 25,25)
+ctx.drawImage(grassblock1, 25, 450, 25,25)
+ctx.drawImage(grassblock1, 50, 450, 25,25)
+ctx.drawImage(grassblock1, 75, 425, 25,25)
+ctx.drawImage(grassblock1, 100, 425, 25,25)
+ctx.drawImage(grassblock1, 100, 325, 25,25)
+ctx.drawImage(grassblock1, 75, 325, 25,25)
+ctx.drawImage(grassblock1, 50, 325, 25,25)
+ctx.drawImage(Dirtblock, 25, 325, 25, 25)
+ctx.drawImage(Dirtblock, 0, 325, 25, 25)
+ctx.drawImage(Dirtblock, 25, 300, 25, 25)
+ctx.drawImage(Dirtblock, 0, 300, 25, 25)
+ctx.drawImage(Dirtblock, 25, 275, 25, 25)
+ctx.drawImage(Dirtblock, 0, 275, 25, 25)
+ctx.drawImage(Dirtblock, 25, 350, 25, 25)
+ctx.drawImage(Dirtblock, 0, 350, 25, 25)
+ctx.drawImage(Dirtblock, 50, 350, 25, 25)
+
+ctx.drawImage(grassblock1, 0, 450, 25,25)
+ctx.drawImage(grassblock1, 25, 450, 25,25)
+ctx.drawImage(grassblock1, 50, 450, 25,25)
+ctx.drawImage(grassblock1, 75, 450, 25,25)
+
+// NERÅT (jord)
+ctx.drawImage(Dirtblock, 0, 475, 25,25)
+ctx.drawImage(Dirtblock, 25, 475, 25,25)
+ctx.drawImage(Dirtblock, 50, 475, 25,25)
+ctx.drawImage(Dirtblock, 75, 475, 25,25)
+
+// FÖRSTA HOPPET UPP
+ctx.drawImage(grassblock1, 125, 425, 25,25)
+ctx.drawImage(grassblock1, 150, 425, 25,25)
+
+ctx.drawImage(Dirtblock, 125, 450, 25,25)
+ctx.drawImage(Dirtblock, 150, 450, 25,25)
+
+// ANDRA PLATTFORMEN (lite högre)
+ctx.drawImage(grassblock1, 200, 375, 25,25)
+ctx.drawImage(grassblock1, 225, 375, 25,25)
+
+ctx.drawImage(Dirtblock, 200, 400, 25,25)
+ctx.drawImage(Dirtblock, 225, 400, 25,25)
+
+// NEDÅT IGEN (fall)
+ctx.drawImage(grassblock1, 275, 450, 25,25)
+
+// LÅNG PLATTFORM ÅT HÖGER
+ctx.drawImage(grassblock1, 325, 425, 25,25)
+ctx.drawImage(grassblock1, 350, 425, 25,25)
+ctx.drawImage(grassblock1, 375, 425, 25,25)
+ctx.drawImage(grassblock1, 400, 425, 25,25)
+
+// TRAPPA UPP (klassisk IWBTG)
+ctx.drawImage(grassblock1, 450, 400, 25,25)
+ctx.drawImage(grassblock1, 475, 375, 25,25)
+ctx.drawImage(grassblock1, 500, 350, 25,25)
+ctx.drawImage(grassblock1, 525, 325, 25,25)
+
+// LITEN SÄKER YTA (lurar spelaren)
+ctx.drawImage(grassblock1, 575, 325, 25,25)
+ctx.drawImage(grassblock1, 600, 325, 25,25)
+
+// FALL NER IGEN
+ctx.drawImage(grassblock1, 650, 450, 25,25)
+
+// SLUTPLATTFORM
+ctx.drawImage(grassblock1, 700, 425, 25,25)
+ctx.drawImage(grassblock1, 725, 425, 25,25)
+ctx.drawImage(grassblock1, 750, 425, 25,25)
+//Värden på skärmen: x = 0-1250 y = 0-575 kordinater, alla block ska vara 25 wide och hög.
