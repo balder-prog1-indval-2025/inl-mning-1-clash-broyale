@@ -24,12 +24,12 @@ let a: Hitbox[] = []
 
 
 
-for(let i = 0; i<= 50; i++) {
+for(let i = 0; i<= 51; i++) {
     lager_3.push (random(1, 5))
     lager_4.push (random(1, 5))
 }
 function draw_map () {
-for (let i = 0; i<=50; i++) {
+for (let i = 0; i<=51; i++) {
 if(i<10 || i>15) {
 ctx.drawImage(grassblock1, i*25, 450, 25,25)
 ctx.drawImage(stoneblock1, i*25, 550, 25, 25)
@@ -46,9 +46,9 @@ else if(lager_3[i] == 2 ) {ctx.drawImage(stoneblock1,i*25,500,25,25)}
 if(lager_4[i]==2) {ctx.drawImage(Dirtblock,i*25,525,25,25)}
 else if(lager_4[i]==1 || lager_4[i]>2) {ctx.drawImage(stoneblock1,i*25,525,25,25)}
 
-}
-}
 
+}
+}
 
 
 }
@@ -70,7 +70,7 @@ function jump () {
             
             jump_time += deltaTime
             if(jump_time <16000) {
-            return_movement = -12 + 12 * jump_time/8000
+                return_movement = -12 + 12 * jump_time/8000
         } else {return_movement = 6 * jump_time/8000}
         } else if (character.intersects (a[i])) { // när karaktären inträffar hitboxen (marken).
             console.log("intersect")
@@ -83,13 +83,17 @@ function jump () {
             amount_jumps = 2
             amount_dashes = 2
         
-            char_y = a[i].y - character.height -1 
+           
+            return_movement = -2
         }
     else if (!jumping && !character.intersects(a[i])) { //när karaktären inte hoppar och inte träffar marken
-        jump_time += deltaTime
         fall_time +=deltaTime
-        return_movement = 12 * jump_time/8000 // då läggs det på "gravitationen", ett värde som med tiden ökar. Gör så att karaktären träffar hitboxen instant
-    
+        if (fall_time> 5000){
+            
+            jump_time += deltaTime
+        
+            return_movement = 8 * jump_time/8000 // då läggs det på "gravitationen", ett värde som med tiden ökar. Gör så att karaktären träffar hitboxen instant
+            }
     }
         
     }
