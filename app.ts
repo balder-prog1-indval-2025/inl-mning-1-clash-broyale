@@ -22,10 +22,16 @@ let Dirtblock = await fetchImage("Images/Dirtblock.png")
 let Character_RevertedImage = await fetchImage ("images/Character_reverted.png")
 let Character_Image = await fetchImage ("images/Character.png")
 let a: Hitbox[] = []
+let shots: Hitbox[] = []
+let shot_Placement = char_x + 10
+let shot_speed = 1
 
 
-
-
+for (let i = 0; i<=51; i++) {
+if(i<10 || i>15 && i<30 || i>35 ) {
+    a.push(new Hitbox (i*25 ,450,25,25))
+}
+}
 for(let i = 0; i<= 51; i++) {
     lager_3.push (random(1, 5))
     lager_4.push (random(1, 5))
@@ -40,7 +46,7 @@ ctx.drawImage(Dirtblock, i*25, 475, 25, 25)
 ctx.drawImage(stoneblock1,i*25,550,25,25)
 ctx.drawImage(stoneblock1,i*25,575,25,25)
 ctx.drawImage(stoneblock1,i*25,600,25,25)
-a.push(new Hitbox (i*25 ,450,25,25))
+
 
 if (lager_3[i] == 1 || lager_3[i] > 2) {ctx.drawImage(Dirtblock,i*25,500,25,25)}
 
@@ -48,13 +54,8 @@ else if(lager_3[i] == 2 ) {ctx.drawImage(stoneblock1,i*25,500,25,25)}
 
 if(lager_4[i]==2) {ctx.drawImage(Dirtblock,i*25,525,25,25)}
 else if(lager_4[i]==1 || lager_4[i]>2) {ctx.drawImage(stoneblock1,i*25,525,25,25)}
-
-
 }
 }
-
-
-
 }
 
 
@@ -69,7 +70,7 @@ else if(lager_4[i]==1 || lager_4[i]>2) {ctx.drawImage(stoneblock1,i*25,525,25,25
 
 function jump () {
     let return_movement = 0
-    for (let i = 0; i < 40 ; i++){
+    for (let i = 0; i < a.length ; i++){
         if (dashing && (keyboard.d || keyboard.a) && amount_dashes > 0 ) {
             
             return_movement = 0
@@ -85,7 +86,7 @@ function jump () {
                 return_movement = -12 + 12 * jump_time/8000
         } else {return_movement = 6 * jump_time/8000}
         } else if (character.intersects (a[i])) { // när karaktären inträffar hitboxen (marken).
-            //dconsole.log("intersect")
+            //console.log("intersect")
             jumping = false // när karaktären inträffar hitboxen kan den inte hoppa...
             dashing = false // ... eller "dasha"
             fall_time = 0
@@ -113,7 +114,7 @@ function jump () {
 }
 function dash () {
     let return_dash = 0
-    for (let i = 0; i < 40 ; i++){
+    for (let i = 0; i < a.length ; i++){
         if (dashing && !character.intersects(a[i])) {
         
             if ( keyboard.d && dash_time < 100 && amount_dashes>0) {
@@ -194,22 +195,39 @@ hitbox.drawOutline()
 
 }
 
-/*function shoot () {
-    if (keyboard.)
+function shoot () {
+    if (keyboard.enter && shots.length < 3) { 
+        
+        keyboard.enter = false
+        shot_Placement = char_x + 10
+        shots.push(new Hitbox(shot_Placement, char_y + 5, 20, 10))
+    }
 }
-*/
+function updateShot () {
+    shot_Placement += shot_speed
+    return shot_Placement
+}
 
 
 
 
 update = () => {
     clear()
-    
-    
-    
+    updateShot()
+    if(char_Direction) {shot_speed = -10}
+    else {shot_speed = 10}
+    //console.log(char_Direction)
+    shot_speed = 1
+    console.log(shots.length)
+    for(let i = 0; i < shots.length; i++){
+        shots[i].drawOutline()
+        
+    }
+    shoot()
     draw_map()
-    for (let i = 0; i <= a.length -1 ; i++) {
+    for (let i = 0;  i <= a.length -1 ; i++) {
         a[i].drawOutline()
+
     }
     movement_x = walk() + dash()
     movement_y = jump() 
