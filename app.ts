@@ -22,9 +22,12 @@ let Dirtblock = await fetchImage("Images/Dirtblock.png")
 let Character_RevertedImage = await fetchImage ("images/Character_reverted.png")
 let Character_Image = await fetchImage ("images/Character.png")
 let a: Hitbox[] = []
-let shots: Hitbox[] = []
+let shots = []
 let shot_Placement = char_x + 10
 let shot_speed = 1
+let shooting = false
+
+
 
 
 for (let i = 0; i<=51; i++) {
@@ -61,7 +64,8 @@ else if(lager_4[i]==1 || lager_4[i]>2) {ctx.drawImage(stoneblock1,i*25,525,25,25
 
 
 
-
+if(char_Direction) {shot_speed = -10}
+else {shot_speed = 10}
 
 
 
@@ -199,13 +203,19 @@ function shoot () {
     if (keyboard.enter && shots.length < 3) { 
         
         keyboard.enter = false
-        shot_Placement = char_x + 10
-        shots.push(new Hitbox(shot_Placement, char_y + 5, 20, 10))
+        //shooting = true
+        
+        shots.push({
+           "hitbox": new Hitbox(shot_Placement, char_y + 5, 20, 10),
+            "direction": char_Direction
+    })
     }
+    
 }
 function updateShot () {
-    shot_Placement += shot_speed
-    return shot_Placement
+    if (shooting ) {}
+      
+    else { shot_Placement = char_x + 10}
 }
 
 
@@ -213,15 +223,21 @@ function updateShot () {
 
 update = () => {
     clear()
-    updateShot()
-    if(char_Direction) {shot_speed = -10}
-    else {shot_speed = 10}
+    //updateShot()
+    shot_Placement = char_x+ 10 
     //console.log(char_Direction)
-    shot_speed = 1
+
     console.log(shots.length)
     for(let i = 0; i < shots.length; i++){
-        shots[i].drawOutline()
         
+        if(!shots[i]["direction"]){
+            //console.log("höger")
+        shots[i]["hitbox"].x += 14
+        } else if (shots[i]["direction"]) {
+            //console.log("vänster")
+            shots[i]["hitbox"].x -=14
+        }
+        shots[i]["hitbox"].drawOutline()
     }
     shoot()
     draw_map()
