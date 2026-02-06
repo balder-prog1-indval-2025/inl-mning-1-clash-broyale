@@ -21,27 +21,34 @@ let Dirtoverlayblock = await fetchImage("images/Dirtoverlayblock.png")
 let Dirtblock = await fetchImage("Images/Dirtblock.png")
 let Character_RevertedImage = await fetchImage ("images/Character_reverted.png")
 let Character_Image = await fetchImage ("images/Character.png")
-let a: Hitbox[] = []
+let ground: Hitbox[] = []
+let wall: Hitbox[] = []
 let shots = []
 let shot_Placement = char_x + 10
 let shot_speed = 1
-let shooting = false
 
 
 
 
-for (let i = 0; i<=51; i++) {
-if(i<10 || i>15 && i<30 || i>35 ) {
-    a.push(new Hitbox (i*25 ,450,25,25))
+for(let i = 0; i < 3; i++){//platforms
+    ground.push (new Hitbox(275 +i*200, 300, 50, 25))
+}
+
+wall.push(new Hitbox(0, 475, 250,200))
+wall.push(new Hitbox(1025, 475, 250, 200))
+
+for (let i = 0; i<=51; i++) { //ground hitboxes
+if(i<10 || i>40 ) {
+    ground.push(new Hitbox (i*25 ,450,25,25))
 }
 }
-for(let i = 0; i<= 51; i++) {
+for(let i = 0; i<= 51; i++) { //ground blocks
     lager_3.push (random(1, 5))
     lager_4.push (random(1, 5))
 }
 function draw_map () {
 for (let i = 0; i<=51; i++) {
-if(i<10 || i>15 && i<30 || i>35 ) {
+if(i<10 || i>40 ) {
 ctx.drawImage(grassblock1, i*25, 450, 25,25)
 ctx.drawImage(stoneblock1, i*25, 550, 25, 25)
 ctx.drawImage(Dirtblock, i*25, 500, 25, 25)
@@ -73,23 +80,23 @@ else {shot_speed = 10}
 
 
 function jump () {
-    let return_movement = 0
-    for (let i = 0; i < a.length ; i++){
+    let return_jump = 0
+    for (let i = 0; i < ground.length ; i++){
         if (dashing && (keyboard.d || keyboard.a) && amount_dashes > 0 ) {
             
-            return_movement = 0
-        } else if(after_dash && !character.intersects(a[i])) {
-            jump_time = 8000
+            return_jump = 0
+        } else if(after_dash && !character.intersects(ground[i])) {
+            jump_time = 5000
             after_dash = false
             
         } 
-        else if(jumping && !character.intersects(a[i]) && after_dash == false) {
+        else if(jumping && !character.intersects(ground[i]) && after_dash == false) {
             
             jump_time += deltaTime
-            if(jump_time <16000) {
-                return_movement = -12 + 12 * jump_time/8000
-        } else {return_movement = 6 * jump_time/8000}
-        } else if (character.intersects (a[i])) { // när karaktären inträffar hitboxen (marken).
+            if(jump_time <10000) {
+                return_jump = -12 + 12 * jump_time/5000
+        } else {return_jump = 6 * jump_time/5000}
+        } else if (character.intersects (ground[i])) { // när karaktären inträffar hitboxen (marken).
             //console.log("intersect")
             jumping = false // när karaktären inträffar hitboxen kan den inte hoppa...
             dashing = false // ... eller "dasha"
@@ -101,25 +108,28 @@ function jump () {
             amount_dashes = 2
         
            
-            return_movement = -2
+            return_jump = -2
         }
-    else if (!jumping && !character.intersects(a[i])) { //när karaktären inte hoppar och inte träffar marken
+    else if (!jumping && !character.intersects(ground[i])) { //när karaktären inte hoppar och inte träffar marken
         fall_time +=deltaTime
         if (fall_time> 5000){
             
             jump_time += deltaTime
         
-            return_movement = 8 * jump_time/8000 // då läggs det på "gravitationen", ett värde som med tiden ökar. Gör så att karaktären träffar hitboxen instant
+            return_jump = 8 * jump_time/8000 // då läggs det på "gravitationen", ett värde som med tiden ökar. Gör så att karaktären träffar hitboxen instant
             }
     }
         
     }
-    return return_movement
+    for(let i = 0; i < wall.length; i++){
+        if (character.intersects(wall[i])){movement_x = 0}
+    }
+    return return_jump
 }
 function dash () {
     let return_dash = 0
-    for (let i = 0; i < a.length ; i++){
-        if (dashing && !character.intersects(a[i])) {
+    for (let i = 0; i < ground.length ; i++){
+        if (dashing && !character.intersects(ground[i])) {
         
             if ( keyboard.d && dash_time < 100 && amount_dashes>0) {
             dash_time += deltaTime
@@ -145,7 +155,7 @@ function dash () {
             return return_dash
             } 
         }
-        else if (dashing && character.intersects(a[i])) {
+        else if (dashing && character.intersects(ground[i])) {
             dashing = false
             return_dash = 0
         }
@@ -200,10 +210,10 @@ hitbox.drawOutline()
 }
 
 function shoot () {
-    if (keyboard.enter && shots.length < 3) { 
+    if (keyboard.enter ) { 
         
         keyboard.enter = false
-        //shooting = true
+       
         
         shots.push({
            "hitbox": new Hitbox(shot_Placement, char_y + 5, 20, 10),
@@ -212,22 +222,20 @@ function shoot () {
     }
     
 }
-function updateShot () {
-    if (shooting ) {}
-      
-    else { shot_Placement = char_x + 10}
-}
 
 
 
+let test = new Hitbox(1150, 200, 100, 250)
 
 update = () => {
     clear()
-    //updateShot()
+    
     shot_Placement = char_x+ 10 
-    //console.log(char_Direction)
-
-    console.log(shots.length)
+   
+    test.drawOutline()
+    for(let i = 0; i < wall.length; i++){
+    wall[i].drawOutline()        
+    }
     for(let i = 0; i < shots.length; i++){
         
         if(!shots[i]["direction"]){
@@ -238,11 +246,15 @@ update = () => {
             shots[i]["hitbox"].x -=14
         }
         shots[i]["hitbox"].drawOutline()
+        if (shots[i]["hitbox"].intersects(test)) {
+            shots.shift()
+            console.log ("intersect")
+        }
     }
     shoot()
     draw_map()
-    for (let i = 0;  i <= a.length -1 ; i++) {
-        a[i].drawOutline()
+    for (let i = 0;  i <= ground.length -1 ; i++) {
+        ground[i].drawOutline()
 
     }
     movement_x = walk() + dash()
@@ -262,8 +274,8 @@ update = () => {
         keyboard.space = false 
     
      if (amount_jumps == 1 && jumping) {
-        jump_time = -3000
-        jump_time = -3000
+        jump_time = -1000
+        
     }
     else {
         jumping = true
