@@ -1,5 +1,3 @@
-
- /*STAAAA
 let amount_jumps = 2
 let amount_dashes = 2
 let char_x = 50
@@ -14,31 +12,43 @@ let dashing = false
 let after_dash = false
 let lager_3 = []
 let lager_4 = [] 
+let fall_time = 0
 let char_Direction = false
 
-let Character_RevertedImage = await fetchImage("images/Character_reverted.png")
-let Character_Image = await fetchImage("images/Character.png")
+let Spider =  await fetchImage("images/Spider.png")
 let grassblock1 = await fetchImage("images/Block1.png")
 let stoneblock1 = await fetchImage("images/stoneblock1.png")
 let Dirtoverlayblock = await fetchImage("images/Dirtoverlayblock.png")
 let Dirtblock = await fetchImage("Images/Dirtblock.png")
-let a: Hitbox[] = []
+let Character_RevertedImage = await fetchImage ("images/Character_reverted.png")
+let Character_Image = await fetchImage ("images/Character.png")
+let ground: Hitbox[] = []
+let wall: Hitbox[] = []
+let shots = []
+let shot_Placement = char_x + 10
+let shot_speed = 1
 
 
-let hitbox = new Hitbox(
-    grassblock1[0], // x
-    grassblock1[1], // y
-    grassblock1[2], // width
-    grassblock1[3]  // height
-)
 
+for(let i = 0; i < 3; i++){//platforms
+    ground.push (new Hitbox(275 +i*200, 300, 50, 25))
+}
 
-for(let i = 0; i<= 49; i++) {
+wall.push(new Hitbox(0, 475, 250,200))
+wall.push(new Hitbox(1025, 475, 250, 200))
+
+for (let i = 0; i<=51; i++) { //ground hitboxes
+if(i<10 || i>40 ) {
+    ground.push(new Hitbox (i*25 ,450,25,25))
+}
+}
+for(let i = 0; i<= 51; i++) { //ground blocks
     lager_3.push (random(1, 5))
     lager_4.push (random(1, 5))
 }
 function draw_map () {
-for (let i = 0; i<=49; i++) {
+for (let i = 0; i<=51; i++) {
+if(i<10 || i>40 ) {
 ctx.drawImage(grassblock1, i*25, 450, 25,25)
 ctx.drawImage(stoneblock1, i*25, 550, 25, 25)
 ctx.drawImage(Dirtblock, i*25, 500, 25, 25)
@@ -46,17 +56,1219 @@ ctx.drawImage(Dirtblock, i*25, 475, 25, 25)
 ctx.drawImage(stoneblock1,i*25,550,25,25)
 ctx.drawImage(stoneblock1,i*25,575,25,25)
 ctx.drawImage(stoneblock1,i*25,600,25,25)
-a.push(new Hitbox (i*25 ,450,25,25))
+
+
 if (lager_3[i] == 1 || lager_3[i] > 2) {ctx.drawImage(Dirtblock,i*25,500,25,25)}
 
 else if(lager_3[i] == 2 ) {ctx.drawImage(stoneblock1,i*25,500,25,25)}
 
 if(lager_4[i]==2) {ctx.drawImage(Dirtblock,i*25,525,25,25)}
 else if(lager_4[i]==1 || lager_4[i]>2) {ctx.drawImage(stoneblock1,i*25,525,25,25)}
-
 }
 }
+}
+let WallHitbox = []
+  let DirtAndStoneHitboxes = [
+    WallHitbox.push(new Hitbox(25, 325, 25, 25)),
+    WallHitbox.push(new Hitbox(0, 325, 25, 25)),
+    WallHitbox.push(new Hitbox(25, 300, 25, 25)),
+    WallHitbox.push(new Hitbox(0, 300, 25, 25)),
+    WallHitbox.push(new Hitbox(25, 275, 25, 25)),
+    WallHitbox.push(new Hitbox(0, 275, 25, 25)),
+    WallHitbox.push(new Hitbox(25, 350, 25, 25)),
+    WallHitbox.push(new Hitbox(0, 350, 25, 25)),
+    WallHitbox.push(new Hitbox(50, 350, 25, 25)),
+    WallHitbox.push(new Hitbox(25, 250, 25, 25)),
+    WallHitbox.push(new Hitbox(25, 225, 25, 25)),
+    WallHitbox.push(new Hitbox(25, 200, 25, 25)),
+    WallHitbox.push(new Hitbox(25, 175, 25, 25)),
+    WallHitbox.push(new Hitbox(25, 150, 25, 25)),
+    WallHitbox.push(new Hitbox(25, 125, 25, 25)),
+    WallHitbox.push(new Hitbox(0, 125, 25, 25)),
+    WallHitbox.push(new Hitbox(0, 150, 25, 25)),
+    WallHitbox.push(new Hitbox(0, 175, 25, 25)),
+    WallHitbox.push(new Hitbox(0, 200, 25, 25)),
+    WallHitbox.push(new Hitbox(0, 225, 25, 25)),
+    WallHitbox.push(new Hitbox(0, 250, 25, 25)),
+    
+    WallHitbox.push(new Hitbox(150, 200, 25, 25)),
+    WallHitbox.push(new Hitbox(150, 225, 25, 25)),
+    WallHitbox.push(new Hitbox(175, 200, 25, 25)),
+    WallHitbox.push(new Hitbox(175, 225, 25, 25)),
+    
+    WallHitbox.push(new Hitbox(200, 200, 25, 25)),
+    WallHitbox.push(new Hitbox(200, 225, 25, 25)),
+    WallHitbox.push(new Hitbox(225, 175, 25, 25)),
+    WallHitbox.push(new Hitbox(225, 200, 25, 25)),
+    WallHitbox.push(new Hitbox(225, 225, 25, 25)),
+    
+    WallHitbox.push(new Hitbox(150, 475, 25, 25)),
+    WallHitbox.push(new Hitbox(150, 500, 25, 25)),
+    WallHitbox.push(new Hitbox(175, 475, 25, 25)),
+    WallHitbox.push(new Hitbox(175, 500, 25, 25)),
+    //----
+   
+    WallHitbox.push(new Hitbox(200, 475, 25, 25)),
+    WallHitbox.push(new Hitbox(200, 500, 25, 25)),
+    WallHitbox.push(new Hitbox(225, 475, 25, 25)),
+    WallHitbox.push(new Hitbox(225, 500, 25, 25)),
+    
+    WallHitbox.push(new Hitbox(150, 525, 25, 25)),
+    WallHitbox.push(new Hitbox(150, 550, 25, 25)),
+    WallHitbox.push(new Hitbox(150, 575, 25, 25)),
+    WallHitbox.push(new Hitbox(175, 525, 25, 25)),
+    WallHitbox.push(new Hitbox(175, 550, 25, 25)),
+    WallHitbox.push(new Hitbox(175, 575, 25, 25)),
+    
+    WallHitbox.push(new Hitbox(200, 525, 25, 25)),
+    WallHitbox.push(new Hitbox(200, 550, 25, 25)),
+    WallHitbox.push(new Hitbox(200, 575, 25, 25)),
+    WallHitbox.push(new Hitbox(225, 525, 25, 25)),
+    WallHitbox.push(new Hitbox(225, 550, 25, 25)),
+    WallHitbox.push(new Hitbox(225, 575, 25, 25)),
+    WallHitbox.push(new Hitbox(75, 450, 25, 25)),
+    WallHitbox.push(new Hitbox(75, 475, 25, 25)),
+    WallHitbox.push(new Hitbox(75, 500, 25, 25)),
+    WallHitbox.push(new Hitbox(100, 475, 25, 25)),
+    WallHitbox.push(new Hitbox(100, 500, 25, 25)),
 
+    WallHitbox.push(new Hitbox(125, 475, 25, 25)),
+    WallHitbox.push(new Hitbox(125, 500, 25, 25)),
+    WallHitbox.push(new Hitbox(150, 475, 25, 25)),
+    WallHitbox.push(new Hitbox(150, 500, 25, 25)),
+
+    WallHitbox.push(new Hitbox(75, 525, 25, 25)),
+    WallHitbox.push(new Hitbox(75, 550, 25, 25)),
+    WallHitbox.push(new Hitbox(75, 575, 25, 25)),
+    WallHitbox.push(new Hitbox(100, 525, 25, 25)),
+    WallHitbox.push(new Hitbox(100, 550, 25, 25)),
+    WallHitbox.push(new Hitbox(100, 575, 25, 25)),
+
+    WallHitbox.push(new Hitbox(125, 525, 25, 25)),
+    WallHitbox.push(new Hitbox(125, 550, 25, 25)),
+    WallHitbox.push(new Hitbox(125, 575, 25, 25)),
+    WallHitbox.push(new Hitbox(150, 525, 25, 25)),
+    WallHitbox.push(new Hitbox(150, 550, 25, 25)),
+    WallHitbox.push(new Hitbox(150, 575, 25, 25)),
+
+    WallHitbox.push(new Hitbox(0, 475, 25, 25)),
+    WallHitbox.push(new Hitbox(0, 500, 25, 25)),
+    WallHitbox.push(new Hitbox(0, 525, 25, 25)),
+    WallHitbox.push(new Hitbox(25, 475, 25, 25)),
+    WallHitbox.push(new Hitbox(25, 500, 25, 25)),
+    WallHitbox.push(new Hitbox(25, 525, 25, 25)),
+
+    WallHitbox.push(new Hitbox(50, 475, 25, 25)),
+    WallHitbox.push(new Hitbox(50, 500, 25, 25)),
+    WallHitbox.push(new Hitbox(50, 525, 25, 25)),
+    WallHitbox.push(new Hitbox(75, 475, 25, 25)),
+    WallHitbox.push(new Hitbox(75, 500, 25, 25)),
+    WallHitbox.push(new Hitbox(75, 525, 25, 25)),
+
+    WallHitbox.push(new Hitbox(0, 550, 25, 25)),
+    WallHitbox.push(new Hitbox(0, 575, 25, 25)),
+    WallHitbox.push(new Hitbox(0, 600, 25, 25)),
+    WallHitbox.push(new Hitbox(25, 550, 25, 25)),
+    WallHitbox.push(new Hitbox(25, 575, 25, 25)),
+    WallHitbox.push(new Hitbox(25, 600, 25, 25)),
+
+    WallHitbox.push(new Hitbox(50, 550, 25, 25)),
+    WallHitbox.push(new Hitbox(50, 575, 25, 25)),
+    WallHitbox.push(new Hitbox(50, 600, 25, 25)),
+    WallHitbox.push(new Hitbox(75, 550, 25, 25)),
+    WallHitbox.push(new Hitbox(75, 575, 25, 25)),
+    WallHitbox.push(new Hitbox(75, 600, 25, 25)),
+    WallHitbox.push(new Hitbox(600, 175, 25, 25)),
+    //-----
+    WallHitbox.push(new Hitbox(600, 200, 25, 25)),
+    WallHitbox.push(new Hitbox(600, 225, 25, 25)),
+
+    WallHitbox.push(new Hitbox(625, 175, 25, 25)),
+    WallHitbox.push(new Hitbox(625, 200, 25, 25)),
+    WallHitbox.push(new Hitbox(625, 225, 25, 25)),
+
+    WallHitbox.push(new Hitbox(650, 175, 25, 25)),
+    WallHitbox.push(new Hitbox(650, 200, 25, 25)),
+    WallHitbox.push(new Hitbox(650, 225, 25, 25)),
+
+    WallHitbox.push(new Hitbox(675, 175, 25, 25)),
+    WallHitbox.push(new Hitbox(675, 200, 25, 25)),
+    WallHitbox.push(new Hitbox(675, 225, 25, 25)),
+
+    WallHitbox.push(new Hitbox(225, 150, 25, 25)),
+    WallHitbox.push(new Hitbox(225, 125, 25, 25)),
+    WallHitbox.push(new Hitbox(225, 100, 25, 25)),
+    WallHitbox.push(new Hitbox(225, 75, 25, 25)),
+    WallHitbox.push(new Hitbox(250, 325, 25, 25)),
+    WallHitbox.push(new Hitbox(225, 325, 25, 25)),
+    WallHitbox.push(new Hitbox(200, 325, 25, 25)),
+    WallHitbox.push(new Hitbox(175, 325, 25, 25)),
+    WallHitbox.push(new Hitbox(150, 325, 25, 25)),
+    WallHitbox.push(new Hitbox(125, 325, 25, 25)),
+    WallHitbox.push(new Hitbox(275, 350, 25, 25)),
+    WallHitbox.push(new Hitbox(300, 350, 25, 25)),
+    WallHitbox.push(new Hitbox(425, 400, 25, 25)),
+//---
+    WallHitbox.push(new Hitbox(25, 325, 25, 25)),
+    WallHitbox.push(new Hitbox(0, 325, 25, 25)),
+    WallHitbox.push(new Hitbox(25, 300, 25, 25)),
+    WallHitbox.push(new Hitbox(0, 300, 25, 25)),
+    WallHitbox.push(new Hitbox(25, 275, 25, 25)),
+    WallHitbox.push(new Hitbox(0, 275, 25, 25)),
+    WallHitbox.push(new Hitbox(25, 350, 25, 25)),
+    WallHitbox.push(new Hitbox(0, 350, 25, 25)),
+    WallHitbox.push(new Hitbox(50, 350, 25, 25)),
+    WallHitbox.push(new Hitbox(25, 250, 25, 25)),
+    WallHitbox.push(new Hitbox(25, 225, 25, 25)),
+    WallHitbox.push(new Hitbox(25, 200, 25, 25)),
+    WallHitbox.push(new Hitbox(25, 175, 25, 25)),
+    WallHitbox.push(new Hitbox(25, 150, 25, 25)),
+    WallHitbox.push(new Hitbox(25, 125, 25, 25)),
+    WallHitbox.push(new Hitbox(0, 125, 25, 25)),
+    WallHitbox.push(new Hitbox(0, 150, 25, 25)),
+    WallHitbox.push(new Hitbox(0, 175, 25, 25)),
+    WallHitbox.push(new Hitbox(0, 200, 25, 25)),
+    WallHitbox.push(new Hitbox(0, 225, 25, 25)),
+    WallHitbox.push(new Hitbox(0, 250, 25, 25)),
+
+    WallHitbox.push(new Hitbox(150, 200, 25, 25)),
+    WallHitbox.push(new Hitbox(150, 225, 25, 25)),
+    WallHitbox.push(new Hitbox(175, 200, 25, 25)),
+    WallHitbox.push(new Hitbox(175, 225, 25, 25)),
+
+    WallHitbox.push(new Hitbox(200, 200, 25, 25)),
+    WallHitbox.push(new Hitbox(200, 225, 25, 25)),
+    WallHitbox.push(new Hitbox(225, 175, 25, 25)),
+    WallHitbox.push(new Hitbox(225, 200, 25, 25)),
+    WallHitbox.push(new Hitbox(225, 225, 25, 25)),
+
+    WallHitbox.push(new Hitbox(150, 475, 25, 25)),
+    WallHitbox.push(new Hitbox(150, 500, 25, 25)),
+    WallHitbox.push(new Hitbox(175, 475, 25, 25)),
+    WallHitbox.push(new Hitbox(175, 500, 25, 25)),
+
+    WallHitbox.push(new Hitbox(200, 475, 25, 25)),
+    WallHitbox.push(new Hitbox(200, 500, 25, 25)),
+    WallHitbox.push(new Hitbox(225, 475, 25, 25)),
+    WallHitbox.push(new Hitbox(225, 500, 25, 25)),
+
+    WallHitbox.push(new Hitbox(150, 525, 25, 25)),
+    WallHitbox.push(new Hitbox(150, 550, 25, 25)),
+    WallHitbox.push(new Hitbox(150, 575, 25, 25)),
+    WallHitbox.push(new Hitbox(175, 525, 25, 25)),
+    WallHitbox.push(new Hitbox(175, 550, 25, 25)),
+    WallHitbox.push(new Hitbox(175, 575, 25, 25)),
+
+    WallHitbox.push(new Hitbox(200, 525, 25, 25)),
+    WallHitbox.push(new Hitbox(200, 550, 25, 25)),
+    WallHitbox.push(new Hitbox(200, 575, 25, 25)),
+    WallHitbox.push(new Hitbox(225, 525, 25, 25)),
+    WallHitbox.push(new Hitbox(225, 550, 25, 25)),
+    WallHitbox.push(new Hitbox(225, 575, 25, 25)),
+
+    WallHitbox.push(new Hitbox(75, 475, 25, 25)),
+    WallHitbox.push(new Hitbox(75, 500, 25, 25)),
+    WallHitbox.push(new Hitbox(100, 475, 25, 25)),
+    WallHitbox.push(new Hitbox(100, 500, 25, 25)),
+
+    WallHitbox.push(new Hitbox(125, 475, 25, 25)),
+    WallHitbox.push(new Hitbox(125, 500, 25, 25)),
+    WallHitbox.push(new Hitbox(150, 475, 25, 25)),
+    WallHitbox.push(new Hitbox(150, 500, 25, 25)),
+
+    WallHitbox.push(new Hitbox(75, 525, 25, 25)),
+    WallHitbox.push(new Hitbox(75, 550, 25, 25)),
+    WallHitbox.push(new Hitbox(75, 575, 25, 25)),
+    WallHitbox.push(new Hitbox(100, 525, 25, 25)),
+    WallHitbox.push(new Hitbox(100, 550, 25, 25)),
+    WallHitbox.push(new Hitbox(100, 575, 25, 25)),
+
+    WallHitbox.push(new Hitbox(125, 525, 25, 25)),
+    WallHitbox.push(new Hitbox(125, 550, 25, 25)),
+    WallHitbox.push(new Hitbox(125, 575, 25, 25)),
+    WallHitbox.push(new Hitbox(150, 525, 25, 25)),
+    WallHitbox.push(new Hitbox(150, 550, 25, 25)),
+    WallHitbox.push(new Hitbox(150, 575, 25, 25)),
+
+    WallHitbox.push(new Hitbox(0, 475, 25, 25)),
+    WallHitbox.push(new Hitbox(0, 500, 25, 25)),
+    WallHitbox.push(new Hitbox(0, 525, 25, 25)),
+    WallHitbox.push(new Hitbox(25, 475, 25, 25)),
+    WallHitbox.push(new Hitbox(25, 500, 25, 25)),
+    WallHitbox.push(new Hitbox(25, 525, 25, 25)),
+
+    WallHitbox.push(new Hitbox(50, 475, 25, 25)),
+    WallHitbox.push(new Hitbox(50, 500, 25, 25)),
+    WallHitbox.push(new Hitbox(50, 525, 25, 25)),
+    WallHitbox.push(new Hitbox(75, 475, 25, 25)),
+    WallHitbox.push(new Hitbox(75, 500, 25, 25)),
+    WallHitbox.push(new Hitbox(75, 525, 25, 25)),
+
+    WallHitbox.push(new Hitbox(0, 550, 25, 25)),
+    WallHitbox.push(new Hitbox(0, 575, 25, 25)),
+    WallHitbox.push(new Hitbox(0, 600, 25, 25)),
+    WallHitbox.push(new Hitbox(25, 550, 25, 25)),
+    WallHitbox.push(new Hitbox(25, 575, 25, 25)),
+    WallHitbox.push(new Hitbox(25, 600, 25, 25)),
+
+    WallHitbox.push(new Hitbox(50, 550, 25, 25)),
+    WallHitbox.push(new Hitbox(50, 575, 25, 25)),
+    WallHitbox.push(new Hitbox(50, 600, 25, 25)),
+    WallHitbox.push(new Hitbox(75, 550, 25, 25)),
+    WallHitbox.push(new Hitbox(75, 575, 25, 25)),
+    WallHitbox.push(new Hitbox(75, 600, 25, 25)),
+
+
+    WallHitbox.push(new Hitbox(550, 450, 25, 25)),
+    WallHitbox.push(new Hitbox(550, 475, 25, 25)),
+    WallHitbox.push(new Hitbox(550, 500, 25, 25)),
+    WallHitbox.push(new Hitbox(575, 450, 25, 25)),
+    WallHitbox.push(new Hitbox(575, 475, 25, 25)),
+    WallHitbox.push(new Hitbox(575, 500, 25, 25)),
+
+    WallHitbox.push(new Hitbox(600, 450, 25, 25)),
+    WallHitbox.push(new Hitbox(600, 475, 25, 25)),
+    WallHitbox.push(new Hitbox(600, 500, 25, 25)),
+    WallHitbox.push(new Hitbox(625, 450, 25, 25)),
+    WallHitbox.push(new Hitbox(625, 475, 25, 25)),
+    WallHitbox.push(new Hitbox(625, 500, 25, 25)),
+
+    WallHitbox.push(new Hitbox(650, 450, 25, 25)),
+    WallHitbox.push(new Hitbox(650, 475, 25, 25)),
+    WallHitbox.push(new Hitbox(650, 500, 25, 25)),
+    WallHitbox.push(new Hitbox(675, 450, 25, 25)),
+    WallHitbox.push(new Hitbox(675, 475, 25, 25)),
+    WallHitbox.push(new Hitbox(675, 500, 25, 25)),
+
+    WallHitbox.push(new Hitbox(600, 525, 25, 25)),
+    WallHitbox.push(new Hitbox(600, 550, 25, 25)),
+    WallHitbox.push(new Hitbox(600, 575, 25, 25)),
+    WallHitbox.push(new Hitbox(625, 525, 25, 25)),
+    WallHitbox.push(new Hitbox(625, 550, 25, 25)),
+    WallHitbox.push(new Hitbox(625, 575, 25, 25)),
+
+    WallHitbox.push(new Hitbox(650, 525, 25, 25)),
+    WallHitbox.push(new Hitbox(650, 550, 25, 25)),
+    WallHitbox.push(new Hitbox(650, 575, 25, 25)),
+    WallHitbox.push(new Hitbox(675, 525, 25, 25)),
+    WallHitbox.push(new Hitbox(675, 550, 25, 25)),
+    WallHitbox.push(new Hitbox(675, 575, 25, 25)),
+
+    WallHitbox.push(new Hitbox(600, 250, 25, 25)),
+    WallHitbox.push(new Hitbox(600, 275, 25, 25)),
+    WallHitbox.push(new Hitbox(600, 300, 25, 25)),
+    WallHitbox.push(new Hitbox(625, 250, 25, 25)),
+    WallHitbox.push(new Hitbox(625, 275, 25, 25)),
+    WallHitbox.push(new Hitbox(625, 300, 25, 25)),
+
+    WallHitbox.push(new Hitbox(650, 250, 25, 25)),
+    WallHitbox.push(new Hitbox(650, 275, 25, 25)),
+    WallHitbox.push(new Hitbox(650, 300, 25, 25)),
+    WallHitbox.push(new Hitbox(675, 250, 25, 25)),
+    WallHitbox.push(new Hitbox(675, 275, 25, 25)),
+    WallHitbox.push(new Hitbox(675, 300, 25, 25)),
+
+    WallHitbox.push(new Hitbox(600, 325, 25, 25)),
+    WallHitbox.push(new Hitbox(600, 350, 25, 25)),
+    WallHitbox.push(new Hitbox(600, 375, 25, 25)),
+    WallHitbox.push(new Hitbox(625, 325, 25, 25)),
+    WallHitbox.push(new Hitbox(625, 350, 25, 25)),
+    WallHitbox.push(new Hitbox(625, 375, 25, 25)),
+
+    WallHitbox.push(new Hitbox(650, 325, 25, 25)),
+    WallHitbox.push(new Hitbox(650, 350, 25, 25)),
+    WallHitbox.push(new Hitbox(650, 375, 25, 25)),
+    WallHitbox.push(new Hitbox(675, 325, 25, 25)),
+    WallHitbox.push(new Hitbox(675, 350, 25, 25)),
+    WallHitbox.push(new Hitbox(675, 375, 25, 25)),
+
+    WallHitbox.push(new Hitbox(600, 400, 25, 25)),
+    WallHitbox.push(new Hitbox(600, 425, 25, 25)),
+    WallHitbox.push(new Hitbox(625, 400, 25, 25)),
+    WallHitbox.push(new Hitbox(625, 425, 25, 25)),
+    WallHitbox.push(new Hitbox(650, 400, 25, 25)),
+    WallHitbox.push(new Hitbox(650, 425, 25, 25)),
+    WallHitbox.push(new Hitbox(675, 400, 25, 25)),
+    WallHitbox.push(new Hitbox(675, 425, 25, 25)),
+
+    WallHitbox.push(new Hitbox(325, 325, 25, 25)),
+    WallHitbox.push(new Hitbox(325, 350, 25, 25)),
+    WallHitbox.push(new Hitbox(350, 325, 25, 25)),
+    WallHitbox.push(new Hitbox(350, 350, 25, 25)),
+
+    WallHitbox.push(new Hitbox(375, 325, 25, 25)),
+    WallHitbox.push(new Hitbox(375, 350, 25, 25)),
+    WallHitbox.push(new Hitbox(400, 325, 25, 25)),
+    WallHitbox.push(new Hitbox(400, 350, 25, 25)),
+
+    WallHitbox.push(new Hitbox(325, 375, 25, 25)),
+    WallHitbox.push(new Hitbox(325, 400, 25, 25)),
+    WallHitbox.push(new Hitbox(325, 425, 25, 25)),
+    WallHitbox.push(new Hitbox(350, 375, 25, 25)),
+    WallHitbox.push(new Hitbox(350, 400, 25, 25)),
+    WallHitbox.push(new Hitbox(350, 425, 25, 25)),
+
+    WallHitbox.push(new Hitbox(375, 375, 25, 25)),
+    WallHitbox.push(new Hitbox(375, 400, 25, 25)),
+    WallHitbox.push(new Hitbox(375, 425, 25, 25)),
+    WallHitbox.push(new Hitbox(400, 375, 25, 25)),
+    WallHitbox.push(new Hitbox(400, 400, 25, 25)),
+    WallHitbox.push(new Hitbox(400, 425, 25, 25)),
+
+    WallHitbox.push(new Hitbox(225, 150, 25, 25)),
+    WallHitbox.push(new Hitbox(225, 125, 25, 25)),
+    WallHitbox.push(new Hitbox(225, 100, 25, 25)),
+    WallHitbox.push(new Hitbox(225, 75, 25, 25)),
+
+    WallHitbox.push(new Hitbox(250, 325, 25, 25)),
+    WallHitbox.push(new Hitbox(225, 325, 25, 25)),
+    WallHitbox.push(new Hitbox(200, 325, 25, 25)),
+    WallHitbox.push(new Hitbox(175, 325, 25, 25)),
+    WallHitbox.push(new Hitbox(150, 325, 25, 25)),
+    WallHitbox.push(new Hitbox(125, 325, 25, 25)),
+    WallHitbox.push(new Hitbox(275, 350, 25, 25)),
+    WallHitbox.push(new Hitbox(300, 350, 25, 25)),
+    WallHitbox.push(new Hitbox(425, 400, 25, 25)),
+
+    WallHitbox.push(new Hitbox(600, 175, 25, 25)),
+    WallHitbox.push(new Hitbox(600, 200, 25, 25)),
+    WallHitbox.push(new Hitbox(600, 225, 25, 25)),
+    WallHitbox.push(new Hitbox(625, 175, 25, 25)),
+    WallHitbox.push(new Hitbox(625, 200, 25, 25)),
+    WallHitbox.push(new Hitbox(625, 225, 25, 25)),
+    WallHitbox.push(new Hitbox(650, 175, 25, 25)),
+    WallHitbox.push(new Hitbox(650, 200, 25, 25)),
+    WallHitbox.push(new Hitbox(650, 225, 25, 25)),
+    WallHitbox.push(new Hitbox(675, 175, 25, 25)),
+    WallHitbox.push(new Hitbox(675, 200, 25, 25)),
+    WallHitbox.push(new Hitbox(675, 225, 25, 25)),
+    WallHitbox.push(new Hitbox(250, 175, 25, 25)),
+    WallHitbox.push(new Hitbox(275, 175, 25, 25)),
+    WallHitbox.push(new Hitbox(300, 175, 25, 25)),
+    WallHitbox.push(new Hitbox(325, 175, 25, 25)),
+    WallHitbox.push(new Hitbox(350, 175, 25, 25)),
+    WallHitbox.push(new Hitbox(375, 175, 25, 25)),
+    WallHitbox.push(new Hitbox(400, 175, 25, 25)),
+    WallHitbox.push(new Hitbox(425, 175, 25, 25)),
+    WallHitbox.push(new Hitbox(450, 175, 25, 25)),
+    WallHitbox.push(new Hitbox(475, 175, 25, 25)),
+    WallHitbox.push(new Hitbox(500, 175, 25, 25)),
+    WallHitbox.push(new Hitbox(525, 175, 25, 25)),
+    WallHitbox.push(new Hitbox(550, 175, 25, 25)),
+    WallHitbox.push(new Hitbox(575, 175, 25, 25)),
+    
+    WallHitbox.push(new Hitbox(75, 350, 25, 25)),
+    WallHitbox.push(new Hitbox(100, 350, 25, 25)),
+    WallHitbox.push(new Hitbox(125, 350, 25, 25)),
+    
+    WallHitbox.push(new Hitbox(500, 475, 25, 25)),
+    WallHitbox.push(new Hitbox(500, 500, 25, 25)),
+    WallHitbox.push(new Hitbox(500, 525, 25, 25)),
+    WallHitbox.push(new Hitbox(500, 550, 25, 25)),
+    WallHitbox.push(new Hitbox(500, 575, 25, 25)),
+    WallHitbox.push(new Hitbox(500, 600, 25, 25)),
+    WallHitbox.push(new Hitbox(500, 625, 25, 25)),
+    WallHitbox.push(new Hitbox(500, 650, 25, 25)),
+    
+  ]
+
+  let GrassBlockHitboxes = [
+        ground.push(new Hitbox(675, 150, 25, 25)),
+        ground.push(new Hitbox(650, 150, 25, 25)),
+        ground.push(new Hitbox(625, 150, 25, 25)),
+        ground.push(new Hitbox(600, 150, 25, 25)),
+        ground.push(new Hitbox(575, 150, 25, 25)),
+        
+        
+        
+        ground.push(new Hitbox(550, 150, 25, 25)),
+        ground.push(new Hitbox(525, 150, 25, 25)),
+        ground.push(new Hitbox(500, 150, 25, 25)),
+        ground.push(new Hitbox(475, 150, 25, 25)),
+        ground.push(new Hitbox(450, 150, 25, 25)),
+        ground.push(new Hitbox(425, 150, 25, 25)),
+        
+        ground.push(new Hitbox(425, 150, 25, 25)),
+        ground.push(new Hitbox(400, 150, 25, 25)),
+        ground.push(new Hitbox(375, 150, 25, 25)),
+        ground.push(new Hitbox(350, 150, 25, 25)),
+        ground.push(new Hitbox(325, 150, 25, 25)),
+        ground.push(new Hitbox(300, 150, 25, 25)),
+        ground.push(new Hitbox(275, 150, 25, 25)),
+        ground.push(new Hitbox(250, 150, 25, 25)),
+        
+        ground.push(new Hitbox(0, 450, 25, 25)),
+        ground.push(new Hitbox(25, 450, 25, 25)),
+        ground.push(new Hitbox(50, 450, 25, 25)),
+        ground.push(new Hitbox(75, 425, 25, 25)),
+        ground.push(new Hitbox(100, 425, 25, 25)),
+        ground.push(new Hitbox(100, 325, 25, 25)),
+        ground.push(new Hitbox(75, 325, 25, 25)),
+        ground.push(new Hitbox(50, 325, 25, 25)),
+        
+        ground.push(new Hitbox(400, 300, 25, 25)),
+        ground.push(new Hitbox(375, 300, 25, 25)),
+        ground.push(new Hitbox(350, 300, 25, 25)),
+        ground.push(new Hitbox(325, 300, 25, 25)),
+        
+        ground.push(new Hitbox(500, 450, 25, 25)),
+        ground.push(new Hitbox(525, 450, 25, 25)),
+        ground.push(new Hitbox(550, 450, 25, 25)),
+        ground.push(new Hitbox(575, 450, 25, 25)),
+        
+        ground.push(new Hitbox(125, 300, 25, 25)),
+        ground.push(new Hitbox(150, 300, 25, 25)),
+        ground.push(new Hitbox(175, 300, 25, 25)),
+        ground.push(new Hitbox(200, 300, 25, 25)),
+        ground.push(new Hitbox(225, 300, 25, 25)),
+        ground.push(new Hitbox(250, 300, 25, 25)),
+        ground.push(new Hitbox(275, 325, 25, 25)),
+        ground.push(new Hitbox(300, 325, 25, 25)),
+        
+        ground.push(new Hitbox(200, 175, 25, 25)),
+        ground.push(new Hitbox(175, 175, 25, 25)),
+        ground.push(new Hitbox(150, 175, 25, 25)),
+        ground.push(new Hitbox(150, 50, 25, 25)),
+        ground.push(new Hitbox(175, 50, 25, 25)),
+        ground.push(new Hitbox(200, 50, 25, 25)),
+        ground.push(new Hitbox(225, 50, 25, 25)),
+        
+        ground.push(new Hitbox(0, 100, 25, 25)),
+        ground.push(new Hitbox(25, 100, 25, 25)),
+        
+        ground.push(new Hitbox(150, 450, 25, 25)),
+        ground.push(new Hitbox(125, 450, 25, 25)),
+        ground.push(new Hitbox(175, 450, 25, 25)),
+        ground.push(new Hitbox(225, 450, 25, 25)),
+        
+        ground.push(new Hitbox(475, 375, 25, 25)),
+        ground.push(new Hitbox(450, 375, 25, 25)),
+        ground.push(new Hitbox(425, 375, 25, 25)),
+        
+  ]
+      
+
+
+function map() {
+    //Dirtoverlayblocks: 
+ctx.drawImage(Dirtoverlayblock, 150, 425, 70, 35)
+ctx.drawImage(Dirtoverlayblock, 150, 400, 70, 35)
+ctx.drawImage(Dirtoverlayblock, 150, 375, 70, 35)
+ctx.drawImage(Dirtoverlayblock, 150, 347, 70, 35)
+
+ctx.drawImage(Dirtoverlayblock, 125, 425, 70, 35)
+ctx.drawImage(Dirtoverlayblock, 125, 400, 70, 35)
+ctx.drawImage(Dirtoverlayblock, 125, 375, 70, 35)
+ctx.drawImage(Dirtoverlayblock, 125, 347, 70, 35)
+
+ctx.drawImage(Dirtoverlayblock, 175, 425, 70, 35)
+ctx.drawImage(Dirtoverlayblock, 175, 400, 70, 35)
+ctx.drawImage(Dirtoverlayblock, 175, 375, 70, 35)
+ctx.drawImage(Dirtoverlayblock, 175, 347, 70, 35)
+
+ctx.drawImage(Dirtoverlayblock, 0, 425, 70, 35)
+ctx.drawImage(Dirtoverlayblock, 0, 400, 70, 35)
+ctx.drawImage(Dirtoverlayblock, 0, 375, 70, 35)
+ctx.drawImage(Dirtoverlayblock, 0, 347, 70, 35)
+
+ctx.drawImage(Dirtoverlayblock, 0, 425, 70, 35)
+ctx.drawImage(Dirtoverlayblock, 0, 400, 70, 35)
+ctx.drawImage(Dirtoverlayblock, 0, 375, 70, 35)
+ctx.drawImage(Dirtoverlayblock, 0, 347, 70, 35)
+
+ctx.drawImage(Dirtoverlayblock, 0, 425, 70, 35)
+ctx.drawImage(Dirtoverlayblock, 0, 400, 70, 35)
+ctx.drawImage(Dirtoverlayblock, 0, 375, 70, 35)
+ctx.drawImage(Dirtoverlayblock, 0, 347, 70, 35)
+
+// base x: 75
+
+ctx.drawImage(Dirtoverlayblock, 75, 425, 70, 35)
+ctx.drawImage(Dirtoverlayblock, 75, 400, 70, 35)
+ctx.drawImage(Dirtoverlayblock, 75, 375, 70, 35)
+ctx.drawImage(Dirtoverlayblock, 75, 347, 70, 35)
+
+ctx.drawImage(Dirtoverlayblock, 75, 425, 70, 35)
+ctx.drawImage(Dirtoverlayblock, 75, 400, 70, 35)
+ctx.drawImage(Dirtoverlayblock, 75, 375, 70, 35)
+ctx.drawImage(Dirtoverlayblock, 75, 347, 70, 35)
+
+ctx.drawImage(Dirtoverlayblock, 75, 425, 70, 35)
+ctx.drawImage(Dirtoverlayblock, 75, 400, 70, 35)
+ctx.drawImage(Dirtoverlayblock, 75, 375, 70, 35)
+ctx.drawImage(Dirtoverlayblock, 75, 347, 70, 35)
+
+ctx.drawImage(Dirtoverlayblock, 50, 425, 70, 35)
+ctx.drawImage(Dirtoverlayblock, 50, 400, 70, 35)
+ctx.drawImage(Dirtoverlayblock, 50, 375, 70, 35)
+ctx.drawImage(Dirtoverlayblock, 50, 347, 70, 35)
+
+//----
+
+ctx.drawImage(Dirtoverlayblock, 350, 525, 70, 35)
+ctx.drawImage(Dirtoverlayblock, 350, 500, 70, 35)
+ctx.drawImage(Dirtoverlayblock, 350, 475, 70, 35)
+ctx.drawImage(Dirtoverlayblock, 350, 447, 70, 35)
+
+ctx.drawImage(Dirtoverlayblock, 325, 525, 70, 35)
+ctx.drawImage(Dirtoverlayblock, 325, 500, 70, 35)
+ctx.drawImage(Dirtoverlayblock, 325, 475, 70, 35)
+ctx.drawImage(Dirtoverlayblock, 325, 447, 70, 35)
+
+ctx.drawImage(Dirtoverlayblock, 375, 525, 70, 35)
+ctx.drawImage(Dirtoverlayblock, 375, 500, 70, 35)
+ctx.drawImage(Dirtoverlayblock, 375, 475, 70, 35)
+ctx.drawImage(Dirtoverlayblock, 375, 447, 70, 35)
+
+ctx.drawImage(Dirtoverlayblock, 200, 525, 70, 35)
+ctx.drawImage(Dirtoverlayblock, 200, 500, 70, 35)
+ctx.drawImage(Dirtoverlayblock, 200, 475, 70, 35)
+ctx.drawImage(Dirtoverlayblock, 200, 447, 70, 35)
+
+ctx.drawImage(Dirtoverlayblock, 200, 525, 70, 35)
+ctx.drawImage(Dirtoverlayblock, 200, 500, 70, 35)
+ctx.drawImage(Dirtoverlayblock, 200, 475, 70, 35)
+ctx.drawImage(Dirtoverlayblock, 200, 447, 70, 35)
+
+ctx.drawImage(Dirtoverlayblock, 200, 525, 70, 35)
+ctx.drawImage(Dirtoverlayblock, 200, 500, 70, 35)
+ctx.drawImage(Dirtoverlayblock, 200, 475, 70, 35)
+ctx.drawImage(Dirtoverlayblock, 200, 447, 70, 35)
+
+// base x: 75 (+200)
+
+ctx.drawImage(Dirtoverlayblock, 275, 525, 70, 35)
+ctx.drawImage(Dirtoverlayblock, 275, 500, 70, 35)
+ctx.drawImage(Dirtoverlayblock, 275, 475, 70, 35)
+ctx.drawImage(Dirtoverlayblock, 275, 447, 70, 35)
+
+ctx.drawImage(Dirtoverlayblock, 275, 525, 70, 35)
+ctx.drawImage(Dirtoverlayblock, 275, 500, 70, 35)
+ctx.drawImage(Dirtoverlayblock, 275, 475, 70, 35)
+ctx.drawImage(Dirtoverlayblock, 275, 447, 70, 35)
+
+ctx.drawImage(Dirtoverlayblock, 275, 525, 70, 35)
+ctx.drawImage(Dirtoverlayblock, 275, 500, 70, 35)
+ctx.drawImage(Dirtoverlayblock, 275, 475, 70, 35)
+ctx.drawImage(Dirtoverlayblock, 275, 447, 70, 35)
+
+ctx.drawImage(Dirtoverlayblock, 250, 525, 70, 35)
+ctx.drawImage(Dirtoverlayblock, 250, 500, 70, 35)
+ctx.drawImage(Dirtoverlayblock, 250, 475, 70, 35)
+ctx.drawImage(Dirtoverlayblock, 250, 447, 70, 35)
+
+
+// base x: 250 + 25 = 275
+// base y: 525
+
+ctx.drawImage(Dirtoverlayblock, 425, 525, 70, 35)
+ctx.drawImage(Dirtoverlayblock, 425, 500, 70, 35)
+ctx.drawImage(Dirtoverlayblock, 425, 475, 70, 35)
+ctx.drawImage(Dirtoverlayblock, 425, 447, 70, 35)
+
+ctx.drawImage(Dirtoverlayblock, 400, 525, 70, 35)
+ctx.drawImage(Dirtoverlayblock, 400, 500, 70, 35)
+ctx.drawImage(Dirtoverlayblock, 400, 475, 70, 35)
+ctx.drawImage(Dirtoverlayblock, 400, 447, 70, 35)
+
+ctx.drawImage(Dirtoverlayblock, 450, 525, 70, 35)
+ctx.drawImage(Dirtoverlayblock, 450, 500, 70, 35)
+ctx.drawImage(Dirtoverlayblock, 450, 475, 70, 35)
+ctx.drawImage(Dirtoverlayblock, 450, 447, 70, 35)
+
+ctx.drawImage(Dirtoverlayblock, 275, 525, 70, 35)
+ctx.drawImage(Dirtoverlayblock, 275, 500, 70, 35)
+ctx.drawImage(Dirtoverlayblock, 275, 475, 70, 35)
+ctx.drawImage(Dirtoverlayblock, 275, 447, 70, 35)
+
+ctx.drawImage(Dirtoverlayblock, 275, 525, 70, 35)
+ctx.drawImage(Dirtoverlayblock, 275, 500, 70, 35)
+ctx.drawImage(Dirtoverlayblock, 275, 475, 70, 35)
+ctx.drawImage(Dirtoverlayblock, 275, 447, 70, 35)
+
+ctx.drawImage(Dirtoverlayblock, 275, 525, 70, 35)
+ctx.drawImage(Dirtoverlayblock, 275, 500, 70, 35)
+ctx.drawImage(Dirtoverlayblock, 275, 475, 70, 35)
+ctx.drawImage(Dirtoverlayblock, 275, 447, 70, 35)
+
+// base x: 75 + 25 = 100
+
+ctx.drawImage(Dirtoverlayblock, 350, 525, 70, 35)
+ctx.drawImage(Dirtoverlayblock, 350, 500, 70, 35)
+ctx.drawImage(Dirtoverlayblock, 350, 475, 70, 35)
+ctx.drawImage(Dirtoverlayblock, 350, 447, 70, 35)
+
+ctx.drawImage(Dirtoverlayblock, 350, 525, 70, 35)
+ctx.drawImage(Dirtoverlayblock, 350, 500, 70, 35)
+ctx.drawImage(Dirtoverlayblock, 350, 475, 70, 35)
+ctx.drawImage(Dirtoverlayblock, 350, 447, 70, 35)
+
+ctx.drawImage(Dirtoverlayblock, 350, 525, 70, 35)
+ctx.drawImage(Dirtoverlayblock, 350, 500, 70, 35)
+ctx.drawImage(Dirtoverlayblock, 350, 475, 70, 35)
+ctx.drawImage(Dirtoverlayblock, 350, 447, 70, 35)
+
+ctx.drawImage(Dirtoverlayblock, 325, 525, 70, 35)
+ctx.drawImage(Dirtoverlayblock, 325, 500, 70, 35)
+ctx.drawImage(Dirtoverlayblock, 325, 475, 70, 35)
+ctx.drawImage(Dirtoverlayblock, 325, 447, 70, 35)
+
+
+// base x: 275
+// base y: 550
+
+ctx.drawImage(Dirtoverlayblock, 425, 550, 70, 35)
+ctx.drawImage(Dirtoverlayblock, 425, 525, 70, 35)
+ctx.drawImage(Dirtoverlayblock, 425, 500, 70, 35)
+ctx.drawImage(Dirtoverlayblock, 425, 472, 70, 35)
+
+ctx.drawImage(Dirtoverlayblock, 400, 550, 70, 35)
+ctx.drawImage(Dirtoverlayblock, 400, 525, 70, 35)
+ctx.drawImage(Dirtoverlayblock, 400, 500, 70, 35)
+ctx.drawImage(Dirtoverlayblock, 400, 472, 70, 35)
+
+ctx.drawImage(Dirtoverlayblock, 450, 550, 70, 35)
+ctx.drawImage(Dirtoverlayblock, 450, 525, 70, 35)
+ctx.drawImage(Dirtoverlayblock, 450, 500, 70, 35)
+ctx.drawImage(Dirtoverlayblock, 450, 472, 70, 35)
+
+ctx.drawImage(Dirtoverlayblock, 275, 550, 70, 35)
+ctx.drawImage(Dirtoverlayblock, 275, 525, 70, 35)
+ctx.drawImage(Dirtoverlayblock, 275, 500, 70, 35)
+ctx.drawImage(Dirtoverlayblock, 275, 472, 70, 35)
+
+ctx.drawImage(Dirtoverlayblock, 275, 550, 70, 35)
+ctx.drawImage(Dirtoverlayblock, 275, 525, 70, 35)
+ctx.drawImage(Dirtoverlayblock, 275, 500, 70, 35)
+ctx.drawImage(Dirtoverlayblock, 275, 472, 70, 35)
+
+ctx.drawImage(Dirtoverlayblock, 275, 550, 70, 35)
+ctx.drawImage(Dirtoverlayblock, 275, 525, 70, 35)
+ctx.drawImage(Dirtoverlayblock, 275, 500, 70, 35)
+ctx.drawImage(Dirtoverlayblock, 275, 472, 70, 35)
+
+// base x: 100
+
+ctx.drawImage(Dirtoverlayblock, 350, 550, 70, 35)
+ctx.drawImage(Dirtoverlayblock, 350, 525, 70, 35)
+ctx.drawImage(Dirtoverlayblock, 350, 500, 70, 35)
+ctx.drawImage(Dirtoverlayblock, 350, 472, 70, 35)
+
+ctx.drawImage(Dirtoverlayblock, 350, 550, 70, 35)
+ctx.drawImage(Dirtoverlayblock, 350, 525, 70, 35)
+ctx.drawImage(Dirtoverlayblock, 350, 500, 70, 35)
+ctx.drawImage(Dirtoverlayblock, 350, 472, 70, 35)
+
+ctx.drawImage(Dirtoverlayblock, 350, 550, 70, 35)
+ctx.drawImage(Dirtoverlayblock, 350, 525, 70, 35)
+ctx.drawImage(Dirtoverlayblock, 350, 500, 70, 35)
+ctx.drawImage(Dirtoverlayblock, 350, 472, 70, 35)
+
+ctx.drawImage(Dirtoverlayblock, 325, 550, 70, 35)
+ctx.drawImage(Dirtoverlayblock, 325, 525, 70, 35)
+ctx.drawImage(Dirtoverlayblock, 325, 500, 70, 35)
+ctx.drawImage(Dirtoverlayblock, 325, 472, 70, 35)
+ctx.drawImage(Dirtoverlayblock, 247, 550, 70, 35)
+
+// base x: 250
+// base y: 450
+
+ctx.drawImage(Dirtoverlayblock, 250, 450, 70, 35)
+ctx.drawImage(Dirtoverlayblock, 250, 425, 70, 35)
+ctx.drawImage(Dirtoverlayblock, 250, 400, 70, 35)
+ctx.drawImage(Dirtoverlayblock, 250, 372, 70, 35)
+
+ctx.drawImage(Dirtoverlayblock, 250, 450, 70, 35)
+ctx.drawImage(Dirtoverlayblock, 250, 425, 70, 35)
+ctx.drawImage(Dirtoverlayblock, 250, 400, 70, 35)
+ctx.drawImage(Dirtoverlayblock, 250, 372, 70, 35)
+
+ctx.drawImage(Dirtoverlayblock, 250, 450, 70, 35)
+ctx.drawImage(Dirtoverlayblock, 250, 425, 70, 35)
+ctx.drawImage(Dirtoverlayblock, 250, 400, 70, 35)
+ctx.drawImage(Dirtoverlayblock, 250, 372, 70, 35)
+
+ctx.drawImage(Dirtoverlayblock, 225, 450, 70, 35)
+ctx.drawImage(Dirtoverlayblock, 225, 425, 70, 35)
+ctx.drawImage(Dirtoverlayblock, 225, 400, 70, 35)
+ctx.drawImage(Dirtoverlayblock, 225, 372, 70, 35)
+
+ctx.drawImage(Dirtoverlayblock, 300, 425, 70, 35)
+ctx.drawImage(Dirtoverlayblock, 300, 400, 70, 35)
+ctx.drawImage(Dirtoverlayblock, 300, 375, 70, 35)
+ctx.drawImage(Dirtoverlayblock, 225, 347, 70, 35)
+ctx.drawImage(Dirtoverlayblock, 147, 450, 70, 35)
+
+ctx.drawImage(Dirtoverlayblock, 422, 425, 70, 35)
+ctx.drawImage(Dirtoverlayblock, 430, 398, 70, 35)
+
+// base x: 175
+// base y: 150
+
+ctx.drawImage(Dirtoverlayblock, 175, 150, 70, 35)
+ctx.drawImage(Dirtoverlayblock, 175, 125, 70, 35)
+ctx.drawImage(Dirtoverlayblock, 175, 100, 70, 35)
+ctx.drawImage(Dirtoverlayblock, 175, 72, 70, 35)
+
+ctx.drawImage(Dirtoverlayblock, 175, 150, 70, 35)
+ctx.drawImage(Dirtoverlayblock, 175, 125, 70, 35)
+ctx.drawImage(Dirtoverlayblock, 175, 100, 70, 35)
+ctx.drawImage(Dirtoverlayblock, 175, 72, 70, 35)
+
+ctx.drawImage(Dirtoverlayblock, 175, 150, 70, 35)
+ctx.drawImage(Dirtoverlayblock, 175, 125, 70, 35)
+ctx.drawImage(Dirtoverlayblock, 175, 100, 70, 35)
+ctx.drawImage(Dirtoverlayblock, 175, 72, 70, 35)
+
+ctx.drawImage(Dirtoverlayblock, 150, 150, 70, 35)
+ctx.drawImage(Dirtoverlayblock, 150, 125, 70, 35)
+ctx.drawImage(Dirtoverlayblock, 150, 100, 70, 35)
+ctx.drawImage(Dirtoverlayblock, 150, 72, 70, 35)
+
+// base x: 175
+// base y: 300  (150 + 150)
+
+ctx.drawImage(Dirtoverlayblock, 175, 300, 70, 35)
+ctx.drawImage(Dirtoverlayblock, 175, 275, 70, 35)
+ctx.drawImage(Dirtoverlayblock, 175, 250, 70, 35)
+ctx.drawImage(Dirtoverlayblock, 175, 222, 70, 35)
+
+ctx.drawImage(Dirtoverlayblock, 175, 300, 70, 35)
+ctx.drawImage(Dirtoverlayblock, 175, 275, 70, 35)
+ctx.drawImage(Dirtoverlayblock, 175, 250, 70, 35)
+ctx.drawImage(Dirtoverlayblock, 175, 222, 70, 35)
+
+ctx.drawImage(Dirtoverlayblock, 175, 300, 70, 35)
+ctx.drawImage(Dirtoverlayblock, 175, 275, 70, 35)
+ctx.drawImage(Dirtoverlayblock, 175, 250, 70, 35)
+ctx.drawImage(Dirtoverlayblock, 175, 222, 70, 35)
+
+ctx.drawImage(Dirtoverlayblock, 150, 300, 70, 35)
+ctx.drawImage(Dirtoverlayblock, 150, 275, 70, 35)
+ctx.drawImage(Dirtoverlayblock, 150, 250, 70, 35)
+ctx.drawImage(Dirtoverlayblock, 150, 222, 70, 35)
+
+
+
+//Dirtblocks: 
+ctx.drawImage(Dirtblock, 25, 325, 25, 25)
+ctx.drawImage(Dirtblock, 0, 325, 25, 25)
+ctx.drawImage(Dirtblock, 25, 300, 25, 25)
+ctx.drawImage(Dirtblock, 0, 300, 25, 25)
+ctx.drawImage(Dirtblock, 25, 275, 25, 25)
+ctx.drawImage(Dirtblock, 0, 275, 25, 25)
+ctx.drawImage(Dirtblock, 25, 350, 25, 25)
+ctx.drawImage(Dirtblock, 0, 350, 25, 25)
+ctx.drawImage(Dirtblock, 50, 350, 25, 25)
+ctx.drawImage(Dirtblock, 25, 250, 25, 25)
+ctx.drawImage(Dirtblock, 25, 225, 25, 25)
+ctx.drawImage(Dirtblock, 25, 200, 25, 25)
+ctx.drawImage(Dirtblock, 25, 175, 25, 25)
+ctx.drawImage(Dirtblock, 25, 150, 25, 25)
+ctx.drawImage(Dirtblock, 25, 125, 25, 25)
+ctx.drawImage(Dirtblock, 0, 125, 25, 25)
+ctx.drawImage(Dirtblock, 0, 150, 25, 25)
+ctx.drawImage(Dirtblock, 0, 175, 25, 25)
+ctx.drawImage(Dirtblock, 0, 200, 25, 25)
+ctx.drawImage(Dirtblock, 0, 225, 25, 25)
+ctx.drawImage(Dirtblock, 0, 250, 25, 25)
+
+ctx.drawImage(Dirtblock, 150, 175, 25, 25)
+ctx.drawImage(Dirtblock, 150, 200, 25, 25)
+ctx.drawImage(Dirtblock, 150, 225, 25, 25)
+ctx.drawImage(Dirtblock, 175, 175, 25, 25)
+ctx.drawImage(Dirtblock, 175, 200, 25, 25)
+ctx.drawImage(Dirtblock, 175, 225, 25, 25)
+
+ctx.drawImage(Dirtblock, 200, 175, 25, 25)
+ctx.drawImage(Dirtblock, 200, 200, 25, 25)
+ctx.drawImage(Dirtblock, 200, 225, 25, 25)
+ctx.drawImage(Dirtblock, 225, 175, 25, 25)
+ctx.drawImage(Dirtblock, 225, 200, 25, 25)
+ctx.drawImage(Dirtblock, 225, 225, 25, 25)
+
+//-----------------
+
+ctx.drawImage(Dirtblock, 150, 450, 25, 25)
+ctx.drawImage(Dirtblock, 150, 475, 25, 25)
+ctx.drawImage(Dirtblock, 150, 500, 25, 25)
+ctx.drawImage(Dirtblock, 175, 450, 25, 25)
+ctx.drawImage(Dirtblock, 175, 475, 25, 25)
+ctx.drawImage(Dirtblock, 175, 500, 25, 25)
+
+ctx.drawImage(Dirtblock, 200, 475, 25, 25)
+ctx.drawImage(Dirtblock, 200, 500, 25, 25)
+ctx.drawImage(Dirtblock, 225, 450, 25, 25)
+ctx.drawImage(Dirtblock, 225, 475, 25, 25)
+ctx.drawImage(Dirtblock, 225, 500, 25, 25)
+
+ctx.drawImage(Dirtblock, 150, 525, 25, 25)
+ctx.drawImage(Dirtblock, 150, 550, 25, 25)
+ctx.drawImage(Dirtblock, 150, 575, 25, 25)
+ctx.drawImage(Dirtblock, 175, 525, 25, 25)
+ctx.drawImage(Dirtblock, 175, 550, 25, 25)
+ctx.drawImage(Dirtblock, 175, 575, 25, 25)
+
+ctx.drawImage(Dirtblock, 200, 525, 25, 25)
+ctx.drawImage(Dirtblock, 200, 550, 25, 25)
+ctx.drawImage(Dirtblock, 200, 575, 25, 25)
+ctx.drawImage(Dirtblock, 225, 525, 25, 25)
+ctx.drawImage(Dirtblock, 225, 550, 25, 25)
+ctx.drawImage(Dirtblock, 225, 575, 25, 25)
+
+//-------
+
+ctx.drawImage(Dirtblock, 75, 450, 25, 25)
+ctx.drawImage(Dirtblock, 75, 475, 25, 25)
+ctx.drawImage(Dirtblock, 75, 500, 25, 25)
+ctx.drawImage(Dirtblock, 100, 450, 25, 25)
+ctx.drawImage(Dirtblock, 100, 475, 25, 25)
+ctx.drawImage(Dirtblock, 100, 500, 25, 25)
+
+ctx.drawImage(Dirtblock, 125, 450, 25, 25)
+ctx.drawImage(Dirtblock, 125, 475, 25, 25)
+ctx.drawImage(Dirtblock, 125, 500, 25, 25)
+ctx.drawImage(Dirtblock, 150, 450, 25, 25)
+ctx.drawImage(Dirtblock, 150, 475, 25, 25)
+ctx.drawImage(Dirtblock, 150, 500, 25, 25)
+
+ctx.drawImage(Dirtblock, 75, 525, 25, 25)
+ctx.drawImage(Dirtblock, 75, 550, 25, 25)
+ctx.drawImage(Dirtblock, 75, 575, 25, 25)
+ctx.drawImage(Dirtblock, 100, 525, 25, 25)
+ctx.drawImage(Dirtblock, 100, 550, 25, 25)
+ctx.drawImage(Dirtblock, 100, 575, 25, 25)
+
+ctx.drawImage(Dirtblock, 125, 525, 25, 25)
+ctx.drawImage(Dirtblock, 125, 550, 25, 25)
+ctx.drawImage(Dirtblock, 125, 575, 25, 25)
+ctx.drawImage(Dirtblock, 150, 525, 25, 25)
+ctx.drawImage(Dirtblock, 150, 550, 25, 25)
+ctx.drawImage(Dirtblock, 150, 575, 25, 25)
+ 
+//--------
+// baseX = 0
+// baseY = 475
+
+ctx.drawImage(Dirtblock, 0, 475, 25, 25)
+ctx.drawImage(Dirtblock, 0, 500, 25, 25)
+ctx.drawImage(Dirtblock, 0, 525, 25, 25)
+ctx.drawImage(Dirtblock, 25, 475, 25, 25)
+ctx.drawImage(Dirtblock, 25, 500, 25, 25)
+ctx.drawImage(Dirtblock, 25, 525, 25, 25)
+
+ctx.drawImage(Dirtblock, 50, 475, 25, 25)
+ctx.drawImage(Dirtblock, 50, 500, 25, 25)
+ctx.drawImage(Dirtblock, 50, 525, 25, 25)
+ctx.drawImage(Dirtblock, 75, 475, 25, 25)
+ctx.drawImage(Dirtblock, 75, 500, 25, 25)
+ctx.drawImage(Dirtblock, 75, 525, 25, 25)
+
+ctx.drawImage(Dirtblock, 0, 550, 25, 25)
+ctx.drawImage(Dirtblock, 0, 575, 25, 25)
+ctx.drawImage(Dirtblock, 0, 600, 25, 25)
+ctx.drawImage(Dirtblock, 25, 550, 25, 25)
+ctx.drawImage(Dirtblock, 25, 575, 25, 25)
+ctx.drawImage(Dirtblock, 25, 600, 25, 25)
+
+ctx.drawImage(Dirtblock, 50, 550, 25, 25)
+ctx.drawImage(Dirtblock, 50, 575, 25, 25)
+ctx.drawImage(Dirtblock, 50, 600, 25, 25)
+ctx.drawImage(Dirtblock, 75, 550, 25, 25)
+ctx.drawImage(Dirtblock, 75, 575, 25, 25)
+ctx.drawImage(Dirtblock, 75, 600, 25, 25)
+
+//-----
+// baseX = 500
+// baseY = 450
+
+ctx.drawImage(Dirtblock, 500, 450, 25, 25)
+ctx.drawImage(Dirtblock, 500, 475, 25, 25)
+ctx.drawImage(Dirtblock, 500, 500, 25, 25)
+ctx.drawImage(Dirtblock, 525, 450, 25, 25)
+ctx.drawImage(Dirtblock, 525, 475, 25, 25)
+ctx.drawImage(Dirtblock, 525, 500, 25, 25)
+
+ctx.drawImage(Dirtblock, 550, 450, 25, 25)
+ctx.drawImage(Dirtblock, 550, 475, 25, 25)
+ctx.drawImage(Dirtblock, 550, 500, 25, 25)
+ctx.drawImage(Dirtblock, 575, 450, 25, 25)
+ctx.drawImage(Dirtblock, 575, 475, 25, 25)
+ctx.drawImage(Dirtblock, 575, 500, 25, 25)
+
+ctx.drawImage(Dirtblock, 500, 525, 25, 25)
+ctx.drawImage(Dirtblock, 500, 550, 25, 25)
+ctx.drawImage(Dirtblock, 500, 575, 25, 25)
+ctx.drawImage(Dirtblock, 525, 525, 25, 25)
+ctx.drawImage(Dirtblock, 525, 550, 25, 25)
+ctx.drawImage(Dirtblock, 525, 575, 25, 25)
+
+ctx.drawImage(Dirtblock, 550, 525, 25, 25)
+ctx.drawImage(Dirtblock, 550, 550, 25, 25)
+ctx.drawImage(Dirtblock, 550, 575, 25, 25)
+ctx.drawImage(Dirtblock, 575, 525, 25, 25)
+ctx.drawImage(Dirtblock, 575, 550, 25, 25)
+ctx.drawImage(Dirtblock, 575, 575, 25, 25)
+
+//------
+
+ctx.drawImage(Dirtblock, 600, 450, 25, 25)
+ctx.drawImage(Dirtblock, 600, 475, 25, 25)
+ctx.drawImage(Dirtblock, 600, 500, 25, 25)
+ctx.drawImage(Dirtblock, 625, 450, 25, 25)
+ctx.drawImage(Dirtblock, 625, 475, 25, 25)
+ctx.drawImage(Dirtblock, 625, 500, 25, 25)
+
+ctx.drawImage(Dirtblock, 650, 450, 25, 25)
+ctx.drawImage(Dirtblock, 650, 475, 25, 25)
+ctx.drawImage(Dirtblock, 650, 500, 25, 25)
+ctx.drawImage(Dirtblock, 675, 450, 25, 25)
+ctx.drawImage(Dirtblock, 675, 475, 25, 25)
+ctx.drawImage(Dirtblock, 675, 500, 25, 25)
+
+ctx.drawImage(Dirtblock, 600, 525, 25, 25)
+ctx.drawImage(Dirtblock, 600, 550, 25, 25)
+ctx.drawImage(Dirtblock, 600, 575, 25, 25)
+ctx.drawImage(Dirtblock, 625, 525, 25, 25)
+ctx.drawImage(Dirtblock, 625, 550, 25, 25)
+ctx.drawImage(Dirtblock, 625, 575, 25, 25)
+
+ctx.drawImage(Dirtblock, 650, 525, 25, 25)
+ctx.drawImage(Dirtblock, 650, 550, 25, 25)
+ctx.drawImage(Dirtblock, 650, 575, 25, 25)
+ctx.drawImage(Dirtblock, 675, 525, 25, 25)
+ctx.drawImage(Dirtblock, 675, 550, 25, 25)
+ctx.drawImage(Dirtblock, 675, 575, 25, 25)
+
+//---------------
+// baseX = samma (600)
+// baseY = 250
+
+ctx.drawImage(Dirtblock, 600, 250, 25, 25)
+ctx.drawImage(Dirtblock, 600, 275, 25, 25)
+ctx.drawImage(Dirtblock, 600, 300, 25, 25)
+ctx.drawImage(Dirtblock, 625, 250, 25, 25)
+ctx.drawImage(Dirtblock, 625, 275, 25, 25)
+ctx.drawImage(Dirtblock, 625, 300, 25, 25)
+
+ctx.drawImage(Dirtblock, 650, 250, 25, 25)
+ctx.drawImage(Dirtblock, 650, 275, 25, 25)
+ctx.drawImage(Dirtblock, 650, 300, 25, 25)
+ctx.drawImage(Dirtblock, 675, 250, 25, 25)
+ctx.drawImage(Dirtblock, 675, 275, 25, 25)
+ctx.drawImage(Dirtblock, 675, 300, 25, 25)
+
+ctx.drawImage(Dirtblock, 600, 325, 25, 25)
+ctx.drawImage(Dirtblock, 600, 350, 25, 25)
+ctx.drawImage(Dirtblock, 600, 375, 25, 25)
+ctx.drawImage(Dirtblock, 625, 325, 25, 25)
+ctx.drawImage(Dirtblock, 625, 350, 25, 25)
+ctx.drawImage(Dirtblock, 625, 375, 25, 25)
+
+ctx.drawImage(Dirtblock, 650, 325, 25, 25)
+ctx.drawImage(Dirtblock, 650, 350, 25, 25)
+ctx.drawImage(Dirtblock, 650, 375, 25, 25)
+ctx.drawImage(Dirtblock, 675, 325, 25, 25)
+ctx.drawImage(Dirtblock, 675, 350, 25, 25)
+ctx.drawImage(Dirtblock, 675, 375, 25, 25)
+
+//--------
+
+// baseX = 600
+// baseY = 300
+
+ctx.drawImage(Dirtblock, 600, 300, 25, 25)
+ctx.drawImage(Dirtblock, 600, 325, 25, 25)
+ctx.drawImage(Dirtblock, 600, 350, 25, 25)
+ctx.drawImage(Dirtblock, 625, 300, 25, 25)
+ctx.drawImage(Dirtblock, 625, 325, 25, 25)
+ctx.drawImage(Dirtblock, 625, 350, 25, 25)
+
+ctx.drawImage(Dirtblock, 650, 300, 25, 25)
+ctx.drawImage(Dirtblock, 650, 325, 25, 25)
+ctx.drawImage(Dirtblock, 650, 350, 25, 25)
+ctx.drawImage(Dirtblock, 675, 300, 25, 25)
+ctx.drawImage(Dirtblock, 675, 325, 25, 25)
+ctx.drawImage(Dirtblock, 675, 350, 25, 25)
+
+ctx.drawImage(Dirtblock, 600, 375, 25, 25)
+ctx.drawImage(Dirtblock, 600, 400, 25, 25)
+ctx.drawImage(Dirtblock, 600, 425, 25, 25)
+ctx.drawImage(Dirtblock, 625, 375, 25, 25)
+ctx.drawImage(Dirtblock, 625, 400, 25, 25)
+ctx.drawImage(Dirtblock, 625, 425, 25, 25)
+
+ctx.drawImage(Dirtblock, 650, 375, 25, 25)
+ctx.drawImage(Dirtblock, 650, 400, 25, 25)
+ctx.drawImage(Dirtblock, 650, 425, 25, 25)
+ctx.drawImage(Dirtblock, 675, 375, 25, 25)
+ctx.drawImage(Dirtblock, 675, 400, 25, 25)
+ctx.drawImage(Dirtblock, 675, 425, 25, 25)
+
+//-------
+
+// baseX = 325
+// baseY = 300
+
+ctx.drawImage(Dirtblock, 325, 300, 25, 25)
+ctx.drawImage(Dirtblock, 325, 325, 25, 25)
+ctx.drawImage(Dirtblock, 325, 350, 25, 25)
+ctx.drawImage(Dirtblock, 350, 300, 25, 25)
+ctx.drawImage(Dirtblock, 350, 325, 25, 25)
+ctx.drawImage(Dirtblock, 350, 350, 25, 25)
+
+ctx.drawImage(Dirtblock, 375, 300, 25, 25)
+ctx.drawImage(Dirtblock, 375, 325, 25, 25)
+ctx.drawImage(Dirtblock, 375, 350, 25, 25)
+ctx.drawImage(Dirtblock, 400, 300, 25, 25)
+ctx.drawImage(Dirtblock, 400, 325, 25, 25)
+ctx.drawImage(Dirtblock, 400, 350, 25, 25)
+
+ctx.drawImage(Dirtblock, 325, 375, 25, 25)
+ctx.drawImage(Dirtblock, 325, 400, 25, 25)
+ctx.drawImage(Dirtblock, 325, 425, 25, 25)
+ctx.drawImage(Dirtblock, 350, 375, 25, 25)
+ctx.drawImage(Dirtblock, 350, 400, 25, 25)
+ctx.drawImage(Dirtblock, 350, 425, 25, 25)
+
+ctx.drawImage(Dirtblock, 375, 375, 25, 25)
+ctx.drawImage(Dirtblock, 375, 400, 25, 25)
+ctx.drawImage(Dirtblock, 375, 425, 25, 25)
+ctx.drawImage(Dirtblock, 400, 375, 25, 25)
+ctx.drawImage(Dirtblock, 400, 400, 25, 25)
+ctx.drawImage(Dirtblock, 400, 425, 25, 25)
+
+ctx.drawImage(Dirtblock, 225, 150, 25, 25)
+ctx.drawImage(Dirtblock, 225, 125, 25, 25)
+ctx.drawImage(Dirtblock, 225, 100, 25, 25)
+ctx.drawImage(Dirtblock, 225, 75, 25, 25)
+
+ctx.drawImage(Dirtblock, 250, 325, 25, 25)
+ctx.drawImage(Dirtblock, 225, 325, 25, 25)
+ctx.drawImage(Dirtblock, 200, 325, 25, 25)
+ctx.drawImage(Dirtblock, 175, 325, 25, 25)
+ctx.drawImage(Dirtblock, 150, 325, 25, 25)
+ctx.drawImage(Dirtblock, 125, 325, 25, 25)
+ctx.drawImage(Dirtblock, 275, 350, 25, 25)
+ctx.drawImage(Dirtblock, 300, 350, 25, 25)
+ctx.drawImage(Dirtblock, 425, 400, 25, 25)
+
+ctx.drawImage(Dirtblock, 600, 175, 25, 25)
+ctx.drawImage(Dirtblock, 600, 200, 25, 25)
+ctx.drawImage(Dirtblock, 600, 225, 25, 25)
+ctx.drawImage(Dirtblock, 625, 175, 25, 25)
+ctx.drawImage(Dirtblock, 625, 200, 25, 25)
+ctx.drawImage(Dirtblock, 625, 225, 25, 25)
+
+
+ctx.drawImage(Dirtblock, 650, 175, 25, 25)
+ctx.drawImage(Dirtblock, 650, 200, 25, 25)
+ctx.drawImage(Dirtblock, 650, 225, 25, 25)
+ctx.drawImage(Dirtblock, 675, 175, 25, 25)
+ctx.drawImage(Dirtblock, 675, 200, 25, 25)
+ctx.drawImage(Dirtblock, 675, 225, 25, 25)
+
+ctx.drawImage(Dirtblock, 250, 175, 25, 25)
+ctx.drawImage(Dirtblock, 275, 175, 25, 25)
+ctx.drawImage(Dirtblock, 300, 175, 25, 25)
+ctx.drawImage(Dirtblock, 325, 175, 25, 25)
+ctx.drawImage(Dirtblock, 350, 175, 25, 25)
+ctx.drawImage(Dirtblock, 375, 175, 25, 25)
+ctx.drawImage(Dirtblock, 400, 175, 25, 25)
+ctx.drawImage(Dirtblock, 425, 175, 25, 25)
+ctx.drawImage(Dirtblock, 450, 175, 25, 25)
+ctx.drawImage(Dirtblock, 475, 175, 25, 25)
+ctx.drawImage(Dirtblock, 500, 175, 25, 25)
+ctx.drawImage(Dirtblock, 525, 175, 25, 25)
+ctx.drawImage(Dirtblock, 550, 175, 25, 25)
+ctx.drawImage(Dirtblock, 575, 175, 25, 25)
+ctx.drawImage(Dirtblock, 75, 350, 25, 25)
+ctx.drawImage(Dirtblock, 100, 350, 25, 25)
+ctx.drawImage(Dirtblock, 125, 350, 25, 25)
+
+
+//grass blocks:
+ctx.drawImage(grassblock1, 675, 150, 25, 25)
+ctx.drawImage(grassblock1, 650, 150, 25, 25)
+ctx.drawImage(grassblock1, 625, 150, 25, 25)
+ctx.drawImage(grassblock1, 600, 150, 25, 25)
+ctx.drawImage(grassblock1, 575, 150, 25, 25)
+ctx.drawImage(grassblock1, 550, 150, 25, 25)
+
+// base x: 550
+// base y: 150
+
+ctx.drawImage(grassblock1, 550, 150, 25, 25)
+ctx.drawImage(grassblock1, 525, 150, 25, 25)
+ctx.drawImage(grassblock1, 500, 150, 25, 25)
+ctx.drawImage(grassblock1, 475, 150, 25, 25)
+ctx.drawImage(grassblock1, 450, 150, 25, 25)
+ctx.drawImage(grassblock1, 425, 150, 25, 25)
+// base x: 425
+// base y: 150
+
+ctx.drawImage(grassblock1, 425, 150, 25, 25)
+ctx.drawImage(grassblock1, 400, 150, 25, 25)
+ctx.drawImage(grassblock1, 375, 150, 25, 25)
+ctx.drawImage(grassblock1, 350, 150, 25, 25)
+ctx.drawImage(grassblock1, 325, 150, 25, 25)
+ctx.drawImage(grassblock1, 300, 150, 25, 25)
+ctx.drawImage(grassblock1, 275, 150, 25, 25)
+ctx.drawImage(grassblock1, 250, 150, 25, 25)
+
+
+ctx.drawImage(grassblock1, 0, 450, 25,25)
+ctx.drawImage(grassblock1, 25, 450, 25,25)
+ctx.drawImage(grassblock1, 50, 450, 25,25)
+ctx.drawImage(grassblock1, 75, 425, 25,25)
+ctx.drawImage(grassblock1, 100, 425, 25,25)
+ctx.drawImage(grassblock1, 100, 325, 25,25)
+ctx.drawImage(grassblock1, 75, 325, 25,25)
+ctx.drawImage(grassblock1, 50, 325, 25,25)
+
+ctx.drawImage(grassblock1, 400, 300, 25, 25)
+ctx.drawImage(grassblock1, 375, 300, 25, 25)
+ctx.drawImage(grassblock1, 350, 300, 25, 25)
+ctx.drawImage(grassblock1, 325, 300, 25, 25)
+
+ctx.drawImage(grassblock1, 500, 450, 25, 25)
+ctx.drawImage(grassblock1, 525, 450, 25, 25)
+ctx.drawImage(grassblock1, 550, 450, 25, 25)
+ctx.drawImage(grassblock1, 575, 450, 25, 25)
+
+ctx.drawImage(grassblock1, 125, 300, 25, 25)
+ctx.drawImage(grassblock1, 150, 300, 25, 25)
+ctx.drawImage(grassblock1, 175, 300, 25, 25)
+ctx.drawImage(grassblock1, 200, 300, 25, 25)
+ctx.drawImage(grassblock1, 225, 300, 25, 25)
+ctx.drawImage(grassblock1, 250, 300, 25, 25)
+ctx.drawImage(grassblock1, 275, 325, 25, 25)
+ctx.drawImage(grassblock1, 300, 325, 25, 25)
+
+ctx.drawImage(grassblock1, 200, 175, 25, 25)
+ctx.drawImage(grassblock1, 175, 175, 25, 25)
+ctx.drawImage(grassblock1, 150, 175, 25, 25)
+ctx.drawImage(grassblock1, 150, 50, 25, 25)
+ctx.drawImage(grassblock1, 175, 50, 25, 25)
+ctx.drawImage(grassblock1, 200, 50, 25, 25)
+ctx.drawImage(grassblock1, 225, 50, 25, 25)
+
+ctx.drawImage(grassblock1, 0, 100, 25, 25)
+ctx.drawImage(grassblock1, 25, 100, 25, 25)
+
+ctx.drawImage(grassblock1, 150, 450, 25, 25)
+ctx.drawImage(grassblock1, 125, 450, 25, 25)
+ctx.drawImage(grassblock1, 175, 450, 25, 25)
+ctx.drawImage(grassblock1, 200, 450, 25, 25)
+ctx.drawImage(grassblock1, 225, 450, 25, 25)
+
+ctx.drawImage(grassblock1, 475, 375, 25, 25)
+ctx.drawImage(grassblock1, 450, 375, 25, 25)
+ctx.drawImage(grassblock1, 425, 375, 25, 25)
+}
+
+if(char_Direction) {shot_speed = -10}
+else {shot_speed = 10}
 
 
 
@@ -64,54 +1276,65 @@ else if(lager_4[i]==1 || lager_4[i]>2) {ctx.drawImage(stoneblock1,i*25,525,25,25
 
 
 function jump () {
-    let return_movement = 0
-    for (let i = 0; i < 44 ; i++){
+    let return_jump = 0
+    for (let i = 0; i < ground.length ; i++){
         if (dashing && (keyboard.d || keyboard.a) && amount_dashes > 0 ) {
             
-            return_movement = 0
-        } else if(after_dash && !character.intersects(a[i])) {
-            jump_time = 8000
+            return_jump = 0
+        } else if(after_dash && !character.intersects(ground[i])) {
+            jump_time = 15000
             after_dash = false
             
         } 
-        else if(jumping && !character.intersects(a[i]) && after_dash == false) {
+        else if(jumping && !character.intersects(ground[i]) && after_dash == false) {
             
             jump_time += deltaTime
-            if(jump_time <16000) {
-            return_movement = -12 + 12 * jump_time/8000
-        } else {return_movement = 6 * jump_time/8000}
-        } else if (character.intersects (a[i])) {
-            console.log("intersect")
-            jumping = false
-            dashing = false
-            
+            if(jump_time <30000) {
+                return_jump = -12 + 12 * jump_time/15000
+        } else {return_jump = 6 * jump_time/15000}
+        } else if (character.intersects (ground[i])) { // när karaktären inträffar hitboxen (marken).
+            //console.log("intersect")
+            jumping = false // när karaktären inträffar hitboxen kan den inte hoppa...
+            dashing = false // ... eller "dasha"
+            fall_time = 0
             jump_time = 0
-            movement_y= 0
-            movement_x =0
+            movement_y= 0 // all momentum i y-led blir 0,
+           
             amount_jumps = 2
             amount_dashes = 2
-        // console.log(char_x, char_y)
-            
-            return -1
+        
+           
+            return_jump = -2
         }
-    /*else if (!jumping && !character.intersects(hitboxii)) {
-        jump_time += deltaTime
-    return 10 * jump_time/350
-    }*/
-/*STAAAAA
+    else if (!jumping && !character.intersects(ground[i])) { //när karaktären inte hoppar och inte träffar marken
+        fall_time +=deltaTime
+        if (fall_time> 5000){
+            
+            jump_time += deltaTime
+        
+            return_jump = 8 * jump_time/8000 // då läggs det på "gravitationen", ett värde som med tiden ökar. Gör så att karaktären träffar hitboxen instant
+            }
     }
-    return return_movement
+        
+    }
+    for(let i = 0; i < wall.length; i++){
+        if (character.intersects(wall[i])){movement_x = 0}
+    }
+    return return_jump
 }
 function dash () {
     let return_dash = 0
-    for (let i = 0; i < 44 ; i++){
-        if (dashing && !character.intersects(a[i])) {
-        //dash_time += deltaTime
-        //console.log (amount_dashes)
+    for (let i = 0; i < ground.length ; i++){
+        if (dashing && !character.intersects(ground[i])) {
+        
             if ( keyboard.d && dash_time < 100 && amount_dashes>0) {
             dash_time += deltaTime
             //console.log (dash_time)
         
+             return_dash = 2
+             return return_dash
+            } else if (keyboard.d && dash_time < 100 && amount_dashes>0) {
+            dash_time += deltaTime
              return_dash = 2
              return return_dash
             } else if (keyboard.a && dash_time < 100 && amount_dashes>0) {
@@ -124,14 +1347,17 @@ function dash () {
             dash_time = 0
             dashing = false
             after_dash = true
-        
-            }
+            return_dash = -2
+            return return_dash
+            } 
         }
-        else if (dashing && character.intersects(a[i])) {
+        else if (dashing && character.intersects(ground[i])) {
             dashing = false
-            return_dash = 0}
+            return_dash = 0
+        }
 }
     return return_dash
+    
 }
     
 
@@ -141,18 +1367,12 @@ function walk () {
     if (dashing && (keyboard.a || keyboard.d) && amount_dashes > 0) {
         return movement_x
     }
-    else if (keyboard.a) {
+    else if (keyboard.a && !keyboard.d) {
         return -5
-    }else if (keyboard.d ) {
+    }else if (keyboard.d && !keyboard.a ) {
         return 5
     }
-    /*else if (movement_x < -0.1) {
-        return movement_x + 0.2
-    } else if (movement_x > 0.1) {
-        return movement_x - 0.2
-    } else if (dashing && character.intersects(hitboxii)) {return 0} 
-    */
- /*STAAA
+
    else {
         return 0
 }
@@ -185,20 +1405,76 @@ hitbox.drawOutline()
 
 }
 
+function shoot () {
+    if (keyboard.enter ) { 
+        
+        keyboard.enter = false
+       
+        
+        shots.push({
+           "hitbox": new Hitbox(shot_Placement, char_y + 5, 20, 10),
+            "direction": char_Direction
+    })
+    }
+    
+}
 
 
 
-
-
+let test = new Hitbox(1150, 300, 100, 250)
 
 update = () => {
     clear()
+    map()
+    //--------------
+ctx.drawImage(Spider, 650, 150,400, 200)
+for(let i = 0; i < WallHitbox.length; i++) {
+    if(character.intersects(WallHitbox[i]) && keyboard.d && !char_Direction) {
+    char_x = char_x -5
+    char_y = char_y +2
+    }
+    else if(character.intersects(WallHitbox[i]) && keyboard.a && char_Direction) {
+        char_x = char_x + 5
+        char_y = char_y +2
+    }
+    else if(character.intersects(WallHitbox[i]) && jumping) {
+        char_y = char_y + 5
+    }
+    else if(character.intersects(WallHitbox[i]) && dashing && keyboard.d) {
+        char_x = char_x -10
+    }
+    else if(character.intersects(WallHitbox[i]) && dashing && keyboard.a) {
+        char_x = char_x + 10
+    }
     
-    
+}
+    //--------------
+    shot_Placement = char_x+ 10 
+   
+    test.drawOutline()
+    for(let i = 0; i < wall.length; i++){
+    wall[i].drawOutline()        
+    }
+    for(let i = 0; i < shots.length; i++){
+        
+        if(!shots[i]["direction"]){
+            //console.log("höger")
+        shots[i]["hitbox"].x += 14
+        } else if (shots[i]["direction"]) {
+            //console.log("vänster")
+            shots[i]["hitbox"].x -=14
+        }
+        shots[i]["hitbox"].drawOutline()
+        if (shots[i]["hitbox"].intersects(test)) {
+            shots.shift()
+            console.log ("intersect")
+        }
+    }
+    shoot()
     draw_map()
-    for (let i = 0; i <= 43 ; i++) {
-       
-        a[i].drawOutline()
+    for (let i = 0;  i <= ground.length -1 ; i++) {
+        ground[i].drawOutline()
+
     }
     movement_x = walk() + dash()
     movement_y = jump() 
@@ -217,7 +1493,8 @@ update = () => {
         keyboard.space = false 
     
      if (amount_jumps == 1 && jumping) {
-        jump_time = -3000
+        jump_time = -5000
+        
     }
     else {
         jumping = true
@@ -230,12 +1507,6 @@ update = () => {
     updateCharacter(char_x, char_y, character)
       
 } 
- 
-
-
-export { }
-/*
-let grassblock1 = await fetchImage("images/Block1.png")
  
 
 
@@ -272,79 +1543,14 @@ else if(m==1 || m>2) {ctx.drawImage(stoneblock1,i,525,25,25)}
 
 */
 
-
+/*
 let grassblock1 = await fetchImage("images/Block1.png")
 let stoneblock1 = await fetchImage("images/stoneblock1.png")
 let Dirtoverlayblock = await fetchImage("images/Dirtoverlayblock.png")
 let Dirtblock = await fetchImage("Images/Dirtblock.png")
+*/
 
-ctx.drawImage(grassblock1, 0, 450, 25,25)
-ctx.drawImage(grassblock1, 25, 450, 25,25)
-ctx.drawImage(grassblock1, 50, 450, 25,25)
-ctx.drawImage(grassblock1, 75, 425, 25,25)
-ctx.drawImage(grassblock1, 100, 425, 25,25)
-ctx.drawImage(grassblock1, 100, 325, 25,25)
-ctx.drawImage(grassblock1, 75, 325, 25,25)
-ctx.drawImage(grassblock1, 50, 325, 25,25)
-ctx.drawImage(Dirtblock, 25, 325, 25, 25)
-ctx.drawImage(Dirtblock, 0, 325, 25, 25)
-ctx.drawImage(Dirtblock, 25, 300, 25, 25)
-ctx.drawImage(Dirtblock, 0, 300, 25, 25)
-ctx.drawImage(Dirtblock, 25, 275, 25, 25)
-ctx.drawImage(Dirtblock, 0, 275, 25, 25)
-ctx.drawImage(Dirtblock, 25, 350, 25, 25)
-ctx.drawImage(Dirtblock, 0, 350, 25, 25)
-ctx.drawImage(Dirtblock, 50, 350, 25, 25)
 
-ctx.drawImage(grassblock1, 0, 450, 25,25)
-ctx.drawImage(grassblock1, 25, 450, 25,25)
-ctx.drawImage(grassblock1, 50, 450, 25,25)
-ctx.drawImage(grassblock1, 75, 450, 25,25)
 
-// NERÅT (jord)
-ctx.drawImage(Dirtblock, 0, 475, 25,25)
-ctx.drawImage(Dirtblock, 25, 475, 25,25)
-ctx.drawImage(Dirtblock, 50, 475, 25,25)
-ctx.drawImage(Dirtblock, 75, 475, 25,25)
 
-// FÖRSTA HOPPET UPP
-ctx.drawImage(grassblock1, 125, 425, 25,25)
-ctx.drawImage(grassblock1, 150, 425, 25,25)
 
-ctx.drawImage(Dirtblock, 125, 450, 25,25)
-ctx.drawImage(Dirtblock, 150, 450, 25,25)
-
-// ANDRA PLATTFORMEN (lite högre)
-ctx.drawImage(grassblock1, 200, 375, 25,25)
-ctx.drawImage(grassblock1, 225, 375, 25,25)
-
-ctx.drawImage(Dirtblock, 200, 400, 25,25)
-ctx.drawImage(Dirtblock, 225, 400, 25,25)
-
-// NEDÅT IGEN (fall)
-ctx.drawImage(grassblock1, 275, 450, 25,25)
-
-// LÅNG PLATTFORM ÅT HÖGER
-ctx.drawImage(grassblock1, 325, 425, 25,25)
-ctx.drawImage(grassblock1, 350, 425, 25,25)
-ctx.drawImage(grassblock1, 375, 425, 25,25)
-ctx.drawImage(grassblock1, 400, 425, 25,25)
-
-// TRAPPA UPP (klassisk IWBTG)
-ctx.drawImage(grassblock1, 450, 400, 25,25)
-ctx.drawImage(grassblock1, 475, 375, 25,25)
-ctx.drawImage(grassblock1, 500, 350, 25,25)
-ctx.drawImage(grassblock1, 525, 325, 25,25)
-
-// LITEN SÄKER YTA (lurar spelaren)
-ctx.drawImage(grassblock1, 575, 325, 25,25)
-ctx.drawImage(grassblock1, 600, 325, 25,25)
-
-// FALL NER IGEN
-ctx.drawImage(grassblock1, 650, 450, 25,25)
-
-// SLUTPLATTFORM
-ctx.drawImage(grassblock1, 700, 425, 25,25)
-ctx.drawImage(grassblock1, 725, 425, 25,25)
-ctx.drawImage(grassblock1, 750, 425, 25,25)
-//Värden på skärmen: x = 0-1250 y = 0-575 kordinater, alla block ska vara 25 wide och hög.
