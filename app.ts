@@ -17,7 +17,8 @@ let char_Direction = false
 
 enum AttackType {
     BigAttack,
-    SmallAttack
+    SmallAttack,
+    
 }
 
 let grassblock1 = await fetchImage("images/Block1.png")
@@ -33,19 +34,22 @@ let shot_Placement = char_x + 10
 let deaths = 0
 
 let boss = new Hitbox(1150, 200, 100, 250)
-let boss_Health = 5
+let boss_Health = 50
 let boss_Attack_hitboxes= []
 let boss_Currently_Attacking = true
 let boss_Which_attack = 0
+let boss_Blow_attack = 0
 let boss_timer = 0
-let boss_Attack_type = -1 
+let blow_timer = 0
+let blowing = false
 
 
 //first attack
 let B_attack_1_x = 1150
 //second attack
 let B_attack_2_timer = 0
-
+// third attack
+let B_attack_3_timer = 0
 
 
 
@@ -60,7 +64,7 @@ wall.push(new Hitbox(0, 475, 250,200))
 wall.push(new Hitbox(1025, 475, 250, 200))
 
 //Death zone
-let death_zone = new Hitbox (0, 600, 1200, 200)
+let death_zone = new Hitbox (-1000, 600, 3200, 200)
 
 for (let i = 0; i<=51; i++) { //ground hitboxes
 if(i<10 || i>40 ) {
@@ -157,7 +161,7 @@ function dash () {
     let return_dash = 0
     for (let i = 0; i < ground.length ; i++){
         if (dashing && !character.intersects(ground[i])) {
-        
+            
             if ( keyboard.d && dash_time < 100 && amount_dashes>0) {
             dash_time += deltaTime
             
@@ -166,8 +170,8 @@ function dash () {
              return return_dash
             } else if (keyboard.d && dash_time < 100 && amount_dashes>0) {
             dash_time += deltaTime
-             return_dash = 2
-             return return_dash
+            return_dash = 2
+            return return_dash
             } else if (keyboard.a && dash_time < 100 && amount_dashes>0) {
             dash_time += deltaTime
         
@@ -191,7 +195,6 @@ function dash () {
     
 }
     
-
 
 
 function walk () { //standard movement im x-axis
@@ -261,12 +264,17 @@ function shoot () { // makes hitboxes for bullets
 let attack_2 = false
 function boss_Attacks () {
     boss_timer += deltaTime/100
+    
     if(boss_Currently_Attacking && boss_timer > 20){
         boss_Currently_Attacking= false
-        boss_Which_attack = random(1,2) 
+        boss_Which_attack = random(1,3) 
+        boss_Blow_attack = random(1, 3)
         boss_timer = 0
         attack_2 = true
-       // console.log("attack")
+        
+}
+if (boss_Blow_attack == 1 && boss_Health > 0){
+    blowing = true
 }
 
 
@@ -282,23 +290,42 @@ if (boss_Which_attack == 1 && boss_Health > 0) {
     boss_Currently_Attacking= true
 } 
 else if(boss_Which_attack == 2 && boss_Health > 0) {
-    
-        if (attack_2) {boss_Attack_hitboxes.push ({
-            "hitbox":new Hitbox (0, 275, 1200, 50),
-            "type": AttackType.BigAttack
-            })
+    B_attack_2_timer += deltaTime/100
+        if (attack_2) {
+            
+            if (B_attack_2_timer < 7) {
+                boss_Attack_hitboxes.push ({
+                    "hitbox": new Hitbox (275, 0, 50, 100),
+                    "hitbox2": new Hitbox (550, 0, 50, 100),
+                    "hitbox3": new Hitbox (825, 0, 50, 100),
+                    "type": AttackType.BigAttack
+                    })
+            }  
         }
         attack_2 = false
-        B_attack_2_timer += deltaTime/100
-        //boss_Attack_type = AttackType.BigAttack
-        if (B_attack_2_timer > 10) {
+        
+        if (B_attack_2_timer > 7 ) {
+            boss_Attack_hitboxes.pop()
+            boss_Attack_hitboxes.push ({
+            "hitbox":new Hitbox (275, 0, 50, 1000),
+            "hitbox2": new Hitbox (550, 0, 50, 1000),
+            "hitbox3": new Hitbox (825, 0, 50, 1000),
+            "type": AttackType.BigAttack
+        })
+        }
+        if (B_attack_2_timer > 12) {
             boss_Attack_hitboxes.pop()
             B_attack_2_timer= 0
             boss_Which_attack = 0
             boss_Currently_Attacking = true 
     }
 
-}else {boss_Currently_Attacking = true}
+}else if (boss_Which_attack == 3) {
+    boss.y -= 4
+    console.log ("yes")
+    boss_Currently_Attacking = true
+}
+else {boss_Currently_Attacking = true}
 
 }
 
@@ -311,28 +338,54 @@ update = () => {
         char_x = 50
         char_y = 400
         deaths ++
+        boss_Health = 50
     }
     text ("Death count: " + deaths, 10, 20) // a visible death count
     
     boss_Attacks()
-    if (boss_Health == 0) {// makes the boss disappear
-        boss.y += 2000
-        boss_Health= -1 //just to make so boss doesn't move continuously
+    if (boss_Health < 0) {// makes the boss disappear
+        boss.y = 2000
+        //just to make so boss doesn't move continuously
+    } else if (boss_Health > 0 && boss_Which_attack != 3) {boss.y = 200} 
+   
+    if (blowing) {
+        char_x -= 2 
+        
+        blow_timer += deltaTime/100
+        if (blow_timer > 40) {
+            blowing = false
+            blow_timer = 0
+        }
     }
-   
-   
    
     // boss_Attacks
     boss.drawOutline()
     for(let i = 0; i < boss_Attack_hitboxes.length; i++) {
         boss_Attack_hitboxes[i]["hitbox"].drawOutline()
         
+        if (boss_Attack_hitboxes[i]["type"] == AttackType.BigAttack ){
+            boss_Attack_hitboxes[i]["hitbox2"].drawOutline()
+            boss_Attack_hitboxes[i]["hitbox3"].drawOutline()
+        
+            if (character.intersects(boss_Attack_hitboxes[i]["hitbox2"])  || character.intersects(boss_Attack_hitboxes[i]["hitbox3"])){
+                char_x = 50
+                char_y = 400
+                deaths ++
+                boss_Health =50
+            }
+        }
+       
         if ( boss_Attack_hitboxes[i]["type"] == AttackType.SmallAttack ) {boss_Attack_hitboxes[i]["hitbox"].x -= 10}
-        else if (boss_Attack_hitboxes[i]["type"] == AttackType.BigAttack ) {boss_Attack_hitboxes[i]["hitbox"].x -= 0}
+        else if (boss_Attack_hitboxes[i]["type"] == AttackType.BigAttack ) {
+            boss_Attack_hitboxes[i]["hitbox"].x -= 0
+            boss_Attack_hitboxes[i]["hitbox2"].x -= 0
+            boss_Attack_hitboxes[i]["hitbox3"].x -= 0
+        }
         if (character.intersects(boss_Attack_hitboxes[i]["hitbox"])) {
             char_x = 50
             char_y = 400
             deaths ++
+            boss_Health = 50
             boss_Attack_hitboxes.shift()
         }
     } 
