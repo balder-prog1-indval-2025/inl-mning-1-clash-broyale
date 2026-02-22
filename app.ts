@@ -6,6 +6,7 @@ let movement_x = 0
 let movement_y = 0
 let jumping = false
 let jump_time = 0
+let jump_reset = true
 let character = new Hitbox (char_x,char_y, 25, 40)
 let dash_time = 0
 let dashing = false
@@ -18,7 +19,7 @@ let char_Direction = false
 enum AttackType {
     BigAttack,
     SmallAttack,
-    
+    FlyAttack
 }
 
 let grassblock1 = await fetchImage("images/Block1.png")
@@ -34,7 +35,7 @@ let shot_Placement = char_x + 10
 let deaths = 0
 
 let boss = new Hitbox(1150, 200, 100, 250)
-let boss_Health = 50
+let boss_Health = 100
 let boss_Attack_hitboxes= []
 let boss_Currently_Attacking = true
 let boss_Which_attack = 0
@@ -45,13 +46,18 @@ let blowing = false
 
 
 //first attack
+let B_attack_1 = false
 let B_attack_1_x = 1150
+let B_attack_1_hitboxes = true
 //second attack
 let B_attack_2_timer = 0
 // third attack
 let B_attack_3_timer = 0
-
-
+let B_attack_3 = false
+let B_moving_left = false
+let B_moving_right = false
+let B_return = false
+  
 
 //Platform hitboxes
 ground.push(new Hitbox(275, 350, 50, 25))
@@ -117,7 +123,10 @@ function jump () {// Determines everything that has with the characters movement
             
         } 
         else if(jumping && !character.intersects(ground[i]) && after_dash == false) { // the actual jump
-            
+            if (jump_reset) {
+                jump_time = 0
+                jump_reset = false
+            }
             jump_time += deltaTime
             if(jump_time <10000) {
                 return_jump = -12 + 12 * jump_time/5000
@@ -128,6 +137,7 @@ function jump () {// Determines everything that has with the characters movement
             dashing = false // ... or "dash"
             fall_time = 0
             jump_time = 0
+            jump_reset = true
             movement_y= 0 // all momentum i y-led blir 0,
             amount_jumps = 2
             amount_dashes = 2
@@ -265,12 +275,13 @@ let attack_2 = false
 function boss_Attacks () {
     boss_timer += deltaTime/100
     
-    if(boss_Currently_Attacking && boss_timer > 20){
+    if(boss_Currently_Attacking && boss_timer > 30){
         boss_Currently_Attacking= false
         boss_Which_attack = random(1,3) 
-        boss_Blow_attack = random(1, 3)
+        boss_Blow_attack = random(1, 5)
         boss_timer = 0
         attack_2 = true
+        B_attack_1_hitboxes = true
         
 }
 if (boss_Blow_attack == 1 && boss_Health > 0){
@@ -280,14 +291,37 @@ if (boss_Blow_attack == 1 && boss_Health > 0){
 
 if (boss_Which_attack == 1 && boss_Health > 0) {
     
+    if (boss.y < 0 ) {
+        B_attack_1 = true
+    }
+    if (!B_attack_1 ) {
+        boss.y -= 3
+    } else {boss.y += 5}
+        
+    
+    if (boss.y > 205){
+        boss.y = 200
+        boss_Which_attack = 0
+        boss_Currently_Attacking= true
+        B_attack_1_hitboxes = true
+        B_attack_1 = false
+        boss_timer = 20
+    }
+    if(B_attack_1_hitboxes) {
     boss_Attack_hitboxes.push({
-        "hitbox": new Hitbox(B_attack_1_x, 350, 100, 100),
+        "hitbox": new Hitbox(B_attack_1_x, 350, 125, 125),
+        "hitbox2": new Hitbox(B_attack_1_x + 600, 200, 125, 125),
+        "hitbox3": new Hitbox(B_attack_1_x + 1200, 50, 125, 125),
         "type": AttackType.SmallAttack 
     })
+    B_attack_1_hitboxes = false
+    }
         //console.log("attack")
     //boss_Attack_type = AttackType.SmallAttack
-    boss_Which_attack = 0
-    boss_Currently_Attacking= true
+    //boss_Which_attack = 0
+    //boss_Currently_Attacking= true
+   
+    
 } 
 else if(boss_Which_attack == 2 && boss_Health > 0) {
     B_attack_2_timer += deltaTime/100
@@ -321,11 +355,32 @@ else if(boss_Which_attack == 2 && boss_Health > 0) {
     }
 
 }else if (boss_Which_attack == 3) {
-    boss.y -= 4
-    console.log ("yes")
-    boss_Currently_Attacking = true
-}
-else {boss_Currently_Attacking = true}
+    boss.y -= 7
+    B_attack_3 = true
+    
+    
+    if(boss.y < -300 && B_attack_3){ 
+        B_attack_3 = false
+        boss_Which_attack = 0
+        boss_Attack_hitboxes.push ({
+        "hitbox":new Hitbox (500, H, 100, 100),
+        "hitbox2": new Hitbox (525, H, 50, H),
+        "hitbox_leftWall": new Hitbox (0, 0, 250, 0),
+        "hitbox_rightWall": new Hitbox (1025, 0, 300, 0),
+        "type": AttackType.FlyAttack}) 
+         
+    } }  
+    if(B_attack_3_timer >37){
+        B_attack_3_timer = 0
+        //boss_Attack_hitboxes.pop()
+        //boss_Currently_Attacking = true
+        B_moving_left = false
+        B_moving_right = false
+        
+        B_return = true
+    }
+
+//else {boss_Currently_Attacking = true}
 
 }
 
@@ -338,21 +393,25 @@ update = () => {
         char_x = 50
         char_y = 400
         deaths ++
-        boss_Health = 50
+        boss_Health = 100
+        boss.y = 200
+        boss_Attack_hitboxes.shift()
+        boss_Currently_Attacking = true
     }
     text ("Death count: " + deaths, 10, 20) // a visible death count
     
     boss_Attacks()
-    if (boss_Health < 0) {// makes the boss disappear
-        boss.y = 2000
-        //just to make so boss doesn't move continuously
-    } else if (boss_Health > 0 && boss_Which_attack != 3) {boss.y = 200} 
-   
+    for(let i = 0; i < boss_Attack_hitboxes.length; i++) {
+        if (boss_Health < 0) {// makes the boss disappear
+            boss.y = 2000
+            //just to make so boss doesn't move continuously
+        } else if (boss_Health > 0 && boss_Which_attack != 3 && !AttackType.FlyAttack) {boss.y = 200} 
+}
     if (blowing) {
         char_x -= 2 
         
         blow_timer += deltaTime/100
-        if (blow_timer > 40) {
+        if (blow_timer > 30) {
             blowing = false
             blow_timer = 0
         }
@@ -360,34 +419,121 @@ update = () => {
    
     // boss_Attacks
     boss.drawOutline()
+    
     for(let i = 0; i < boss_Attack_hitboxes.length; i++) {
         boss_Attack_hitboxes[i]["hitbox"].drawOutline()
         
-        if (boss_Attack_hitboxes[i]["type"] == AttackType.BigAttack ){
+        if (boss_Attack_hitboxes[i]["type"] == AttackType.FlyAttack ){
+            boss_Attack_hitboxes[i]["hitbox_rightWall"].height += 10 
+            boss_Attack_hitboxes[i]["hitbox_leftWall"].height += 10
+            
+            boss_Attack_hitboxes[i]["hitbox2"].drawOutline()
+            boss_Attack_hitboxes[i]["hitbox_rightWall"].drawOutline()
+            boss_Attack_hitboxes[i]["hitbox_leftWall"].drawOutline()
+            B_attack_3_timer += deltaTime/100
+            
+           
+            if (boss_Attack_hitboxes[i]["hitbox"].y > H-100 && !B_return) 
+                {boss_Attack_hitboxes[i]["hitbox"].y -= 10}
+           
+            if(boss_Attack_hitboxes[i]["hitbox2"].y > 200)
+                {boss_Attack_hitboxes[i]["hitbox2"].y -= 10
+                 boss_Attack_hitboxes[i]["hitbox2"].height += 10}
+            else if(boss_Attack_hitboxes[i]["hitbox2"].y < 193 && B_moving_right == false){
+                B_moving_left = true
+
+                }
+                    
+            if (B_moving_left) {
+                boss_Attack_hitboxes[i]["hitbox"].x -= 7
+                boss_Attack_hitboxes[i]["hitbox2"].x -= 7
+                if (boss_Attack_hitboxes[i]["hitbox"].x < 250) {
+                    B_moving_left = false
+                    B_moving_right = true
+                    
+                }
+            } else if (B_moving_right) {
+                boss_Attack_hitboxes[i]["hitbox"].x += 7
+                boss_Attack_hitboxes[i]["hitbox2"].x += 7
+                if (boss_Attack_hitboxes[i]["hitbox"].x > 900){
+                    B_moving_right = false
+                    B_moving_left = true
+                }
+            }   
+            if (character.intersects(boss_Attack_hitboxes[i]["hitbox"]) || character.intersects(boss_Attack_hitboxes[i]["hitbox2"]) || character.intersects(boss_Attack_hitboxes[i]["hitbox_leftWall"]) || character.intersects(boss_Attack_hitboxes[i]["hitbox_rightWall"])) {
+                char_x = 50
+                char_y = 400
+                deaths ++
+                boss_Health = 100
+                boss_Attack_hitboxes[i]["hitbox"].x =500
+                boss_Attack_hitboxes[i]["hitbox2"].x =525
+                boss_Attack_hitboxes.shift()
+                
+                boss_Currently_Attacking = true
+                boss.y = 200
+            }
+            if (B_return) {
+                
+                boss_Attack_hitboxes[i]["hitbox"].y += 10
+                boss_Attack_hitboxes[i]["hitbox2"].y += 100
+                boss_Attack_hitboxes[i]["hitbox"].x += 0
+                boss_Attack_hitboxes[i]["hitbox2"].x += 0
+                
+                if (boss_Attack_hitboxes[i]["hitbox"].y > H+10 && boss.y < 200){
+                    boss.y += 10 
+                }else if (boss.y > 200){
+                    boss_Attack_hitboxes[i]["hitbox"].x =500
+                    boss_Attack_hitboxes[i]["hitbox2"].x =525
+                      boss_Attack_hitboxes.pop()
+                      boss_Currently_Attacking = true
+                      boss_timer = 0
+                      B_return = false
+                      B_attack_3_timer = 0
+                    }
+            
+            }
+                
+        }
+
+        else if (boss_Attack_hitboxes[i]["type"] == AttackType.BigAttack ){
             boss_Attack_hitboxes[i]["hitbox2"].drawOutline()
             boss_Attack_hitboxes[i]["hitbox3"].drawOutline()
         
-            if (character.intersects(boss_Attack_hitboxes[i]["hitbox2"])  || character.intersects(boss_Attack_hitboxes[i]["hitbox3"])){
+            if (character.intersects(boss_Attack_hitboxes[i]["hitbox"]) || character.intersects(boss_Attack_hitboxes[i]["hitbox2"])  || character.intersects(boss_Attack_hitboxes[i]["hitbox3"])){
                 char_x = 50
                 char_y = 400
                 deaths ++
                 boss_Health =50
+                boss_Attack_hitboxes.shift()
             }
         }
        
-        if ( boss_Attack_hitboxes[i]["type"] == AttackType.SmallAttack ) {boss_Attack_hitboxes[i]["hitbox"].x -= 10}
-        else if (boss_Attack_hitboxes[i]["type"] == AttackType.BigAttack ) {
-            boss_Attack_hitboxes[i]["hitbox"].x -= 0
-            boss_Attack_hitboxes[i]["hitbox2"].x -= 0
-            boss_Attack_hitboxes[i]["hitbox3"].x -= 0
+        else if ( boss_Attack_hitboxes[i]["type"] == AttackType.SmallAttack ) {
+            boss_Attack_hitboxes[i]["hitbox2"].drawOutline()
+            boss_Attack_hitboxes[i]["hitbox3"].drawOutline()
+            
+            boss_Attack_hitboxes[i]["hitbox"].x -= 15
+            boss_Attack_hitboxes[i]["hitbox2"].x -= 15
+            boss_Attack_hitboxes[i]["hitbox3"].x -= 15
+            if (character.intersects(boss_Attack_hitboxes[i]["hitbox"]) || character.intersects(boss_Attack_hitboxes[i]["hitbox2"]) || character.intersects(boss_Attack_hitboxes[i]["hitbox3"])){
+                char_x = 50
+                char_y = 400
+                deaths ++
+                boss_Health =50
+                boss.y -= 0
+                boss.y = 200
+                boss_Currently_Attacking = true
+                boss_Attack_hitboxes.shift()
+            }
         }
-        if (character.intersects(boss_Attack_hitboxes[i]["hitbox"])) {
+        
+        /*else if (character.intersects(boss_Attack_hitboxes[i]["hitbox"]) && boss_Attack_hitboxes[i]["type"] == (AttackType.SmallAttack || AttackType.BigAttack || AttackType.FlyAttack)) {
             char_x = 50
             char_y = 400
             deaths ++
             boss_Health = 50
             boss_Attack_hitboxes.shift()
-        }
+        }*/
     } 
     //console.log(boss_Attack_hitboxes.length)
     
