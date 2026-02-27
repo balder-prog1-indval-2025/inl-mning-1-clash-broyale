@@ -33,6 +33,9 @@ let wall: Hitbox[] = []
 let shots = []
 let shot_Placement = char_x + 10
 let deaths = 0
+let test = new Sprite(grassblock1, 0, 0)
+test.x = 10
+test.y = 10
 
 let boss = new Hitbox(1150, 200, 100, 250)
 let boss_Health = 100
@@ -45,12 +48,21 @@ let blow_timer = 0
 let blowing = false
 
 
+let flames =  new Sprite (Character_RevertedImage, 1, 1)
+flames.x = 0
+flames.y = 1000
+flames.width = 250
+flames.height = 100
+
+
+
 //first attack
 let B_attack_1 = false
 let B_attack_1_x = 1150
 let B_attack_1_hitboxes = true
 //second attack
 let B_attack_2_timer = 0
+let attack_2 = false
 // third attack
 let B_attack_3_timer = 0
 let B_attack_3 = false
@@ -271,7 +283,7 @@ function shoot () { // makes hitboxes for bullets
     
 }
 
-let attack_2 = false
+
 function boss_Attacks () {
     boss_timer += deltaTime/100
     
@@ -282,7 +294,7 @@ function boss_Attacks () {
         boss_timer = 0
         attack_2 = true
         B_attack_1_hitboxes = true
-        
+        B_attack_3_timer = 0
 }
 if (boss_Blow_attack == 1 && boss_Health > 0){
     blowing = true
@@ -308,10 +320,12 @@ if (boss_Which_attack == 1 && boss_Health > 0) {
         boss_timer = 20
     }
     if(B_attack_1_hitboxes) {
-    boss_Attack_hitboxes.push({
-        "hitbox": new Hitbox(B_attack_1_x, 350, 125, 125),
-        "hitbox2": new Hitbox(B_attack_1_x + 600, 200, 125, 125),
-        "hitbox3": new Hitbox(B_attack_1_x + 1200, 50, 125, 125),
+       
+   
+        boss_Attack_hitboxes.push({
+        "hitbox": new Hitbox(1150, 350, 125, 125),
+        "hitbox2": new Hitbox(1150 + 600, 200, 125, 125),
+        "hitbox3": new Hitbox(1150 + 1200, 50, 125, 125),
         "type": AttackType.SmallAttack 
     })
     B_attack_1_hitboxes = false
@@ -388,13 +402,24 @@ else if(boss_Which_attack == 2 && boss_Health > 0) {
 
 update = () => {
     clear()
-    if (character.intersects(death_zone) || keyboard.r) { // makes it so if you fall of the map or press "R" you die (reset)
+    let test = new Sprite(grassblock1, 1, 1)
+    test.x = 10
+    test.y = 10
+    test.draw()
+    flames.draw()
+    
+    if (char_x > 250) {
+        flames.y = 400 
+    }
+    
+    if (character.intersects(death_zone) || keyboard.r || character.intersects(flames)) { // makes it so if you fall of the map or press "R" you die (reset)
         keyboard.r = false
         char_x = 50
         char_y = 400
         deaths ++
         boss_Health = 100
         boss.y = 200
+        flames.y = 1000
         boss_Attack_hitboxes.shift()
         boss_Currently_Attacking = true
     }
@@ -468,7 +493,7 @@ update = () => {
                 boss_Attack_hitboxes[i]["hitbox"].x =500
                 boss_Attack_hitboxes[i]["hitbox2"].x =525
                 boss_Attack_hitboxes.shift()
-                
+                flames.y = 1000
                 boss_Currently_Attacking = true
                 boss.y = 200
             }
@@ -486,7 +511,7 @@ update = () => {
                     boss_Attack_hitboxes[i]["hitbox2"].x =525
                       boss_Attack_hitboxes.pop()
                       boss_Currently_Attacking = true
-                      boss_timer = 0
+                      boss_timer = 10
                       B_return = false
                       B_attack_3_timer = 0
                     }
@@ -505,6 +530,7 @@ update = () => {
                 deaths ++
                 boss_Health =50
                 boss_Attack_hitboxes.shift()
+                flames.y = 1000
             }
         }
        
@@ -523,27 +549,22 @@ update = () => {
                 boss.y -= 0
                 boss.y = 200
                 boss_Currently_Attacking = true
+                flames.y = 1000
                 boss_Attack_hitboxes.shift()
             }
         }
         
-        /*else if (character.intersects(boss_Attack_hitboxes[i]["hitbox"]) && boss_Attack_hitboxes[i]["type"] == (AttackType.SmallAttack || AttackType.BigAttack || AttackType.FlyAttack)) {
-            char_x = 50
-            char_y = 400
-            deaths ++
-            boss_Health = 50
-            boss_Attack_hitboxes.shift()
-        }*/
+       
     } 
-    //console.log(boss_Attack_hitboxes.length)
     
     
     
+    
    
    
    
    
-    shot_Placement = char_x+ 10 
+    shot_Placement = char_x + 10 
     for(let i = 0; i < wall.length; i++){
     wall[i].drawOutline()        
     }
