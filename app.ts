@@ -28,15 +28,18 @@ let Dirtoverlayblock = await fetchImage("images/Dirtoverlayblock.png")
 let Dirtblock = await fetchImage("Images/Dirtblock.png")
 let Character_RevertedImage = await fetchImage ("images/Character_reverted.png")
 let Character_Image = await fetchImage ("images/Character.png")
-let flames_image = await fetchImage ("Flames.png")
+let flames_image = await fetchImage ("images/Flames.png")
+let platform_image = await fetchImage ("images/Platform.png")
+let bullet_image = await fetchImage ("images/Bullet.png")
+let Cloud_image = await fetchImage ("images/Cloud.png")
+
+
 let ground: Hitbox[] = []
 let wall: Hitbox[] = []
 let shots = []
 let shot_Placement = char_x + 10
 let deaths = 0
-let test = new Sprite(grassblock1, 0, 0)
-test.x = 10
-test.y = 10
+
 
 let boss = new Hitbox(1150, 200, 100, 250)
 let boss_Health = 100
@@ -53,7 +56,9 @@ let flames =  new Sprite (flames_image, 1, 1)
 flames.x = 0
 flames.y = 1000
 flames.width = 250
-flames.height = 100
+flames.height = 150
+
+
 
 
 
@@ -72,10 +77,29 @@ let B_moving_right = false
 let B_return = false
   
 
-//Platform hitboxes
-ground.push(new Hitbox(275, 350, 50, 25))
-ground.push(new Hitbox(275 * 2, 250, 50, 25))
-ground.push(new Hitbox(275 * 3, 300, 50, 25))
+let Platform_1 = new Sprite(platform_image, 1, 1)
+Platform_1.y = 350
+Platform_1.x = 275
+Platform_1.width = 50
+Platform_1.height = 25  
+ground.push(Platform_1)
+
+let Platform_2 = new Sprite(platform_image, 1, 1)
+Platform_2.y = 250
+Platform_2.x = 550
+Platform_2.width = 50
+Platform_2.height = 25  
+ground.push(Platform_2)
+
+let Platform_3 = new Sprite(platform_image, 1, 1)
+Platform_3.y = 300
+Platform_3.x = 825
+Platform_3.width = 50
+Platform_3.height = 25  
+ground.push(Platform_3)
+
+//ground.push(new Hitbox(275 * 2, 250, 50, 25))
+//ground.push(new Hitbox(275 * 3, 300, 50, 25))
 
 
 // Wall hitboxes
@@ -274,12 +298,16 @@ hitbox.drawOutline()
 }
 
 function shoot () { // makes hitboxes for bullets 
+    
     if (keyboard.enter ) { 
         keyboard.enter = false
+
         shots.push({
-           "hitbox": new Hitbox(shot_Placement, char_y + 5, 20, 10),
-           "direction": char_Direction
+           "hitbox": new Hitbox (char_x + 10, char_y + 5, 20, 10),
+           "direction": char_Direction,
+           
     })
+    
     }
     
 }
@@ -403,14 +431,12 @@ else if(boss_Which_attack == 2 && boss_Health > 0) {
 
 update = () => {
     clear()
-    let test = new Sprite(grassblock1, 1, 1)
-    test.x = 10
-    test.y = 10
-    test.draw()
     flames.draw()
-    
+    Platform_1.draw()
+    Platform_2.draw()
+    Platform_3.draw()
     if (char_x > 250) {
-        flames.y = 400 
+        flames.y = 315 
     }
     
     if (character.intersects(death_zone) || keyboard.r || character.intersects(flames)) { // makes it so if you fall of the map or press "R" you die (reset)
@@ -435,7 +461,7 @@ update = () => {
 }
     if (blowing) {
         char_x -= 2 
-        
+        ctx.drawImage(Cloud_image, 0, 0, W,H)
         blow_timer += deltaTime/100
         if (blow_timer > 30) {
             blowing = false
@@ -565,30 +591,32 @@ update = () => {
    
    
    
-    shot_Placement = char_x + 10 
+    
     for(let i = 0; i < wall.length; i++){
     wall[i].drawOutline()        
     }
     for(let i = 0; i < shots.length; i++){
-        
+
         if(!shots[i]["direction"]){ // if character is facing right, bullets go right.
             //console.log("höger")
         shots[i]["hitbox"].x += 14
+        ctx.drawImage(bullet_image, shots[i]["hitbox"].x, shots[i]["hitbox"].y-5, 30, 15)
         } else if (shots[i]["direction"]) { // and vice versa
             //console.log("vänster")
             shots[i]["hitbox"].x -=14
+            ctx.drawImage(bullet_image, shots[i]["hitbox"].x, shots[i]["hitbox"].y -5, 30, 15)
         }
-        shots[i]["hitbox"].drawOutline()
+        //shots[i]["hitbox"].drawOutline()
         if (shots[i]["hitbox"].intersects(boss)) { // if shots hit boss, they disappear and damage it
             shots.shift()
             boss_Health--
-            //console.log (boss_Health)
+            
         }
     }
     shoot()
     draw_map()
     for (let i = 0;  i <= ground.length -1 ; i++) {
-        ground[i].drawOutline()
+        //ground[i].drawOutline()
 
     }
     movement_x = walk() + dash() // 
