@@ -28,6 +28,7 @@ let Dirtoverlayblock = await fetchImage("images/Dirtoverlayblock.png")
 let Dirtblock = await fetchImage("Images/Dirtblock.png")
 let Character_RevertedImage = await fetchImage ("images/Character_reverted.png")
 let Character_Image = await fetchImage ("images/Character.png")
+let flames_image = await fetchImage ("Flames.png")
 let ground: Hitbox[] = []
 let wall: Hitbox[] = []
 let shots = []
@@ -48,7 +49,7 @@ let blow_timer = 0
 let blowing = false
 
 
-let flames =  new Sprite (Character_RevertedImage, 1, 1)
+let flames =  new Sprite (flames_image, 1, 1)
 flames.x = 0
 flames.y = 1000
 flames.width = 250
