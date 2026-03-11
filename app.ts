@@ -1,6 +1,6 @@
 let amount_jumps = 2
 let amount_dashes = 2
-let char_x = 50
+let char_x = W-150
 let char_y = 400
 let movement_x = 0
 let movement_y = 0
@@ -15,7 +15,8 @@ let lager_3 = []
 let lager_4 = [] 
 let fall_time = 0
 let char_Direction = false
-
+let Level = 0
+let Level_change = true
 enum AttackType {
     BigAttack,
     SmallAttack,
@@ -40,8 +41,8 @@ let shots = []
 let deaths = 0
 
 
-let boss = new Hitbox(1150, 200, 100, 250)
-let boss_Health = 100
+let boss = new Hitbox(1150, H, 100, 250)
+let boss_Health = 200
 let boss_Attack_hitboxes= []
 let boss_Currently_Attacking = true
 let boss_Which_attack = 0
@@ -63,7 +64,6 @@ flames.height = 150
 
 //first attack
 let B_attack_1 = false
-let B_attack_1_x = 1150
 let B_attack_1_hitboxes = true
 //second attack
 let B_attack_2_timer = 0
@@ -77,21 +77,21 @@ let B_return = false
   
 
 let Platform_1 = new Sprite(platform_image, 1, 1)
-Platform_1.y = 350
+Platform_1.y = 10000
 Platform_1.x = 275
 Platform_1.width = 50
 Platform_1.height = 25  
 ground.push(Platform_1)
 
 let Platform_2 = new Sprite(platform_image, 1, 1)
-Platform_2.y = 250
+Platform_2.y = 10000
 Platform_2.x = 550
 Platform_2.width = 50
 Platform_2.height = 25  
 ground.push(Platform_2)
 
 let Platform_3 = new Sprite(platform_image, 1, 1)
-Platform_3.y = 300
+Platform_3.y = 10000
 Platform_3.x = 825
 Platform_3.width = 50
 Platform_3.height = 25  
@@ -358,10 +358,7 @@ if (boss_Which_attack == 1 && boss_Health > 0) {
     })
     B_attack_1_hitboxes = false
     }
-        //console.log("attack")
-    //boss_Attack_type = AttackType.SmallAttack
-    //boss_Which_attack = 0
-    //boss_Currently_Attacking= true
+        
    
     
 } 
@@ -383,18 +380,18 @@ else if(boss_Which_attack == 2 && boss_Health > 0) {
         if (B_attack_2_timer > 7 ) {
             boss_Attack_hitboxes.pop()
             boss_Attack_hitboxes.push ({
-            "hitbox":new Hitbox (275, 0, 50, 1000),
-            "hitbox2": new Hitbox (550, 0, 50, 1000),
-            "hitbox3": new Hitbox (825, 0, 50, 1000),
-            "type": AttackType.BigAttack
-        })
+                "hitbox":new Hitbox (275, 0, 50, 1000),
+                "hitbox2": new Hitbox (550, 0, 50, 1000),
+                "hitbox3": new Hitbox (825, 0, 50, 1000),
+                "type": AttackType.BigAttack
+            })
         }
         if (B_attack_2_timer > 12) {
             boss_Attack_hitboxes.pop()
             B_attack_2_timer= 0
             boss_Which_attack = 0
             boss_Currently_Attacking = true 
-    }
+        }
 
 }else if (boss_Which_attack == 3) {
     boss.y -= 7
@@ -414,31 +411,39 @@ else if(boss_Which_attack == 2 && boss_Health > 0) {
     } }  
     if(B_attack_3_timer >37){
         B_attack_3_timer = 0
-        //boss_Attack_hitboxes.pop()
-        //boss_Currently_Attacking = true
         B_moving_left = false
         B_moving_right = false
         
         B_return = true
     }
 
-//else {boss_Currently_Attacking = true}
+
 
 }
 
-
+let test = new Hitbox (W-100, 350, 100, 100)
 
 update = () => {
     clear()
+    if ( character.intersects(test)) {
+        Level++
+        char_x = 50
+        char_y = 400
+    }
+    test.drawOutline()
+    
     if (blowing) {
-        char_x -= 2 
-        ctx.drawImage(Cloud_image, 0, 0, W,H)
-        ctx.drawImage(flames_image, 0, 322, 250,150)
-        ctx.drawImage(platform_image, 275, 350, 50,25)
-        ctx.drawImage(platform_image, 550, 250, 50,25)
-        ctx.drawImage(platform_image, 825, 300, 50,25)
-        
+       
+        let blow_hitbox = new Sprite (Cloud_image,1,1)
+        blow_hitbox.x = 0
+        blow_hitbox.y = 0
+        blow_hitbox.width = W
+        blow_hitbox.height = H
         blow_timer += deltaTime/100
+        blow_hitbox.draw()
+        if (character.intersects(blow_hitbox)) {
+            char_x -= 1,5
+        }
         if (blow_timer > 30) {
             blowing = false
             blow_timer = 0
@@ -446,23 +451,35 @@ update = () => {
     }
     
     
-    flames.draw()
-    Platform_1.draw()
-    Platform_2.draw()
-    Platform_3.draw()
-    
-    
-    
-    if (char_x > 250) {
-        flames.y = 322 
+   
+    if (Level == 1) {
+        Platform_1.draw()
+        Platform_2.draw()
+        Platform_3.draw()
+        Platform_1.y = 350
+        Platform_2.y = 250
+        Platform_3.y = 300
+        if(Level_change){
+            boss.y = 200
+        }
+        Level_change = false
+        flames.draw()
+        boss_Attacks()
     }
     
+    
+    if (char_x > 250 && Level == 1) {
+        flames.y = 322
+        
+    }
+
+
     if (character.intersects(death_zone) || keyboard.r || character.intersects(flames)) { // makes it so if you fall of the map or press "R" you die (reset)
         keyboard.r = false
         char_x = 50
         char_y = 400
         deaths ++
-        boss_Health = 100
+        boss_Health = 200
         boss.y = 200
         flames.y = 1000
         boss_Attack_hitboxes.shift()
@@ -470,7 +487,7 @@ update = () => {
     }
     text ("Death count: " + deaths, 10, 20) // a visible death count
     
-    boss_Attacks()
+    
     for(let i = 0; i < boss_Attack_hitboxes.length; i++) {
         if (boss_Health < 0) {// makes the boss disappear
             boss.y = 2000
@@ -526,7 +543,7 @@ update = () => {
                 char_x = 50
                 char_y = 400
                 deaths ++
-                boss_Health = 100
+                boss_Health = 200
                 boss_Attack_hitboxes[i]["hitbox"].x =500
                 boss_Attack_hitboxes[i]["hitbox2"].x =525
                 boss_Attack_hitboxes.shift()
@@ -565,7 +582,7 @@ update = () => {
                 char_x = 50
                 char_y = 400
                 deaths ++
-                boss_Health =50
+                boss_Health = 200
                 boss_Attack_hitboxes.shift()
                 flames.y = 1000
             }
@@ -582,7 +599,7 @@ update = () => {
                 char_x = 50
                 char_y = 400
                 deaths ++
-                boss_Health =50
+                boss_Health = 200
                 boss.y -= 0
                 boss.y = 200
                 boss_Currently_Attacking = true
@@ -593,7 +610,7 @@ update = () => {
         
        
     } 
-    
+  
     
     
     
@@ -619,6 +636,7 @@ update = () => {
         //shots[i]["hitbox"].drawOutline()
         if (shots[i]["hitbox"].intersects(boss) ) { // if shots hit boss, they disappear and damage it
             shots.shift()
+            console.log("damage")
             boss_Health--
         } 
     } 
