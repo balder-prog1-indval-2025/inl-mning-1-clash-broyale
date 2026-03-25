@@ -1,6 +1,6 @@
 let amount_jumps = 2
 let amount_dashes = 2
-let char_x = 0
+let char_x = 650
 let char_y = 0
 let movement_x = 0
 let movement_y = 0
@@ -15,81 +15,118 @@ let lager_3 = []
 let lager_4 = [] 
 let fall_time = 0
 let char_Direction = false
-let deaths = 0
-let Spiderman = false
-let Spiderman2 = false
-let Spooderman = true
-let SpiderSide = await fetchImage("images/SpiderSide.png")
-let SpikeDown = await fetchImage("images/SpikeDown.png")
-let SpikeUp = await fetchImage("images/SpikeUp.png")
-let SpikeRight = await fetchImage("images/SpikeRight.png")
-let SpikeLeft = await fetchImage("images/Spikeleft.png")
-let Spider =  await fetchImage("images/Spider.png")
+let StoryTell = 0 // Used once
+let Level = 0
+let Level_change = true
+enum AttackType {
+    BigAttack,
+    SmallAttack,
+    FlyAttack
+}
+let Background1 = await fetchImage("images/Background1.png")
+let Background2 = await fetchImage("images/Background2.png")
 let grassblock1 = await fetchImage("images/Block1.png")
 let stoneblock1 = await fetchImage("images/stoneblock1.png")
 let Dirtoverlayblock = await fetchImage("images/Dirtoverlayblock.png")
 let Dirtblock = await fetchImage("Images/Dirtblock.png")
 let Character_RevertedImage = await fetchImage ("images/Character_reverted.png")
 let Character_Image = await fetchImage ("images/Character.png")
+let flames_image = await fetchImage ("images/Flames.png")
+let platform_image = await fetchImage ("images/Platform.png")
+let bullet_image = await fetchImage ("images/Bullet.png")
+let Cloud_image = await fetchImage ("images/Cloud.png")
 let Gnome = await fetchImage("images/Gnome.png")
+let Explosion = await fetchImage("images/explosion.png")
+let SpiderSide = await fetchImage("images/SpiderSide.png")
+let SpikeDown = await fetchImage("images/SpikeDown.png")
+let SpikeUp = await fetchImage("images/SpikeUp.png")
+let SpikeRight = await fetchImage("images/SpikeRight.png")
+let SpikeLeft = await fetchImage("images/Spikeleft.png")
+let Spider =  await fetchImage("images/Spider.png")
+let bossDefault = await fetchImage("images/PearBoss.png")
+let bossLicking = await fetchImage("images/bossLicking.png")
+let bossSpit = await fetchImage("images/bossSpit.png")
+let FatGnome = await fetchImage("images/FatGnome.png")
+let FatGnomeLaugh = await fetchImage("images/GnomeFatLaugh.png")
+let FatGnomeTrigger = new Hitbox(150,350,100,150)    
+let FatGnomeDeathCounter = 0  
+let boss_y = 135
+let Explode = true
+let g = 0 // used for explosion to stay active for a while
+let b = 0 // used for audio of explosion
+let B = 0 // Used for the Godzilla Sound
+let G = 0 // Used for audio of Gnome
+let V = 0 // Used for Gnome delay
+let J = 0 // Used for  SpiderAttack2 audio delay
+let GnomeWOO = new Audio('Audio/GnomeWOO.mp3') 
+let ExplosionSound = new Audio('Audio/loud-explosion.mp3')
+let Godzilla = new Audio('Audio/Godzilla.mp3')
+//let audio = new Audio('audio_file.mp3');
+//audio.play();
+
+
+
 let ground: Hitbox[] = []
 let wall: Hitbox[] = []
 let shots = []
-let shot_Placement = char_x + 10
-let shot_speed = 1
+let deaths = 0
+
+
+let boss = new Hitbox(1150, H, 100, 250)
+let boss_Health = 200
+let boss_Attack_hitboxes= []
+let boss_Currently_Attacking = true
+let boss_Which_attack = 0
+let boss_Blow_attack = 0
+let boss_timer = 0
+let blow_timer = 0
+let blowing = false
+
+
+let flames =  new Sprite (flames_image, 1, 1)
+flames.x = 0
+flames.y = 1000
+flames.width = 250
+flames.height = 150
+
+let Platform_1 = new Sprite(platform_image, 1, 1)
+Platform_1.y = 350
+Platform_1.x = 275
+Platform_1.width = 50
+Platform_1.height = 25  
+
+
+let Platform_2 = new Sprite(platform_image, 1, 1)
+Platform_2.y = 250
+Platform_2.x = 550
+Platform_2.width = 50
+Platform_2.height = 25  
+
+
+let Platform_3 = new Sprite(platform_image, 1, 1)
+Platform_3.y = 200
+Platform_3.x = 825
+Platform_3.width = 50
+Platform_3.height = 25  
+
+
+let Spiderman = false
+let Spiderman2 = false
+let Spooderman = true
 let SpiderTrigger= new Hitbox(775,100, 250, 1000)
-const gnomesound = new Audio("assets/Audio/im-a-gnome-meme-sound-effect-woo.mp3");
-function playSound(){
-    if(keyboard.l) {
-    gnomesound.currentTime = 0;
-    gnomesound.play();
-}}
-
-
-wall.push(new Hitbox(0, 475, 250,200))
-wall.push(new Hitbox(1025, 475, 250, 200))
-
-for (let i = 0; i<=51; i++) { //ground hitboxes
-if(i<10 || i>40 ) {
-    ground.push(new Hitbox (i*25 ,450,25,25))
-}
-}
-for(let i = 0; i<= 51; i++) { //ground blocks
-    lager_3.push (random(1, 5))
-    lager_4.push (random(1, 5))
-}
-function draw_map () {
-for (let i = 0; i<=51; i++) {
-if(i<10 || i>40 ) {
-ctx.drawImage(grassblock1, i*25, 450, 25,25)
-ctx.drawImage(stoneblock1, i*25, 550, 25, 25)
-ctx.drawImage(Dirtblock, i*25, 500, 25, 25)
-ctx.drawImage(Dirtblock, i*25, 475, 25, 25)
-ctx.drawImage(stoneblock1,i*25,550,25,25)
-ctx.drawImage(stoneblock1,i*25,575,25,25)
-ctx.drawImage(stoneblock1,i*25,600,25,25)
-
-
-if (lager_3[i] == 1 || lager_3[i] > 2) {ctx.drawImage(Dirtblock,i*25,500,25,25)}
-
-else if(lager_3[i] == 2 ) {ctx.drawImage(stoneblock1,i*25,500,25,25)}
-
-if(lager_4[i]==2) {ctx.drawImage(Dirtblock,i*25,525,25,25)}
-else if(lager_4[i]==1 || lager_4[i]>2) {ctx.drawImage(stoneblock1,i*25,525,25,25)}
-}
-}
-}
-let death_zone: Hitbox [] = []
-//let Spikes = [
-//death_zone.push(new Hitbox())
 let Spider_hitbox =  new Hitbox ( 675, -700 ,350, 50)
 let SecondSpider_hitbox = new Hitbox (-14000,-100,50,350)
 let SecondSpider_x = -14025
 let Spider_y = -725
+let death_zone: Hitbox [] = []
 death_zone.push(SecondSpider_hitbox)
 death_zone.push(Spider_hitbox)
 let GnomeHitbox = new Hitbox(1015,350,25,75)
+let ExplosionHitbox = new Hitbox(5000,250,300,300)
 death_zone.push(GnomeHitbox)
+death_zone.push(ExplosionHitbox)
+
+
 //]
 // Spikes ----------------------
 //Spikes left
@@ -107,9 +144,9 @@ death_zone.push(new Hitbox(450, 535, 50, 20))
 
 death_zone.push(new Hitbox(155, 145, 75, 15))
 death_zone.push(new Hitbox(155, 100, 75, 15))
-death_zone.push(new Hitbox(112, 54, 25, 10))
+death_zone.push(new Hitbox(112, 53, 25, 8))
 
-death_zone.push(new Hitbox(1015, 425, 30, 30))
+death_zone.push(new Hitbox(1015, 425, 30, 25))
 
 
 death_zone.push(new Hitbox(1015, 0, 30, 345))
@@ -123,7 +160,7 @@ death_zone.push(new Hitbox(250, 555, 95, 50))
 death_zone.push(new Hitbox(425, 345, 92, 10))
 death_zone.push(new Hitbox(425, 318, 75, 15))
 
-death_zone.push(new Hitbox(50, 110, 30, 220)) //RAHHHHh
+death_zone.push(new Hitbox(50, 116, 30, 210)) //RAHHHHh
 
 
 
@@ -619,11 +656,41 @@ let WallHitbox = []
         
   ]
       
+function TrashTalk() {
+if(Level == 0 && !character.intersects(FatGnomeTrigger)) {
+ctx.drawImage(FatGnome, 55, 344, 275, 125)
+}
+else if(character.intersects(FatGnomeTrigger) && StoryTell == 0 && Level == 0) {
+ctx.drawImage(FatGnomeLaugh,55,344,275,125) // Story voiceline here
+}
+for(let i = 0; i<death_zone.length; i++){
+if(character.intersects(death_zone[i]) && FatGnomeDeathCounter == 10) {
+let GnomeWhichTrashTalk = random(1,5)
+FatGnomeDeathCounter = 0
+if (GnomeWhichTrashTalk == 1) {console.log("HEJ")}
+else if (GnomeWhichTrashTalk == 2) {console.log("BAIII")}
+else if (GnomeWhichTrashTalk == 3) {console.log("RAAHAHH")}
+else if (GnomeWhichTrashTalk == 4) {console.log("OOGA")}
+else if (GnomeWhichTrashTalk == 5) {console.log("HEHEH")}
+else if (GnomeWhichTrashTalk == 6) {}
+else if (GnomeWhichTrashTalk == 7) {}
+else if (GnomeWhichTrashTalk == 8) {}
+else if (GnomeWhichTrashTalk == 9) {}
+else if (GnomeWhichTrashTalk == 10) {}
+else if (GnomeWhichTrashTalk == 11) {}
+else if (GnomeWhichTrashTalk == 12) {}
+}
+}
 
+}
 
 function map() {
+    //Background 1
+//ctx.drawImage(Background1,0,0,700,700)
+    //Background 2
+//ctx.drawImage(Background2,700,0,700,700)
     //Dirtoverlayblocks: 
-    /*
+  /*  
 ctx.drawImage(Dirtoverlayblock, 150, 425, 70, 35)
 ctx.drawImage(Dirtoverlayblock, 150, 400, 70, 35)
 ctx.drawImage(Dirtoverlayblock, 150, 375, 70, 35)
@@ -922,7 +989,6 @@ ctx.drawImage(Dirtoverlayblock, 150, 250, 70, 35)
 ctx.drawImage(Dirtoverlayblock, 150, 222, 70, 35)
 
 */
-
 //Dirtblocks: 
 ctx.drawImage(Dirtblock, 25, 325, 25, 25)
 ctx.drawImage(Dirtblock, 0, 325, 25, 25)
@@ -1362,7 +1428,6 @@ ctx.drawImage(SpikeLeft, 1010, 420, 20, 20 )
 
 
 
-
 ctx.drawImage(SpikeLeft, 1010, 330, 20, 20)
 ctx.drawImage(SpikeLeft, 1010, 315, 20, 20)
 ctx.drawImage(SpikeLeft, 1010, 300, 20, 20)
@@ -1390,7 +1455,6 @@ ctx.drawImage(SpikeLeft, 1010, 0, 20, 20)
 // SpikeRight
 ctx.drawImage(SpikeRight, 1030, 435, 20, 20)
 ctx.drawImage(SpikeRight, 1030, 420, 20, 20)
-
 
 
 ctx.drawImage(SpikeRight, 250, 510, 125, 125)
@@ -1444,22 +1508,30 @@ ctx.drawImage(SpikeUp, 460, 50, 50, 100)
 ctx.drawImage(SpikeUp, 495, 50, 50, 100)
 ctx.drawImage(SpikeUp, 530 , 50, 50, 100)
 ctx.drawImage(SpikeUp, 565 , 50, 50, 100)
-
 // SpikeDown --------------
 
 ctx.drawImage(SpikeDown, 350, 450, 50, 45)
 }
 function GnomeAttack() {
-    if(Spiderman2 && Spooderman) {
-ctx.drawImage(Gnome, 1015,350,25,75)
+ //GÖR KLART DETTAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+    if(Spiderman2 && Spooderman && V < 70) {
+    V = V + 1
     }
+    if(G == 0 && V == 70) {GnomeWOO.play()
+    G = 20}
+    if(V == 70 && Spiderman2 && Spooderman) {ctx.drawImage(Gnome, 1010,350,40,70)}
 }
+
 function SpiderAttack_1() {
     if(Spiderman) {
    
         ctx.drawImage(Spider, 650, Spider_y ,400, 200)
         Spider_hitbox.y += 50
         Spider_y += 50
+    if(Spiderman && B == 0) {
+        Godzilla.play()
+        B = 1
+    }
     if (Spider_hitbox.y > H) {
         Spiderman = false
     }
@@ -1471,88 +1543,210 @@ function SpiderAttack_2() {
     ctx.drawImage(SpiderSide, SecondSpider_x, -100, 200, 400 )
     SecondSpider_hitbox.x +=50
     SecondSpider_x +=50
+    if(Spiderman2 && Spooderman && J < 150) {J = J+1}
     if(SecondSpider_x > W) {
         Spiderman2 = false
         Spooderman = false
         GnomeHitbox.x = W+20000
         SecondSpider_hitbox.x = W + 20000
     }
+    if(SecondSpider_hitbox.x > -600) {
+        Godzilla.play()
+    }
     }
 }
-if(char_Direction) {shot_speed = -10}
-else {shot_speed = 10}
+function explosionsound() {
+    if(SecondSpider_x > W && Explode == true && b == 0) {
+        ExplosionSound.play()
+        b = 1
+    }
+}
+function explosion() {
+    if(SecondSpider_x > W && Explode == true && g < 100) {
+        ctx.drawImage(Explosion,800,150,500,500)
+        ExplosionHitbox.x = 900
+        g = g+1
+    }
+    if(g == 100) {ExplosionHitbox.x = 5000}
+}
 
 
 
 
 
 
-function jump () {
+
+
+
+
+
+
+
+
+
+
+
+
+
+//first attack
+let B_attack_1 = false
+let B_attack_1_hitboxes = true
+//second attack
+let B_attack_2_timer = 0
+let attack_2 = false
+// third attack
+let B_attack_3_timer = 0
+let B_attack_3 = false
+let B_moving_left = false
+let B_moving_right = false
+let B_return = false
+  
+/*
+let Platform_1 = new Sprite(platform_image, 1, 1)
+Platform_1.y = 10000
+Platform_1.x = 275
+Platform_1.width = 50
+Platform_1.height = 25  
+ground.push(Platform_1)
+
+let Platform_2 = new Sprite(platform_image, 1, 1)
+Platform_2.y = 10000
+Platform_2.x = 550
+Platform_2.width = 50
+Platform_2.height = 25  
+ground.push(Platform_2)
+
+let Platform_3 = new Sprite(platform_image, 1, 1)
+Platform_3.y = 10000
+Platform_3.x = 825
+Platform_3.width = 50
+Platform_3.height = 25  
+ground.push(Platform_3)
+*/
+//ground.push(new Hitbox(275 * 2, 250, 50, 25))
+//ground.push(new Hitbox(275 * 3, 300, 50, 25))
+
+
+// Wall hitboxes
+wall.push(new Hitbox(0, 475, 250,200))
+wall.push(new Hitbox(1025, 475, 250, 200))
+
+//Death zone
+let death_zone_floor = new Hitbox (-1000, 600, 3200, 200)
+
+for (let i = 0; i<=51; i++) { //ground hitboxes
+if(i<10 || i>40 ) {
+    ground.push(new Hitbox (i*25 ,450,25,25))
+}
+}
+for(let i = 0; i<= 51; i++) { // Makes some variation in the blocks
+    lager_3.push (random(1, 5))
+    lager_4.push (random(1, 5))
+}
+function draw_map () { // Draws the actual map (blocks), not the hitboxes
+for (let i = 0; i<=51; i++) {// Determines the length (x-axis) of the map
+if(i<10 || i>40 ) { // Creates a gap of 30 blocks
+// A base structure of blocks
+ctx.drawImage(grassblock1, i*25, 450, 25,25)
+ctx.drawImage(stoneblock1, i*25, 550, 25, 25)
+ctx.drawImage(Dirtblock, i*25, 500, 25, 25)
+ctx.drawImage(Dirtblock, i*25, 475, 25, 25)
+ctx.drawImage(stoneblock1,i*25,550,25,25)
+ctx.drawImage(stoneblock1,i*25,575,25,25)
+ctx.drawImage(stoneblock1,i*25,600,25,25)
+
+
+if (lager_3[i] == 1 || lager_3[i] > 2) {ctx.drawImage(Dirtblock,i*25,500,25,25)} // If a block doesn't have the value of 2 
+
+else if(lager_3[i] == 2 ) {ctx.drawImage(stoneblock1,i*25,500,25,25)} // If a block on row 3 has the value of 2 (determined before), creates an overlay of a stoneblock
+
+if(lager_4[i]==2) {ctx.drawImage(Dirtblock,i*25,525,25,25)}
+else if(lager_4[i]==1 || lager_4[i]>2) {ctx.drawImage(stoneblock1,i*25,525,25,25)}// If a block on row 4 doesn't have the value of 2, also creates an overlay of a stoneblock
+}
+}
+}
+/**
+ * @return_jump = the value the function returns
+ * @jump_time = determines the speed at which the character falls, the gravity
+ * @jumping = activates if keyboard.space is clicked
+ * @amount_jumps = determines how many jumps you have, resets if the character intersects with the ground
+ * 
+ * @fall_time = a delay for the passive gravity
+ */
+let gravity = 18000
+let gravity_2_jump = -6500
+let fall_gravity = 10000
+function jump () {// Determines everything that has with the characters movement in y-axis to do.
     let return_jump = 0
     for (let i = 0; i < ground.length ; i++){
-        if (dashing && (keyboard.d || keyboard.a) && amount_dashes > 0 ) {
+        if (dashing && (keyboard.d || keyboard.a) && amount_dashes > 0 ) { // the gravity doesn't affect the character while dashing
             
             return_jump = 0
-        } else if(after_dash && !character.intersects(ground[i])) {
-            jump_time = 18000
+        } else if(after_dash && !character.intersects(ground[i])) { // makes it so after a dash the gravity resets
+            jump_time = gravity
             after_dash = false
             
         } 
-        else if(jumping && !character.intersects(ground[i]) && after_dash == false) {
+        else if(jumping && !character.intersects(ground[i]) && after_dash == false) { // the actual jump
             if (jump_reset) {
-            jump_time = 0
-            jump_reset = false
+                jump_time = 0
+                jump_reset = false
             }
             jump_time += deltaTime
-            if(jump_time <30000) {
-                return_jump = -8 + 8 * jump_time/18000
-        } else {return_jump = 4 * jump_time/18000}
-        } else if (character.intersects (ground[i])) { // när karaktären inträffar hitboxen (marken).
-       
-            jumping = false // när karaktären inträffar hitboxen kan den inte hoppa...
-            dashing = false // ... eller "dasha"
-            jump_reset = true
+            if(jump_time <gravity*2) {
+                return_jump = -8 + 8 * jump_time/gravity
+        } else {return_jump = 4 * jump_time/gravity}
+        } 
+        else if (character.intersects (ground[i])) { // when the character intersects with the hitbox.
+            jumping = false // The character can't jump 
+            dashing = false // ... or "dash"
             fall_time = 0
             jump_time = 0
+            jump_reset = true
             movement_y= 0 // all momentum i y-led blir 0,
-           
             amount_jumps = 2
             amount_dashes = 2
-            
-           
-            return_jump = -2
+            return_jump = -2 // The character moves above the hitbox, creates this jittery movement
         }
     else if (!jumping && !character.intersects(ground[i])) { //när karaktären inte hoppar och inte träffar marken
         fall_time +=deltaTime
-        if (fall_time> 7000){
-            
+        if (fall_time> fall_gravity){ // A little delay so that the character doesn't fall immediately
             jump_time += deltaTime
-        
-            return_jump = 8 * jump_time/15000 // då läggs det på "gravitationen", ett värde som med tiden ökar. Gör så att karaktären träffar hitboxen instant
+            return_jump = 8 * jump_time/gravity 
             }
     }
         
     }
-    for(let i = 0; i < wall.length; i++){
-        if (character.intersects(wall[i])){movement_x = 0}
+    for(let i = 0; i < wall.length; i++){ // makes it so the character can't get into walls
+        if (character.intersects(wall[i])){
+            movement_x = 0
+        }
     }
     return return_jump
 }
+
+/**
+ * @return_dash = the value the function returns
+ * @dashing = is active if keyboard.shift is pressed 
+ * @dash_time = the length of the dash
+ * @amount_dashes = how many dashes the character has
+ * @after_dash = a variable that helps with reseting movement after a dash
+ */
 function dash () {
     let return_dash = 0
     for (let i = 0; i < ground.length ; i++){
         if (dashing && !character.intersects(ground[i])) {
-        
+            
             if ( keyboard.d && dash_time < 100 && amount_dashes>0) {
             dash_time += deltaTime
-            //console.log (dash_time)
+            
         
              return_dash = 2
              return return_dash
             } else if (keyboard.d && dash_time < 100 && amount_dashes>0) {
             dash_time += deltaTime
-             return_dash = 2
-             return return_dash
+            return_dash = 2
+            return return_dash
             } else if (keyboard.a && dash_time < 100 && amount_dashes>0) {
             dash_time += deltaTime
         
@@ -1563,7 +1757,7 @@ function dash () {
             dash_time = 0
             dashing = false
             after_dash = true
-            //return_dash = -2
+            return_dash = -2
             return return_dash
             } 
         }
@@ -1578,14 +1772,13 @@ function dash () {
     
 
 
-
-function walk () {
-    if (dashing && (keyboard.a || keyboard.d) && amount_dashes > 0) {
+function walk () { //standard movement im x-axis
+    if (dashing && (keyboard.a || keyboard.d) && amount_dashes > 0) { // makes it so walking doesn't affect dashing. 
         return movement_x
     }
-    else if (keyboard.a && !keyboard.d) {
+    else if (keyboard.a) {
         return -5
-    }else if (keyboard.d && !keyboard.a ) {
+    }else if (keyboard.d ) {
         return 5
     }
 
@@ -1593,11 +1786,22 @@ function walk () {
         return 0
 }
 }
-function updatePosition () {
+
+/**
+ * @char_y = the actual place in y-axis the character is
+ * @char_x = same as above but instead x-axis
+ * @movement_x = the velocity in x-axis (pixels/frame)
+ * @movement_y = the velocity in y-axis
+ */
+function updatePosition () { 
 char_x += movement_x 
 char_y += movement_y
 }
 
+/**
+ * 
+ * @char_Direction = determines which way the character is facing  
+ */
 function updateCharacter(x:number, y:number, hitbox:Hitbox) {
 if (keyboard.d){
     char_Direction = false
@@ -1621,53 +1825,281 @@ hitbox.drawOutline()
 
 }
 
-function shoot () {
+function shoot () { // makes hitboxes for bullets 
+    
     if (keyboard.enter ) { 
-        
         keyboard.enter = false
-       
-        
+
         shots.push({
-           "hitbox": new Hitbox(shot_Placement, char_y + 5, 20, 10),
-            "direction": char_Direction
+           "hitbox": new Hitbox (char_x + 10, char_y + 5, 20, 10),
+           "direction": char_Direction,
+           
     })
+    
     }
     
 }
 
 
+function boss_Attacks () {
+    boss_timer += deltaTime/100
+    
+    if(boss_Currently_Attacking && boss_timer > 30){
+        boss_Currently_Attacking= false
+        boss_Which_attack = random(1,3) 
+        boss_Blow_attack = random(1, 5)
+        boss_timer = 0
+        attack_2 = true
+        B_attack_1_hitboxes = true
+        B_attack_3_timer = 0
+}
+if (boss_Blow_attack == 1 && boss_Health > 0){
+    blowing = true
+}
 
+
+if (boss_Which_attack == 1 && boss_Health > 0) {
+    //rolf
+    if (boss.y < 0 ) {
+        B_attack_1 = true
+    }
+    if (!B_attack_1 ) {
+        boss.y -= 3
+        boss_y -=3
+    } else {boss.y += 5
+        boss_y +=5
+    }
+        
+    
+    if (boss.y > 205){
+        boss.y = 200
+        boss_y = 135
+        boss_Which_attack = 0
+        boss_Currently_Attacking= true
+        B_attack_1_hitboxes = true
+        B_attack_1 = false
+        boss_timer = 20
+    }
+    if(B_attack_1_hitboxes) {
+       
+   ctx.drawImage(bossSpit, boss.x, boss.y, boss.width, boss.height)
+        boss_Attack_hitboxes.push({
+        "hitbox": new Hitbox(1150, 350, 125, 125),
+        "hitbox2": new Hitbox(1150 + 600, 200, 125, 125),
+        "hitbox3": new Hitbox(1150 + 1200, 50, 125, 125),
+        "type": AttackType.SmallAttack 
+    })
+    B_attack_1_hitboxes = false
+    }
+        
+   
+    
+} 
+else if(boss_Which_attack == 2 && boss_Health > 0) {
+    B_attack_2_timer += deltaTime/100
+        if (attack_2) {
+            
+            if (B_attack_2_timer < 7) {
+                boss_Attack_hitboxes.push ({
+                    "hitbox": new Hitbox (275, 0, 50, 100),
+                    "hitbox2": new Hitbox (550, 0, 50, 100),
+                    "hitbox3": new Hitbox (825, 0, 50, 100),
+                    "type": AttackType.BigAttack
+                    })
+            }  
+        }
+        attack_2 = false
+        
+        if (B_attack_2_timer > 7 ) {
+            boss_Attack_hitboxes.pop()
+            boss_Attack_hitboxes.push ({
+                "hitbox":new Hitbox (275, 0, 50, 1000),
+                "hitbox2": new Hitbox (550, 0, 50, 1000),
+                "hitbox3": new Hitbox (825, 0, 50, 1000),
+                "type": AttackType.BigAttack
+            })
+        }
+        if (B_attack_2_timer > 12) {
+            boss_Attack_hitboxes.pop()
+            B_attack_2_timer= 0
+            boss_Which_attack = 0
+            boss_Currently_Attacking = true 
+        }
+
+}else if (boss_Which_attack == 3) {
+    boss.y -= 7
+    boss_y -= 7
+    B_attack_3 = true
+    
+    
+    if(boss.y < -300 && B_attack_3){ 
+        B_attack_3 = false
+        boss_Which_attack = 0
+        boss_Attack_hitboxes.push ({
+        "hitbox":new Hitbox (500, H, 100, 100),
+        "hitbox2": new Hitbox (525, H, 50, H),
+        "hitbox_leftWall": new Hitbox (0, 0, 250, 0),
+        "hitbox_rightWall": new Hitbox (1025, 0, 300, 0),
+        "type": AttackType.FlyAttack}) 
+         
+    } }  
+    if(B_attack_3_timer >37){
+        B_attack_3_timer = 0
+        B_moving_left = false
+        B_moving_right = false
+        
+        B_return = true
+    }
+
+
+
+}
+
+let Next_level = new Hitbox (W-100, 350, 100, 100)
 
 update = () => {
     clear()
+    TrashTalk()
+    FatGnomeTrigger.drawOutline()
     for(let i = 0; i < death_zone.length; i ++){
         death_zone[i].drawOutline()
     }
-
-
+ctx.drawImage(bossDefault, boss.x - 135 ,boss.y -70, 250,350)
+console.log(B_attack_1)
 
     SpiderTrigger.drawOutline()
-GnomeHitbox.drawOutline()
-playSound()
-    //console.log(death_zone.length)
-    map()
+    GnomeHitbox.drawOutline()
+    if (Level == 0) {map()}
     GnomeAttack()
     SpiderAttack_1()
     SpiderAttack_2()
-    //ctx.drawImage(grassblock1, 516, 393 , 25, 25)
-    //ctx.drawImage(grassblock1, 516, 368 , 25, 25)
-    //console.log (Spiderman2)
-    //--------------
+    explosion()
+    explosionsound()
     if(character.intersects(SpiderTrigger)) { Spiderman = true
         Spiderman2 = true
     }
-    
     for(let i = 0; i<death_zone.length; i++) {
-    if (character.intersects(death_zone[i]) || keyboard.r) { // makes it so if you fall of the map or press "R" you die (reset)
+        if (character.intersects(death_zone[i]) ) { // makes it so if you fall of the map or press "R" you die (reset)
+            keyboard.r = false
+            char_x = 50
+            char_y = 400
+            deaths ++
+            FatGnomeDeathCounter ++
+            Spider_hitbox.y = -700
+            Spider_y = -700
+            SecondSpider_hitbox.x = -14000
+            SecondSpider_x = -14025
+            GnomeHitbox.x = 1015
+            GnomeHitbox.y=350
+            Spiderman = false
+            Spiderman2 = false
+            Spooderman = true
+        }
+        }
+    
+    
+    
+    
+    
+        for(let i = 0; i < WallHitbox.length; i++) {
+            if(character.intersects(WallHitbox[i]) && keyboard.d && !char_Direction) {
+            char_x = char_x -5
+            char_y = char_y +2
+            }
+            else if(character.intersects(WallHitbox[i]) && keyboard.a && char_Direction) {
+                char_x = char_x + 5
+                char_y = char_y +2
+            }
+            else if(character.intersects(WallHitbox[i]) && jumping) {
+                char_y = char_y + 5
+            }
+            else if(character.intersects(WallHitbox[i]) && dashing && keyboard.d) {
+                char_x = char_x -10
+            }
+            else if(character.intersects(WallHitbox[i]) && dashing && keyboard.a) {
+                char_x = char_x + 10
+            }
+            
+        }
+            //--------------
+    if ( character.intersects(Next_level)) {
+        Level++
+        char_x = 50
+        char_y = 400
+    }
+    Next_level.drawOutline()
+    
+    if (blowing) {
+       
+        let blow_hitbox = new Sprite (Cloud_image,1,1)
+        blow_hitbox.x = 0
+        blow_hitbox.y = 0
+        blow_hitbox.width = W
+        blow_hitbox.height = H
+        blow_timer += deltaTime/100
+        blow_hitbox.draw()
+        if (character.intersects(blow_hitbox)) {
+            char_x -= 1,5
+        }
+        if (blow_timer > 30) {
+            blowing = false
+            blow_timer = 0
+        }
+    }
+    
+    //console.log(ground.length, death_zone.length)
+   
+    if (Level == 1) {
+       
+        if(Level_change){
+            boss.y = 200
+            boss_y = 135
+            ground = []
+            WallHitbox = []
+            death_zone = []
+            ground.push(Platform_1)
+            ground.push(Platform_2)
+            ground.push(Platform_3)
+            ground.push(new Hitbox(0, 450, 250, 25))
+            ground.push(new Hitbox(1025, 450, 250, 25))
+
+
+            gravity = 1200
+            gravity_2_jump = -300
+            fall_gravity = 1200
+            SpiderTrigger.y = 200000
+            GnomeHitbox.y = 200000
+
+    }
+        Level_change = false
+        flames.draw()
+        
+        Platform_1.draw()
+        Platform_2.draw()
+        Platform_3.draw()
+
+        boss_Attacks()
+    
+    }
+    
+    if (char_x > 250 && Level == 1) {
+        flames.y = 322
+        
+    }
+
+
+    if (character.intersects(death_zone_floor) || keyboard.r || character.intersects(flames)) { // makes it so if you fall of the map or press "R" you die (reset)
         keyboard.r = false
         char_x = 50
         char_y = 400
         deaths ++
+        boss_Health = 200
+        boss.y = 200
+        boss_y = 135
+        boss_y = 135
+        flames.y = 1000
+        boss_Attack_hitboxes.shift()
+        boss_Currently_Attacking = true
         Spider_hitbox.y = -700
         Spider_y = -700
         SecondSpider_hitbox.x = -14000
@@ -1678,58 +2110,174 @@ playSound()
         Spiderman2 = false
         Spooderman = true
     }
-    }
-    text ("Death count: " + deaths, 10, 20) // a visible death count
+    text ("Death count: " + deaths, 10, 20,15,"White") // a visible death count
     
-    //--------------
-for(let i = 0; i < WallHitbox.length; i++) {
-    if(character.intersects(WallHitbox[i]) && keyboard.d && !char_Direction) {
-    char_x = char_x -5
-    char_y = char_y +2
-    }
-    else if(character.intersects(WallHitbox[i]) && keyboard.a && char_Direction) {
-        char_x = char_x + 5
-        char_y = char_y +2
-    }
-    else if(character.intersects(WallHitbox[i]) && jumping) {
-        char_y = char_y + 5
-    }
-    else if(character.intersects(WallHitbox[i]) && dashing && keyboard.d) {
-        char_x = char_x -10
-    }
-    else if(character.intersects(WallHitbox[i]) && dashing && keyboard.a) {
-        char_x = char_x + 10
-    }
     
+    for(let i = 0; i < boss_Attack_hitboxes.length; i++) {
+        if (boss_Health < 0) {// makes the boss disappear
+            boss.y = 2000
+            boss_y = 2000
+            //just to make so boss doesn't move continuously
+        } else if (boss_Health > 0 && boss_Which_attack != 3 && !AttackType.FlyAttack) {boss.y = 200
+            boss_y = 135
+        } 
 }
-    //--------------
-    shot_Placement = char_x+ 10 
+    
    
+    // boss_Attacks
+    boss.drawOutline()
+    
+    for(let i = 0; i < boss_Attack_hitboxes.length; i++) {
+        boss_Attack_hitboxes[i]["hitbox"].drawOutline()
+        
+        if (boss_Attack_hitboxes[i]["type"] == AttackType.FlyAttack ){
+            boss_Attack_hitboxes[i]["hitbox_rightWall"].height += 10 
+            boss_Attack_hitboxes[i]["hitbox_leftWall"].height += 10
+            
+            boss_Attack_hitboxes[i]["hitbox2"].drawOutline()
+            boss_Attack_hitboxes[i]["hitbox_rightWall"].drawOutline()
+            boss_Attack_hitboxes[i]["hitbox_leftWall"].drawOutline()
+            B_attack_3_timer += deltaTime/100
+            
+           
+            if (boss_Attack_hitboxes[i]["hitbox"].y > H-100 && !B_return) 
+                {boss_Attack_hitboxes[i]["hitbox"].y -= 10}
+           
+            if(boss_Attack_hitboxes[i]["hitbox2"].y > 200)
+                {boss_Attack_hitboxes[i]["hitbox2"].y -= 10
+                 boss_Attack_hitboxes[i]["hitbox2"].height += 10}
+            else if(boss_Attack_hitboxes[i]["hitbox2"].y < 193 && B_moving_right == false){
+                B_moving_left = true
 
+                }
+                    
+            if (B_moving_left) {
+                boss_Attack_hitboxes[i]["hitbox"].x -= 7
+                boss_Attack_hitboxes[i]["hitbox2"].x -= 7
+                if (boss_Attack_hitboxes[i]["hitbox"].x < 250) {
+                    B_moving_left = false
+                    B_moving_right = true
+                    
+                }
+            } else if (B_moving_right) {
+                boss_Attack_hitboxes[i]["hitbox"].x += 7
+                boss_Attack_hitboxes[i]["hitbox2"].x += 7
+                if (boss_Attack_hitboxes[i]["hitbox"].x > 900){
+                    B_moving_right = false
+                    B_moving_left = true
+                }
+            }   
+            if (character.intersects(boss_Attack_hitboxes[i]["hitbox"]) || character.intersects(boss_Attack_hitboxes[i]["hitbox2"]) || character.intersects(boss_Attack_hitboxes[i]["hitbox_leftWall"]) || character.intersects(boss_Attack_hitboxes[i]["hitbox_rightWall"])) {
+                char_x = 50
+                char_y = 400
+                deaths ++
+                boss_Health = 200
+                boss_Attack_hitboxes[i]["hitbox"].x =500
+                boss_Attack_hitboxes[i]["hitbox2"].x =525
+                boss_Attack_hitboxes.shift()
+                flames.y = 1000
+                boss_Currently_Attacking = true
+                boss.y = 200
+                boss_y = -300
+            }
+            if (B_return) {
+                
+                boss_Attack_hitboxes[i]["hitbox"].y += 10
+                boss_Attack_hitboxes[i]["hitbox2"].y += 100
+                boss_Attack_hitboxes[i]["hitbox"].x += 0
+                boss_Attack_hitboxes[i]["hitbox2"].x += 0
+                
+                if (boss_Attack_hitboxes[i]["hitbox"].y > H+10 && boss.y < 200){
+                    boss.y += 10 
+                    boss_y +=10
+                }else if (boss.y > 200){
+                    boss_Attack_hitboxes[i]["hitbox"].x =500
+                    boss_Attack_hitboxes[i]["hitbox2"].x =525
+                      boss_Attack_hitboxes.pop()
+                      boss_Currently_Attacking = true
+                      boss_timer = 10
+                      B_return = false
+                      B_attack_3_timer = 0
+                    }
+            
+            }
+                
+        }
+
+        else if (boss_Attack_hitboxes[i]["type"] == AttackType.BigAttack ){
+            boss_Attack_hitboxes[i]["hitbox2"].drawOutline()
+            boss_Attack_hitboxes[i]["hitbox3"].drawOutline()
+        
+            if (character.intersects(boss_Attack_hitboxes[i]["hitbox"]) || character.intersects(boss_Attack_hitboxes[i]["hitbox2"])  || character.intersects(boss_Attack_hitboxes[i]["hitbox3"])){
+                char_x = 50
+                char_y = 400
+                deaths ++
+                boss_Health = 200
+                boss_Attack_hitboxes.shift()
+                flames.y = 1000
+            }
+        }
+       
+        else if ( boss_Attack_hitboxes[i]["type"] == AttackType.SmallAttack ) {
+            boss_Attack_hitboxes[i]["hitbox2"].drawOutline()
+            boss_Attack_hitboxes[i]["hitbox3"].drawOutline()
+            
+            boss_Attack_hitboxes[i]["hitbox"].x -= 15
+            boss_Attack_hitboxes[i]["hitbox2"].x -= 15
+            boss_Attack_hitboxes[i]["hitbox3"].x -= 15
+            if (character.intersects(boss_Attack_hitboxes[i]["hitbox"]) || character.intersects(boss_Attack_hitboxes[i]["hitbox2"]) || character.intersects(boss_Attack_hitboxes[i]["hitbox3"])){
+                char_x = 50
+                char_y = 400
+                deaths ++
+                boss_Health = 200
+                boss.y -= 0
+                boss.y = 200
+                boss_y = 135
+                boss_Currently_Attacking = true
+                flames.y = 1000
+                boss_Attack_hitboxes.shift()
+            }
+        }
+        
+       
+    } 
+  
+    
+    
+    
+   
+   
+   
+   
+    
     for(let i = 0; i < wall.length; i++){
     wall[i].drawOutline()        
     }
     for(let i = 0; i < shots.length; i++){
-        
-        if(!shots[i]["direction"]){
+
+        if(!shots[i]["direction"]){ // if character is facing right, bullets go right.
             //console.log("höger")
         shots[i]["hitbox"].x += 14
-        } else if (shots[i]["direction"]) {
+        ctx.drawImage(bullet_image, shots[i]["hitbox"].x, shots[i]["hitbox"].y-5, 30, 15)
+        } else if (shots[i]["direction"]) { // and vice versa
             //console.log("vänster")
             shots[i]["hitbox"].x -=14
+            ctx.drawImage(bullet_image, shots[i]["hitbox"].x, shots[i]["hitbox"].y -5, 30, 15)
         }
-        shots[i]["hitbox"].drawOutline()
-        if (shots[i]["hitbox"].intersects(test)) {
+        //shots[i]["hitbox"].drawOutline()
+        if (shots[i]["hitbox"].intersects(boss) ) { // if shots hit boss, they disappear and damage it
             shots.shift()
-        }
-    }
+            //console.log("damage")
+            boss_Health--
+        } 
+    } 
     shoot()
     draw_map()
     for (let i = 0;  i <= ground.length -1 ; i++) {
-        ground[i].drawOutline()
+        //ground[i].drawOutline()
 
     }
-    movement_x = walk() + dash()
+    movement_x = walk() + dash() // 
     movement_y = jump() 
     if (keyboard.shift && (keyboard.a || keyboard.d)) {
         keyboard.shift = false
@@ -1746,7 +2294,7 @@ for(let i = 0; i < WallHitbox.length; i++) {
         keyboard.space = false 
     
      if (amount_jumps == 1 && jumping) {
-        jump_time = -5000
+        jump_time = gravity_2_jump
         
     }
     else {
@@ -1763,47 +2311,4 @@ for(let i = 0; i < WallHitbox.length; i++) {
  
 
 
-export { }
-/*
-let grassblock1 = await fetchImage("images/Block1.png")
-let stoneblock1 = await fetchImage("images/stoneblock1.png")
-let Dirtoverlayblock = await fetchImage("images/Dirtoverlayblock.png")
-let Dirtblock = await fetchImage("Images/Dirtblock.png")
-let Dirtblockhitbox = new Hitbox(Dirtblock[0], Dirtblock[1], Dirtblock[2], Dirtblock[3])
-let hitboxdirtoverlayblock = new Hitbox (Dirtoverlayblock[0], Dirtoverlayblock[1], Dirtoverlayblock[2], Dirtoverlayblock[3])
-let hitboxgrassblock1 = new Hitbox(grassblock1[0], grassblock1[1], grassblock1[2], grassblock1[3])
-let hitboxstoneblock1 = new Hitbox(stoneblock1[0], stoneblock1[1], stoneblock1[2], stoneblock1[3])
-
-
-
-for(let i = 0; i<=15000; i = i+25) {
-if(i>=0 && i<150 || i>=300 && i<500  || i>=650 && i<800) {
-    let n = random(1,5)
-    let m = random(1,3)
-ctx.drawImage(grassblock1, i, 450, 25,25)
-ctx.drawImage(stoneblock1, i, 550, 25, 25)
-ctx.drawImage(Dirtblock, i, 500, 25, 25)
-ctx.drawImage(Dirtblock, i, 475, 25, 25)
-ctx.drawImage(stoneblock1,i,550,25,25)
-ctx.drawImage(stoneblock1,i,575,25,25)
-ctx.drawImage(stoneblock1,i,600,25,25)
-if(n==1 || n>2) {ctx.drawImage(Dirtblock,i,500,25,25)}
-else if(n==2) {ctx.drawImage(stoneblock1,i,500,25,25)}
-if(m==2) {ctx.drawImage(Dirtblock,i,525,25,25)}
-else if(m==1 || m>2) {ctx.drawImage(stoneblock1,i,525,25,25)}
-}
-}
-
-*/
-
-/*
-let grassblock1 = await fetchImage("images/Block1.png")
-let stoneblock1 = await fetchImage("images/stoneblock1.png")
-let Dirtoverlayblock = await fetchImage("images/Dirtoverlayblock.png")
-let Dirtblock = await fetchImage("Images/Dirtblock.png")
-*/
-
-
-
-
-
+export {}
