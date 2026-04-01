@@ -18,6 +18,7 @@ let lager_3 = []
 let lager_4 = [] 
 let fall_time = 0
 let char_Direction = false
+let StoryTell = 0 // Used once
 let Level = 0
 let Level_change = true
 enum AttackType {
@@ -25,7 +26,8 @@ enum AttackType {
     SmallAttack,
     FlyAttack
 }
-
+let Background1 = await fetchImage("images/Background1.png")
+let Background2 = await fetchImage("images/Background2.png")
 let grassblock1 = await fetchImage("images/Block1.png")
 let stoneblock1 = await fetchImage("images/stoneblock1.png")
 let Dirtoverlayblock = await fetchImage("images/Dirtoverlayblock.png")
@@ -37,6 +39,7 @@ let platform_image = await fetchImage ("images/Platform.png")
 let bullet_image = await fetchImage ("images/Bullet.png")
 let Wind_image = await fetchImage ("images/Wind.png")
 let Gnome = await fetchImage("images/Gnome.png")
+let Explosion = await fetchImage("images/explosion.png")
 let SpiderSide = await fetchImage("images/SpiderSide.png")
 let SpikeDown = await fetchImage("images/SpikeDown.png")
 let SpikeUp = await fetchImage("images/SpikeUp.png")
@@ -44,8 +47,7 @@ let SpikeRight = await fetchImage("images/SpikeRight.png")
 let SpikeLeft = await fetchImage("images/Spikeleft.png")
 let Spider =  await fetchImage("images/Spider.png")
 let Health_bar_image = await fetchImage ("images/Hpbarfinish.png")
-let Background1 = await fetchImage ("images/Background1.png") 
-let Background2 = await fetchImage ("images/Background2.png")
+
 let bossDefault = await fetchImage ("images/PearBoss.png")
 let bossSpit = await fetchImage ("images/bossSpit.png")
 let bossSlamAttack = await fetchImage ("images/bossSlamAttack.png")
@@ -54,6 +56,26 @@ let bossRightArm = await fetchImage ("images/RightArm.png")
 let bossLicking_under = await fetchImage("images/bossLicking_under.png")
 let bossLicking_over = await fetchImage("images/bossLicking_over.png") 
 let bossTongue = await fetchImage("images/Tongue.png") 
+
+let FatGnome = await fetchImage("images/FatGnome.png")
+let FatGnomeLaugh = await fetchImage("images/GnomeFatLaugh.png")
+let FatGnomeTrigger = new Hitbox(150,350,100,150)    
+let FatGnomeDeathCounter = 0  
+let boss_y = 135
+let Explode = true
+let g = 0 // used for explosion to stay active for a while
+let b = 0 // used for audio of explosion
+let B = 0 // Used for the Godzilla Sound
+let G = 0 // Used for audio of Gnome
+let V = 0 // Used for Gnome delay
+let J = 0 // Used for  SpiderAttack2 audio delay
+let GnomeWOO = new Audio('Audio/GnomeWOO.mp3') 
+let ExplosionSound = new Audio('Audio/loud-explosion.mp3')
+let Godzilla = new Audio('Audio/Godzilla.mp3')
+//let audio = new Audio('audio_file.mp3');
+//audio.play();
+
+
 
 let ground: Hitbox[] = []
 let wall: Hitbox[] = []
@@ -114,7 +136,9 @@ let death_zone: Hitbox [] = []
 death_zone.push(SecondSpider_hitbox)
 death_zone.push(Spider_hitbox)
 let GnomeHitbox = new Hitbox(1015,350,25,75)
+let ExplosionHitbox = new Hitbox(5000,250,300,300)
 death_zone.push(GnomeHitbox)
+death_zone.push(ExplosionHitbox)
 
 //]
 // Spikes ----------------------
@@ -133,7 +157,7 @@ death_zone.push(new Hitbox(450, 535, 50, 20))
 
 death_zone.push(new Hitbox(155, 145, 75, 15))
 death_zone.push(new Hitbox(155, 100, 75, 15))
-death_zone.push(new Hitbox(112, 54, 25, 10))
+death_zone.push(new Hitbox(112, 53, 25, 8))
 
 death_zone.push(new Hitbox(1015, 425, 30, 25))
 
@@ -149,7 +173,7 @@ death_zone.push(new Hitbox(250, 555, 95, 50))
 death_zone.push(new Hitbox(425, 345, 92, 10))
 death_zone.push(new Hitbox(425, 318, 75, 15))
 
-death_zone.push(new Hitbox(50, 110, 30, 220)) //RAHHHHh
+death_zone.push(new Hitbox(50, 116, 30, 210)) //RAHHHHh
 
 
 
@@ -644,7 +668,33 @@ let WallHitbox = []
         ground.push(new Hitbox(425, 375, 25, 25)),
         
   ]
-      
+function TrashTalk() {
+if(Level == 0 && !character.intersects(FatGnomeTrigger)) {
+ctx.drawImage(FatGnome, 55, 344, 275, 125)
+}
+else if(character.intersects(FatGnomeTrigger) && StoryTell == 0 && Level == 0) {
+ctx.drawImage(FatGnomeLaugh,55,344,275,125) // Story voiceline here
+}
+for(let i = 0; i<death_zone.length; i++){
+if(character.intersects(death_zone[i]) && FatGnomeDeathCounter == 10) {
+let GnomeWhichTrashTalk = random(1,5)
+FatGnomeDeathCounter = 0
+if (GnomeWhichTrashTalk == 1) {console.log("HEJ")}
+else if (GnomeWhichTrashTalk == 2) {console.log("BAIII")}
+else if (GnomeWhichTrashTalk == 3) {console.log("RAAHAHH")}
+else if (GnomeWhichTrashTalk == 4) {console.log("OOGA")}
+else if (GnomeWhichTrashTalk == 5) {console.log("HEHEH")}
+else if (GnomeWhichTrashTalk == 6) {}
+else if (GnomeWhichTrashTalk == 7) {}
+else if (GnomeWhichTrashTalk == 8) {}
+else if (GnomeWhichTrashTalk == 9) {}
+else if (GnomeWhichTrashTalk == 10) {}
+else if (GnomeWhichTrashTalk == 11) {}
+else if (GnomeWhichTrashTalk == 12) {}
+}
+}
+
+}      
 
 function map() {
     //Background 
@@ -1504,16 +1554,25 @@ function Platform_move () {
 
 
 function GnomeAttack() {
-    if(Spiderman2 && Spooderman) {
-ctx.drawImage(Gnome, 1010,350,40,70)
+ //GÖR KLART DETTAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+    if(Spiderman2 && Spooderman && V < 70) {
+    V = V + 1
     }
+    if(G == 0 && V == 70) {GnomeWOO.play()
+    G = 20}
+    if(V == 70 && Spiderman2 && Spooderman) {ctx.drawImage(Gnome, 1010,350,40,70)}
 }
+
 function SpiderAttack_1() {
     if(Spiderman) {
    
         ctx.drawImage(Spider, 650, Spider_y ,400, 200)
         Spider_hitbox.y += 50
         Spider_y += 50
+    if(Spiderman && B == 0) {
+        Godzilla.play()
+        B = 1
+    }
     if (Spider_hitbox.y > H) {
         Spiderman = false
     }
@@ -1525,15 +1584,32 @@ function SpiderAttack_2() {
     ctx.drawImage(SpiderSide, SecondSpider_x, -100, 200, 400 )
     SecondSpider_hitbox.x +=50
     SecondSpider_x +=50
+    if(Spiderman2 && Spooderman && J < 150) {J = J+1}
     if(SecondSpider_x > W || Level == 1) {
         Spiderman2 = false
         Spooderman = false
         GnomeHitbox.x = W+20000
         SecondSpider_hitbox.x = W + 20000
     }
+    if(SecondSpider_hitbox.x > -600) {
+        Godzilla.play()
+    }
     }
 }
-
+function explosionsound() {
+    if(SecondSpider_x > W && Explode == true && b == 0) {
+        ExplosionSound.play()
+        b = 1
+    }
+}
+function explosion() {
+    if(SecondSpider_x > W && Explode == true && g < 100) {
+        ctx.drawImage(Explosion,800,150,500,500)
+        ExplosionHitbox.x = 900
+        g = g+1
+    }
+    if(g == 100) {ExplosionHitbox.x = 5000}
+}
 
 
 
@@ -1805,17 +1881,21 @@ if (boss_Blow_attack == 1 && boss_Health > 0){
 
 
 if (boss_Which_attack == 1 && boss_Health > 0) {
-    
+    //rolf
     if (boss.y < 0 ) {
         B_attack_1 = true
     }
     if (!B_attack_1 ) {
         boss.y -= 3
-    } else {boss.y += 5}
+        boss_y -=3
+    } else {boss.y += 5
+        boss_y +=5
+    }
         
     
     if (boss.y > 205){
         boss.y = 200
+        boss_y = 135
         boss_Which_attack = 0
         boss_Currently_Attacking= true
         B_attack_1_hitboxes = true
@@ -1824,7 +1904,7 @@ if (boss_Which_attack == 1 && boss_Health > 0) {
     }
     if(B_attack_1_hitboxes) {
        
-   
+   ctx.drawImage(bossSpit, boss.x, boss.y, boss.width, boss.height)
         boss_Attack_hitboxes.push({
         "hitbox": new Hitbox(1150, 325, 125, 125),
         "hitbox2": new Hitbox(1150 + 600, 200, 125, 125),
@@ -1875,6 +1955,7 @@ else if(boss_Which_attack == 2 && boss_Health > 0) {
 
 }else if (boss_Which_attack == 3) {
     boss.y -= 7
+    boss_y -= 7
     B_attack_3 = true
     
     
@@ -1905,16 +1986,23 @@ let Next_level = new Hitbox (W-100, 350, 100, 100)
 
 update = () => {
     clear()
-    /*for(let i = 0; i < death_zone.length; i ++){
+    TrashTalk()
+    FatGnomeTrigger.drawOutline()
+    for(let i = 0; i < death_zone.length; i ++){
         death_zone[i].drawOutline()
-    }*/
-    
-    
+    }
+
+
+
+    SpiderTrigger.drawOutline()
+    GnomeHitbox.drawOutline()
     if (Level == 0) {map()}
     if (Level == 1) {map_2()}
     GnomeAttack()
     SpiderAttack_1()
     SpiderAttack_2()
+    explosion()
+    explosionsound()
     if(character.intersects(SpiderTrigger)) { Spiderman = true
         Spiderman2 = true
     }
@@ -1924,6 +2012,7 @@ update = () => {
             char_x = 50
             char_y = 400
             deaths ++
+            FatGnomeDeathCounter ++
             Spider_hitbox.y = -700
             Spider_y = -700
             SecondSpider_hitbox.x = -14000
@@ -2001,6 +2090,7 @@ update = () => {
         
         if(Level_change){
             boss.y = 200
+            boss_y = 135
             ground = []
             WallHitbox = []
             death_zone = []
@@ -2060,14 +2150,17 @@ update = () => {
         Spiderman2 = false
         Spooderman = true
     }
-    text ("Death count: " + deaths, 10, 20) // a visible death count
+    text ("Death count: " + deaths, 10, 20,15,"White") // a visible death count
     
     
     for(let i = 0; i < boss_Attack_hitboxes.length; i++) {
         if (boss_Health < 0) {// makes the boss disappear
             boss.y = 2000
+            boss_y = 2000
             //just to make so boss doesn't move continuously
-        } else if (boss_Health > 0 && boss_Which_attack != 3 && !AttackType.FlyAttack) {boss.y = 200} 
+        } else if (boss_Health > 0 && boss_Which_attack != 3 && !AttackType.FlyAttack) {boss.y = 200
+            boss_y = 135
+        } 
 }
     
    
@@ -2337,7 +2430,7 @@ update = () => {
         //shots[i]["hitbox"].drawOutline()
         if (shots[i]["hitbox"].intersects(boss) ) { // if shots hit boss, they disappear and damage it
             shots.shift()
-            console.log("damage")
+            //console.log("damage")
             boss_Health--
             Health_bar_width -= 2.07
         } else if (shots[i]["hitbox"].intersects(shotStop["left"]) || shots[i]["hitbox"].intersects(shotStop["right"])) {
