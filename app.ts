@@ -57,12 +57,17 @@ let bossLeftArm = await fetchImage ("images/LeftArm.png")
 let bossRightArm = await fetchImage ("images/RightArm.png")
 let bossLicking_under = await fetchImage("images/bossLicking_under.png")
 let bossLicking_over = await fetchImage("images/bossLicking_over.png") 
-let bossTongue = await fetchImage("images/Tongue.png") 
+let bossTongue = await fetchImage("images/Tongue.png")
+let Talbubbla = await fetchImage ("images/Talbubbla.png")
+let Jesus = await fetchImage ("images/JesusFckingChrist.png")
 
 let FatGnome = await fetchImage("images/FatGnome.png")
 let FatGnomeLaugh = await fetchImage("images/GnomeFatLaugh.png")
 let FatGnomeTrigger = new Hitbox(150,350,100,150)    
 let FatGnomeDeathCounter = 0  
+let Trashtalking = false
+let GnomeWhichTrashTalk = 0
+let Trashtalk_timer = 0
 
 let Explode = true
 let g = 0 // used for explosion to stay active for a while
@@ -99,7 +104,7 @@ let blow_timer = 0
 let blowing = false
 let Arms_first_y = -200
 let Arms_second_y = -50
-
+let Jesus_y = -150
 
 let flames =  new Hitbox (0, 1050, 250, 70)
 let flames_image_height = 1000
@@ -672,17 +677,30 @@ let WallHitbox = []
         
   ]
 function TrashTalk() {
-if(Level == 0 && !character.intersects(FatGnomeTrigger)) {
+if(Level == 0 && !character.intersects(FatGnomeTrigger) && Trashtalking == false) {
 ctx.drawImage(FatGnome, 55, 344, 275, 125)
 }
-else if(character.intersects(FatGnomeTrigger) && StoryTell == 0 && Level == 0) {
+else if(character.intersects(FatGnomeTrigger) && StoryTell == 0 && Level == 0 || Trashtalking == true) {
 ctx.drawImage(FatGnomeLaugh,55,344,275,125) // Story voiceline here
 }
 for(let i = 0; i<death_zone.length; i++){
-if(character.intersects(death_zone[i]) && FatGnomeDeathCounter == 10) {
-let GnomeWhichTrashTalk = random(1,5)
+if(character.intersects(death_zone[i]) && FatGnomeDeathCounter > 9) {
+GnomeWhichTrashTalk = random(1,5)
+Trashtalking = true
 FatGnomeDeathCounter = 0
-if (GnomeWhichTrashTalk == 1) {console.log("HEJ")}
+}
+if (Trashtalking == true) {
+ctx.drawImage(Talbubbla, 200, 315, 120, 90)
+Trashtalk_timer += deltaTime/100
+if (Trashtalk_timer > 1000) {
+    Trashtalking = false
+    Trashtalk_timer = 0
+}
+if (GnomeWhichTrashTalk == 1) {
+    console.log("HEJ")
+    GnomeWhichTrashTalk = 0
+    Trashtalk_timer = 0
+}
 else if (GnomeWhichTrashTalk == 2) {console.log("BAIII")}
 else if (GnomeWhichTrashTalk == 3) {console.log("RAAHAHH")}
 else if (GnomeWhichTrashTalk == 4) {console.log("OOGA")}
@@ -694,9 +712,9 @@ else if (GnomeWhichTrashTalk == 9) {}
 else if (GnomeWhichTrashTalk == 10) {}
 else if (GnomeWhichTrashTalk == 11) {}
 else if (GnomeWhichTrashTalk == 12) {}
-}
-}
 
+}
+}
 }      
 
 function map() {
@@ -1770,11 +1788,7 @@ function dash () {
         
              return_dash = 2
              return return_dash
-            } else if (keyboard.d && dash_time < 100 && amount_dashes>0) {
-            dash_time += deltaTime
-            return_dash = 2
-            return return_dash
-            } else if (keyboard.a && dash_time < 100 && amount_dashes>0) {
+             } else if (keyboard.a && dash_time < 100 && amount_dashes>0) {
             dash_time += deltaTime
         
             return_dash = -2
@@ -1874,15 +1888,15 @@ function boss_Attacks () {
     if(boss_Currently_Attacking && boss_timer > 30){
         boss_Currently_Attacking= false
         boss_Which_attack = random(1,3) 
-        boss_Blow_attack = random(1, 5)
+        //boss_Blow_attack = random(1, 5)
         boss_timer = 0
         attack_2 = true
         B_attack_1_hitboxes = true
         B_attack_3_timer = 0
 }
-if (boss_Blow_attack == 1 && boss_Health > 0){
+/*if (boss_Blow_attack == 1 && boss_Health > 0){
     blowing = true
-}
+}*/
 
 
 if (boss_Which_attack == 1 && boss_Health > 0) {
@@ -1910,7 +1924,8 @@ if (boss_Which_attack == 1 && boss_Health > 0) {
     if(B_attack_1_hitboxes) {
        
    ctx.drawImage(bossSpit, boss.x, boss.y, boss.width, boss.height)
-        boss_Attack_hitboxes.push({
+        
+   boss_Attack_hitboxes.push({
         "hitbox": new Hitbox(1150, 325, 125, 125),
         "hitbox2": new Hitbox(1150 + 600, 200, 125, 125),
         "hitbox3": new Hitbox(1150 + 1200, 75, 125, 125),
@@ -1925,16 +1940,21 @@ if (boss_Which_attack == 1 && boss_Health > 0) {
 } 
 else if(boss_Which_attack == 2 && boss_Health > 0) {
     B_attack_2_timer += deltaTime/100
-        if (attack_2) {
+    ctx.drawImage(Jesus, 420, Jesus_y, 300, 250)
+    Platform_2.draw()
+    if(Jesus_y < 120) {
+        Jesus_y += 8
+    }
+    if (attack_2) {
             
             if (B_attack_2_timer < 10) {
                 Arms_firstImage = true
-
+                
             }  
         }
         attack_2 = false
-        
-        if (B_attack_2_timer > 10 ) {
+                
+        if (B_attack_2_timer > 14 ) {
             Arms_firstImage = false
             Arms_secondImage = true
             
@@ -1945,11 +1965,12 @@ else if(boss_Which_attack == 2 && boss_Health > 0) {
                 "type": AttackType.BigAttack
             })
         }
-        if (B_attack_2_timer > 16) {
+        if (B_attack_2_timer > 20) {
             boss_Attack_hitboxes = []
             B_attack_2_timer= 0
             boss_Which_attack = 0
             Arms_secondImage = false
+            Jesus_y = -150
             boss_Currently_Attacking = true 
         }
 
@@ -1986,7 +2007,7 @@ let Next_level = new Hitbox (W-100, 350, 100, 100)
 
 update = () => {
     clear()
-    TrashTalk()
+
     FatGnomeTrigger.drawOutline()
     for(let i = 0; i < death_zone.length; i ++){
         death_zone[i].drawOutline()
@@ -2062,13 +2083,10 @@ update = () => {
     
     if (boss_Which_attack == 2 && boss_Health > 0) {
        
-        let blow_hitbox = new Sprite (Wind_image,1,1)
-        blow_hitbox.x = 0
-        blow_hitbox.y = -10
-        blow_hitbox.width = W
-        blow_hitbox.height = H +10
+        let blow_hitbox = new Hitbox (0, -10, W, H+10)
+
         blow_timer += deltaTime/100
-        blow_hitbox.draw()
+        
         if (character.intersects(blow_hitbox)) {
             char_x -= 1,5
         }
@@ -2078,7 +2096,7 @@ update = () => {
         }
     }
     
-    //console.log(ground.length, death_zone.length)
+   
    
     if (Level == 1) {
         
@@ -2127,6 +2145,7 @@ update = () => {
         keyboard.r = false
         char_x = 50
         char_y = 400
+        jump_time = 0
         deaths ++
         boss_Health = 200
         Health_bar_width = W-842
@@ -2366,8 +2385,7 @@ update = () => {
 
         else if (boss_Attack_hitboxes[i]["type"] == AttackType.BigAttack ){
             boss_Attack_hitboxes[i]["hitbox2"].drawOutline()
-
-
+            
 
             
             if (character.intersects(boss_Attack_hitboxes[i]["hitbox"]) || character.intersects(boss_Attack_hitboxes[i]["hitbox2"])  || character.intersects(boss_Attack_hitboxes[i]["hitbox3"])){
@@ -2379,6 +2397,7 @@ update = () => {
                 flames.y = 1000
                 flames_image_height = 1000
                 Health_bar_width = W-842
+                Jesus_y = -150
             }
         }
        
@@ -2422,18 +2441,21 @@ update = () => {
    
    
    
-    
+    /*
     for(let i = 0; i < wall.length; i++){
     wall[i].drawOutline()        
     }
+    */
+
+
     for(let i = 0; i < shots.length; i++){
 
         if(!shots[i]["direction"]){ // if character is facing right, bullets go right.
-            //console.log("höger")
+
         shots[i]["hitbox"].x += 14
         ctx.drawImage(bullet_image, shots[i]["hitbox"].x, shots[i]["hitbox"].y-5, 30, 15)
         } else if (shots[i]["direction"]) { // and vice versa
-            //console.log("vänster")
+
             shots[i]["hitbox"].x -=14
             ctx.drawImage(bullet_image, shots[i]["hitbox"].x, shots[i]["hitbox"].y -5, 30, 15)
         }
@@ -2479,10 +2501,9 @@ update = () => {
     amount_jumps--
 }
     
-   
+    TrashTalk()
     updatePosition()
     updateCharacter(char_x, char_y, character)
-      
 } 
  
 
