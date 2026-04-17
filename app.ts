@@ -23,6 +23,8 @@ enum AttackType {
     SmallAttack,
     FlyAttack
 }
+let Background3 = await fetchImage("images/Background69.png")
+let Background4 = await fetchImage("images/Background4.png")
 let Background1 = await fetchImage("images/Background1.png")
 let Background2 = await fetchImage("images/Background2.png")
 let grassblock1 = await fetchImage("images/Block1.png")
@@ -36,6 +38,7 @@ let platform_image = await fetchImage ("images/Platform.png")
 let bullet_image = await fetchImage ("images/Bullet.png")
 let Cloud_image = await fetchImage ("images/Cloud.png")
 let Gnome = await fetchImage("images/Gnome.png")
+let Goat = await fetchImage("images/Goat.png")
 let Explosion = await fetchImage("images/explosion.png")
 let SpiderSide = await fetchImage("images/SpiderSide.png")
 let SpikeDown = await fetchImage("images/SpikeDown.png")
@@ -47,20 +50,37 @@ let bossDefault = await fetchImage("images/PearBoss.png")
 let bossLicking = await fetchImage("images/bossLicking.png")
 let bossSpit = await fetchImage("images/bossSpit.png")
 let FatGnome = await fetchImage("images/FatGnome.png")
+let DrDisrespect = await fetchImage("images/The2TimeBackToBack19931994BlockBusterVideoGameChampion.png")
+let DrDisrespectLaugh = await fetchImage("images/The2TimeBackToBack19931994BlockBusterVideoGameChampionLaugh.png")
 let FatGnomeLaugh = await fetchImage("images/GnomeFatLaugh.png")
 let FatGnomeTrigger = new Hitbox(150,350,100,150)    
+let GnomeWhichTrashTalk = random(1,5)
+//let GnomeWhichTrashTalk = 3 //temporarily
 let FatGnomeDeathCounter = 0  
 let boss_y = 135
+let GoatTrigger = false
+let GoatNumber = 0
+let Goat_Y = 600
 let Explode = true
+let U = 0 // Used for goat trigger
+let u = 0 // Used for 2nd Goat trigger
 let g = 0 // used for explosion to stay active for a while
 let b = 0 // used for audio of explosion
 let B = 0 // Used for the Godzilla Sound
 let G = 0 // Used for audio of Gnome
 let V = 0 // Used for Gnome delay
 let J = 0 // Used for  SpiderAttack2 audio delay
+let M = 0 // Used for Hellbomb activation
 let GnomeWOO = new Audio('Audio/GnomeWOO.mp3') 
 let ExplosionSound = new Audio('Audio/loud-explosion.mp3')
 let Godzilla = new Audio('Audio/Godzilla.mp3')
+let Idiot = new Audio('Audio/you-are-an-idiot.mp3')
+let Pathetic = new Audio('Audio/drdisrespect_patheticguy_by_taihplays_on_twitch.mp3')
+let IdiotKid = new Audio('Audio/drdisrespect_getthisidiotkidoutofhere_by_taihplays_on_twitch.mp3')
+let BoratSong = new Audio('Audio/Borats Disco Dance .mp3')
+let Terrible = new Audio('Audio/DrTerrible.mp3')
+let GoatBaaah = new Audio('Audio/baah.mp3')
+let HellBombSound = new Audio('Audio/Hellbomb.mp3')
 //let audio = new Audio('audio_file.mp3');
 //audio.play();
 
@@ -655,23 +675,57 @@ let WallHitbox = []
         ground.push(new Hitbox(425, 375, 25, 25)),
         
   ]
-      
+function Hellbomb() {if(GoatNumber == 1 && M == 0) {
+    HellBombSound.play()
+        M = 1
+}}
+function GoatAttack() {
+  if(u<14){
+    for(let i = 0; i < 10;i++) {
+    u = u + 1
+  }
+  if(u == 10 && GoatNumber != 1) {GoatNumber = random(0,100) //changing this will change how often goat attack will happen
+    u = 0
+    if(GoatNumber == 1) {u == 15}
+
+  }
+    }
+   
+
+    if(GoatNumber == 1 && Goat_Y > 301) {
+
+        for(let i = 0; i<301; i ++) {
+            Goat_Y = Goat_Y-0.003
+            ctx.drawImage(Goat, 650,Goat_Y-100,800, 400)
+        
+            if(Goat_Y <301) {GoatTrigger = true}}
+            
+        }
+    if(GoatTrigger) {ctx.drawImage(Goat,650,300-100,800,400)}
+    if(GoatTrigger && U == 0) {
+        U = 1
+        GoatBaaah.play()
+    }
+
+}
 function TrashTalk() {
 if(Level == 0 && !character.intersects(FatGnomeTrigger)) {
 ctx.drawImage(FatGnome, 55, 344, 275, 125)
+ctx.drawImage(DrDisrespect, 150,340,83,83)
 }
 else if(character.intersects(FatGnomeTrigger) && StoryTell == 0 && Level == 0) {
 ctx.drawImage(FatGnomeLaugh,55,344,275,125) // Story voiceline here
+ctx.drawImage(DrDisrespectLaugh, 150,340,83,83)
 }
 for(let i = 0; i<death_zone.length; i++){
-if(character.intersects(death_zone[i]) && FatGnomeDeathCounter == 10) {
-let GnomeWhichTrashTalk = random(1,5)
+if(character.intersects(death_zone[i]) && FatGnomeDeathCounter == 10 || FatGnomeDeathCounter > 10) {
+
 FatGnomeDeathCounter = 0
-if (GnomeWhichTrashTalk == 1) {console.log("HEJ")}
-else if (GnomeWhichTrashTalk == 2) {console.log("BAIII")}
-else if (GnomeWhichTrashTalk == 3) {console.log("RAAHAHH")}
-else if (GnomeWhichTrashTalk == 4) {console.log("OOGA")}
-else if (GnomeWhichTrashTalk == 5) {console.log("HEHEH")}
+if (GnomeWhichTrashTalk == 1) {Idiot.play()}
+else if (GnomeWhichTrashTalk == 2) {Pathetic.play()}
+else if (GnomeWhichTrashTalk == 3) {IdiotKid.play()}
+else if (GnomeWhichTrashTalk == 4) {BoratSong.play()}
+else if (GnomeWhichTrashTalk == 5) {Terrible.play()}
 else if (GnomeWhichTrashTalk == 6) {}
 else if (GnomeWhichTrashTalk == 7) {}
 else if (GnomeWhichTrashTalk == 8) {}
@@ -686,9 +740,13 @@ else if (GnomeWhichTrashTalk == 12) {}
 
 function map() {
     //Background 1
-//ctx.drawImage(Background1,0,0,700,700)
+ctx.drawImage(Background1,0,0,700,700)
     //Background 2
 //ctx.drawImage(Background2,700,0,700,700)
+    //Background 3
+//ctx.drawImage(Background3,0, 0, 700, 700)
+    //Background 4
+//ctx.drawImage(Background4, 0, 0, 1400, 700)
     //Dirtoverlayblocks: 
   /*  
 ctx.drawImage(Dirtoverlayblock, 150, 425, 70, 35)
@@ -1959,17 +2017,18 @@ let Next_level = new Hitbox (W-100, 350, 100, 100)
 
 update = () => {
     clear()
-    TrashTalk()
     FatGnomeTrigger.drawOutline()
     for(let i = 0; i < death_zone.length; i ++){
         death_zone[i].drawOutline()
     }
 ctx.drawImage(bossDefault, boss.x - 135 ,boss.y -70, 250,350)
-console.log(B_attack_1)
+//console.log(B_attack_1)
 
     SpiderTrigger.drawOutline()
     GnomeHitbox.drawOutline()
     if (Level == 0) {map()}
+    //GoatAttack()
+    Hellbomb()
     GnomeAttack()
     SpiderAttack_1()
     SpiderAttack_2()
@@ -1994,6 +2053,8 @@ console.log(B_attack_1)
             Spiderman = false
             Spiderman2 = false
             Spooderman = true
+            GoatTrigger = false
+            
         }
         }
     
@@ -2050,7 +2111,8 @@ console.log(B_attack_1)
     //console.log(ground.length, death_zone.length)
    
     if (Level == 1) {
-       
+        ctx.drawImage(Background4,0,-2,1400,689)
+        if(keyboard.h) {ctx.drawImage(Background3,0,0,1400,700)}
         if(Level_change){
             boss.y = 200
             boss_y = 135
@@ -2062,7 +2124,6 @@ console.log(B_attack_1)
             ground.push(Platform_3)
             ground.push(new Hitbox(0, 450, 250, 25))
             ground.push(new Hitbox(1025, 450, 250, 25))
-
 
             gravity = 1200
             gravity_2_jump = -300
@@ -2303,7 +2364,7 @@ console.log(B_attack_1)
     amount_jumps--
 }
     
-   
+    TrashTalk()
     updatePosition()
     updateCharacter(char_x, char_y, character)
       
