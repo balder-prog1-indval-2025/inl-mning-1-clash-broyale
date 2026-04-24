@@ -74,6 +74,8 @@ let Trashtalking = false
 let GnomeWhichTrashTalk = 0
 let Trashtalk_timer = 0
 
+let GoatHellBomb = true
+let GoatHellBombTimer = 0
 let GoatTrigger = false
 let GoatNumber = 0
 let Goat_Y = 600
@@ -702,7 +704,7 @@ let WallHitbox = []
         ground.push(new Hitbox(425, 375, 25, 25)),
         
   ]
-function Hellbomb() {if(GoatNumber == 1 && M == 0) {
+function Hellbomb() {if(GoatNumber == 1 && M == 0 ) {
     HellBombSound.play()
         M = 1
 }}
@@ -717,6 +719,7 @@ function GoatAttack() {
 
   }
     }
+    
    
 
     if(GoatNumber == 1 && Goat_Y > 301) {
@@ -725,10 +728,22 @@ function GoatAttack() {
             Goat_Y = Goat_Y-0.003
             ctx.drawImage(Goat, 650,Goat_Y-100,800, 400)
         
-            if(Goat_Y <301) {GoatTrigger = true}}
+            if(Goat_Y <301 && GoatHellBomb) {
+                GoatTrigger = true
+                GoatHellBomb = false
+            }}
             
         }
-    if(GoatTrigger) {ctx.drawImage(Goat,650,300-100,800,400)}
+    if(GoatTrigger) {ctx.drawImage(Goat,650,300-100,800,400)
+        GoatHellBombTimer+= deltaTime/100
+    }
+  if (GoatHellBombTimer > 66.9999) {
+    ctx.drawImage(Explosion,-600,-1200,3000,3000)
+} if (GoatHellBombTimer > 100) {
+    GoatTrigger = false
+    GoatHellBombTimer = 0
+    GoatHellBomb = true
+}
     if(GoatTrigger && U == 0) {
         U = 1
         GoatBaaah.play()
@@ -2163,7 +2178,7 @@ update = () => {
     GnomeHitbox.drawOutline()
     if (Level == 0) {map()}
     if (Level == 1) {map_2()}
-    //GoatAttack()
+    GoatAttack()
     Hellbomb()
     GnomeAttack()
     SpiderAttack_1()
@@ -2652,8 +2667,6 @@ update = () => {
     Background_music()
     updatePosition()
     updateCharacter(char_x, char_y, character)
-
-console.log (BoratSong)
 } 
  
 
