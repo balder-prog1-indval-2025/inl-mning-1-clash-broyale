@@ -730,7 +730,7 @@ function GoatAttack() {
         GoatHellBombTimer+= deltaTime/100
     }
   if (GoatHellBombTimer > 66.9999) {
-    ctx.drawImage(Explosion,-600,-1200,3000,3000)
+    ctx.drawImage(Explosion,-500,-1000,3000,3000)
 } if (GoatHellBombTimer > 100) {
     GoatTrigger = false
     GoatHellBombTimer = 0
