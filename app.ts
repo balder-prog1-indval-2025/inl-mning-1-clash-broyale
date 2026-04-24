@@ -96,13 +96,21 @@ let Idiot = new Audio('Audio/you-are-an-idiot.mp3')
 let Pathetic = new Audio('Audio/drdisrespect_patheticguy_by_taihplays_on_twitch.mp3')
 let IdiotKid = new Audio('Audio/drdisrespect_getthisidiotkidoutofhere_by_taihplays_on_twitch.mp3')
 let BoratSong = new Audio('Audio/Borats Disco Dance .mp3')
+let Goat_Simulator_Theme = new Audio('Audio/GoatSimulatorTheme.mp3')
+let CP_Åke = new Audio('Audio/CP-ÅKE.mp3')
+let BakaLam = new Audio ('Audio/BakaLam.mp3')
+let LOL = new Audio ('Audio/GameOverSongIWBTB.mp3')
 let Terrible = new Audio('Audio/DrTerrible.mp3')
 let GoatBaaah = new Audio('Audio/baah.mp3')
 let HellBombSound = new Audio('Audio/Hellbomb.mp3')
 //let audio = new Audio('audio_file.mp3');
 //audio.play();
 
-
+let music_1 = false
+let music_2 = false
+let music_3 = false
+let music_4 = false 
+let music_CP = false
 
 let ground: Hitbox[] = []
 let wall: Hitbox[] = []
@@ -753,14 +761,14 @@ ctx.drawImage(DrDisrespectLaugh, 150,340,83,83)
 }
 for(let i = 0; i<death_zone.length; i++){
 if(character.intersects(death_zone[i]) && FatGnomeDeathCounter > 9) {
-GnomeWhichTrashTalk = random(1,5)
+GnomeWhichTrashTalk = random(2,5)
 Trashtalking = true
 FatGnomeDeathCounter = 0
 }
 if (Trashtalking == true) {
 ctx.drawImage(Talbubbla, 200, 315, 120, 90)
 Trashtalk_timer += deltaTime/100
-if (Trashtalk_timer > 1000) {
+if (Trashtalk_timer > 4000) {
     Trashtalking = false
     Trashtalk_timer = 0
 }
@@ -769,10 +777,26 @@ if (GnomeWhichTrashTalk == 1) {
     GnomeWhichTrashTalk = 0
     Trashtalk_timer = 0
 }
-else if (GnomeWhichTrashTalk == 2) {}
-else if (GnomeWhichTrashTalk == 3) {console.log("RAAHAHH")}
-else if (GnomeWhichTrashTalk == 4) {console.log("OOGA")}
-else if (GnomeWhichTrashTalk == 5) {console.log("HEHEH")}
+else if (GnomeWhichTrashTalk == 2) {
+    Idiot.play()
+    GnomeWhichTrashTalk = 0
+    Trashtalk_timer = 500 
+}
+else if (GnomeWhichTrashTalk == 3) {
+    Pathetic.play()
+    GnomeWhichTrashTalk = 0
+    Trashtalk_timer = 1500
+}
+else if (GnomeWhichTrashTalk == 4) {
+    IdiotKid.play()
+    GnomeWhichTrashTalk = 0
+    Trashtalk_timer = 2200
+}
+else if (GnomeWhichTrashTalk == 5) {
+    Terrible.play()
+    GnomeWhichTrashTalk = 0
+    Trashtalk_timer = 3200
+}
 else if (GnomeWhichTrashTalk == 6) {}
 else if (GnomeWhichTrashTalk == 7) {}
 else if (GnomeWhichTrashTalk == 8) {}
@@ -784,6 +808,73 @@ else if (GnomeWhichTrashTalk == 12) {}
 }
 }
 }      
+
+function Background_music () {
+    if (keyboard.one) {
+        music_1 = true
+        music_2 = false
+        music_3 = false
+        music_4 = false
+        music_CP = false
+    } else if (keyboard.two) {
+        music_2 = true
+        music_1 = false
+        music_3 = false
+        music_4 = false
+        music_CP = false
+    } else if (keyboard.three) {
+        music_3 = true
+        music_1 = false
+        music_2 = false
+        music_4 = false
+        music_CP = false
+    } else if (keyboard.four) {
+        music_4 = true
+        music_1 = false
+        music_2 = false
+        music_3 = false
+        music_CP = false
+    } 
+    else if (keyboard.c && keyboard.p) {
+        music_CP = true
+        music_1 = false
+        music_2 = false
+        music_3 = false
+        music_4 = false
+    }
+    if (music_1) {
+        BoratSong.play()
+        Goat_Simulator_Theme.pause()
+        CP_Åke.pause()
+        BakaLam.pause()
+        LOL.pause()
+    } else if (music_2) {
+        Goat_Simulator_Theme.play()
+        BoratSong.pause()
+        CP_Åke.pause()
+        BakaLam.pause()
+        LOL.pause()
+    } else if (music_3) {
+        BakaLam.play()
+        Goat_Simulator_Theme.pause()
+        BoratSong.pause()
+        CP_Åke.pause()
+        LOL.pause()
+    } else if (music_4) {
+        LOL.play()
+        Goat_Simulator_Theme.pause()
+        BoratSong.pause()
+        CP_Åke.pause()
+        BakaLam.pause()
+    } 
+    else if (music_CP) {
+        CP_Åke.play()
+        BoratSong.pause()
+        Goat_Simulator_Theme.pause()
+        BakaLam.pause()
+        LOL.pause()
+    }
+}
 
 function map() {
     //Background 
@@ -2573,10 +2664,9 @@ update = () => {
 }
     
     TrashTalk()
-    TrashTalk()
+    Background_music()
     updatePosition()
     updateCharacter(char_x, char_y, character)
-    //console.log(GoatHellBombTimer)
 } 
  
 
