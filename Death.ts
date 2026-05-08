@@ -1,5 +1,7 @@
-import {Level, char_x, char_y, character, Health_bar_width, boss, boss_Health, boss_Currently_Attacking, boss_Attack_hitboxes, boss_Which_attack, U, M, flames, flames_image_height, flames_image_height_change} from "./app"
-import {char_x_change, char_y_change, Health_bar_width_change, U_change, M_change, jump_time_change, boss_Health_change, boss_Attack_hitboxes_change, boss_Currently_Attacking_change, flames_y_change} from "./app"
+import {Level, boss, boss_Health} from "./app"
+import {Health_bar_width_change, U_change, M_change, u_change, boss_Health_change, boss_Attack_hitboxes_change, boss_Currently_Attacking_change,} from "./app"
+import {char_x_change, char_y_change, jump_time_change, character} from "./Movement"
+
 let death_zone: Hitbox [] = []
 let Spiderman = false
 let Spiderman2 = false
@@ -10,6 +12,8 @@ let SecondSpider_hitbox = new Hitbox (-14000,-100,50,350)
 let SecondSpider_x = -14025
 let Spider_y = -725
 let Explode = true
+let flames =  new Hitbox (0, 1050, 250, 70)
+let flames_image_height = 1000
 
 let SpiderSide = await fetchImage("images/SpiderSide.png")
 let Spider =  await fetchImage("images/Spider.png")
@@ -35,12 +39,15 @@ let FatGnomeDeathCounter = 0
 
 death_zone.push(SecondSpider_hitbox)
 death_zone.push(Spider_hitbox)
+//death_zone.push(flames)
 let GnomeHitbox = new Hitbox(1015,350,25,75)
 let ExplosionHitbox = new Hitbox(5000,250,300,300)
 death_zone.push(GnomeHitbox)
 death_zone.push(ExplosionHitbox)
-let death_zone_floor = new Hitbox (-1000, 600, 3200, 200)
+//let death_zone_floor = new Hitbox (-1000, H, 3200, 200)
 //]
+
+death_zone.push (new Hitbox (-1000, H, 3200, 200))
 // Spikes ----------------------
 //Spikes left
 //Kopiera ut allt detta senare från funktionen
@@ -151,7 +158,7 @@ export function GnomeAttack() {
    
    export function death () {
     for(let i = 0; i<death_zone.length; i++) {
-        if (character.intersects(death_zone[i] || death_zone_floor || flames) || keyboard.r) { // makes it so if you fall of the map or press "R" you die (reset)
+        if (character.intersects(death_zone[i]) || keyboard.r) { // makes it so if you fall of the map or press "R" you die (reset)
             keyboard.r = false
             char_x_change(50)
             char_y_change(400)
@@ -174,10 +181,11 @@ export function GnomeAttack() {
             //GoatTrigger = false
             U_change(0)
             M_change(0)
+            u_change(0)
             jump_time_change(0)
             boss_Health_change(200)
             Health_bar_width_change (W-842)
-            flames.y = 1000
+            flames_y_change(1000)
             flames_image_height_change  (1000)
             boss_Attack_hitboxes_change([])
             boss_Currently_Attacking_change (true)
@@ -201,5 +209,11 @@ export function Spiderman_change (nytt_värde) {
 export function Spiderman2_change (nytt_värde) {
     Spiderman2 = nytt_värde
 }
+export function flames_image_height_change (nytt_värde) {
+    flames_image_height = nytt_värde
+}
+export function flames_y_change (nytt_värde) {
+    flames.y = nytt_värde
+}
 
-export {death_zone, deaths, FatGnomeDeathCounter, SpiderTrigger, GnomeHitbox}
+export {death_zone, deaths, FatGnomeDeathCounter, SpiderTrigger, GnomeHitbox, flames, flames_image_height}

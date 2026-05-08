@@ -1,25 +1,10 @@
 import {map, map_2, draw_map, WallHitbox, WallHitbox_clear, ground, ground_clear} from "./Map"
-import {death_zone, death_zone_clear, SpiderAttack_1, SpiderAttack_2, GnomeAttack, explosion, explosionsound, FatGnomeDeathCounter, deaths, death, SpiderTrigger, GnomeHitbox} from "./Death"
+import {death_zone, death_zone_clear, SpiderAttack_1, SpiderAttack_2, GnomeAttack, explosion, explosionsound, FatGnomeDeathCounter, deaths, death, SpiderTrigger, GnomeHitbox, flames, flames_image_height, flames_image_height_change} from "./Death"
+import {jump, dash, walk, updateCharacter, updatePosition, character, amount_dashes, amount_jumps, dashing, jumping, char_x, char_y, char_Direction, gravity_2_jump} from "./Movement"
 
 import {FatGnomeDeathCounter_change, deaths_change, Spiderman_change, Spiderman2_change} from "./Death"
-let amount_jumps = 2
-let amount_dashes = 2
-let char_x = 100
-let char_y = 400
-let movement_x = 0
-let movement_y = 0
-let jumping = false
-let jump_time = 0
-let jump_reset = true
-let gravity = 18000
-let gravity_2_jump = -6500
-let fall_gravity = 10000
-let character = new Hitbox (char_x,char_y, 25, 40)
-let dash_time = 0
-let dashing = false
-let after_dash = false
-let fall_time = 0
-let char_Direction = false
+import {char_x_change, char_y_change, jump_time_change, gravity_change, gravity_2_jump_change, fall_gravity_change, movement_x_change, movement_y_change, dash_time_change, jumping_change, dashing_change, amount_dashes_change, amount_jumps_change} from "./Movement"
+
 let StoryTell = 0 // Used once
 let Level = 0
 let Level_change = true
@@ -31,15 +16,14 @@ enum AttackType {
 
 let Boss_Background_Jesus = await fetchImage("images/BossBackground_Jesus.png")
 let Boss_Background_NoJesus = await fetchImage("images/BossBackground_NoJesus.jpg")
-let Character_RevertedImage = await fetchImage ("images/Character_reverted.png")
-let Character_Image = await fetchImage ("images/Character.png")
+
 let flames_image = await fetchImage ("images/Flames.png")
 let platform_image = await fetchImage ("images/Platform.png")
 let bullet_image = await fetchImage ("images/Bullet.png")
-let Gnome = await fetchImage("images/Gnome.png")
+
 let Goat = await fetchImage("images/Goat.png")
 let Explosion = await fetchImage("images/explosion.png")
-let SpiderSide = await fetchImage("images/SpiderSide.png")
+
 
 let Spider =  await fetchImage("images/Spider.png")
 let Health_bar_image = await fetchImage ("images/Hpbarfinish.png")
@@ -75,16 +59,9 @@ let Goat_Y = 600
 
 let U = 0 // Used for goat trigger
 let u = 0 // Used for 2nd Goat trigger
-let g = 0 // used for explosion to stay active for a while
-let b = 0 // used for audio of explosion
-let B = 0 // Used for the Godzilla Sound
-let G = 0 // Used for audio of Gnome
-let V = 0 // Used for Gnome delay
-let J = 0 // Used for  SpiderAttack2 audio delay
+
 let M = 0 // Used for Hellbomb activation
-let GnomeWOO = new Audio('Audio/GnomeWOO.mp3') 
-let ExplosionSound = new Audio('Audio/loud-explosion.mp3')
-let Godzilla = new Audio('Audio/Godzilla.mp3')
+
 let Idiot = new Audio('Audio/you-are-an-idiot.mp3')
 let Pathetic = new Audio('Audio/drdisrespect_patheticguy_by_taihplays_on_twitch.mp3')
 let IdiotKid = new Audio('Audio/drdisrespect_getthisidiotkidoutofhere_by_taihplays_on_twitch.mp3')
@@ -150,10 +127,10 @@ let blowing = false
 let Arms_first_y = -200
 let Arms_second_y = -50
 let Jesus_y = -150
-
+/*
 let flames =  new Hitbox (0, 1050, 250, 70)
 let flames_image_height = 1000
-
+*/
 
 
 let Platform_1 = new Sprite(platform_image, 1, 1)
@@ -186,7 +163,7 @@ function GoatAttack() {
     u = u + 1
   }
   if(u == 10 && GoatNumber != 1) {
-    GoatNumber = random(0,200) //changing this will change how often goat attack will happen
+    GoatNumber = random(0,20000) //changing this will change how often goat attack will happen
     u = 0
    
 
@@ -221,11 +198,11 @@ function GoatAttack() {
     Goat_Y = 600
     GoatNumber = 0
     M = 0
-    jump_time = 0
+    jump_time_change (0)
     HellBombHitbox.x = 200000
     if(HellBombHitbox.x > 0) { 
-        char_x = 100
-        char_y = 400
+        char_x_change (100)
+        char_y_change (400)
 }
 }
     if(GoatTrigger && U == 0) {
@@ -245,7 +222,7 @@ ctx.drawImage(DrDisrespectLaugh, 150,340,83,83)
 }
 for(let i = 0; i<death_zone.length; i++){
 if(character.intersects(death_zone[i]) && FatGnomeDeathCounter > 9) {
-GnomeWhichTrashTalk = random(16,16)
+GnomeWhichTrashTalk = random(1,16)
 Trashtalking = true
 FatGnomeDeathCounter_change (0)
 }
@@ -661,163 +638,6 @@ if(i<10 || i>40 ) {
 }
 }
 
-
-/**
- * @return_jump = the value the function returns
- * @jump_time = determines the speed at which the character falls, the gravity
- * @jumping = activates if keyboard.space is clicked
- * @amount_jumps = determines how many jumps you have, resets if the character intersects with the ground
- * 
- * @fall_time = a delay for the passive gravity
- */
-
-function jump () {// Determines everything that has with the characters movement in y-axis to do.
-    let return_jump = 0
-    for (let i = 0; i < ground.length ; i++){
-        if (dashing && (keyboard.d || keyboard.a) && amount_dashes > 0 ) { // the gravity doesn't affect the character while dashing
-            
-            return_jump = 0
-        } else if(after_dash && !character.intersects(ground[i])) { // makes it so after a dash the gravity resets
-            if (jumping) { 
-                jump_time = gravity
-            }else if (fall_time > fall_gravity) {jump_time = 0}
-            after_dash = false
-            
-        } 
-        else if(jumping && !character.intersects(ground[i]) && after_dash == false) { // the actual jump
-            if (jump_reset) {
-                jump_time = 0
-                jump_reset = false
-            }
-            jump_time += deltaTime
-            if(jump_time <gravity*2) {
-                return_jump = -8 + 8 * jump_time/gravity
-        } else {return_jump = 4 * jump_time/gravity}
-        } 
-        else if (character.intersects (ground[i])) { // when the character intersects with the hitbox.
-            jumping = false // The character can't jump 
-            dashing = false // ... or "dash"
-            fall_time = 0
-            jump_time = 0
-            jump_reset = true
-            movement_y= 0 // all momentum i y-led blir 0,
-            amount_jumps = 2
-            amount_dashes = 2
-            return_jump = -4 // The character moves above the hitbox, creates this jittery movement
-        }
-    else if (!jumping && !character.intersects(ground[i])) { //när karaktären inte hoppar och inte träffar marken
-        fall_time +=deltaTime
-        if (fall_time> fall_gravity){ // A little delay so that the character doesn't fall immediately
-            jump_time += deltaTime
-            return_jump = 8 * jump_time/gravity 
-            }
-    }
-        
-    }
-    for(let i = 0; i < wall.length; i++){ // makes it so the character can't get into walls
-        if (character.intersects(wall[i])){
-            movement_x = 0
-        }
-    }
-    return return_jump
-}
-
-/**
- * @return_dash = the value the function returns
- * @dashing = is active if keyboard.shift is pressed 
- * @dash_time = the length of the dash
- * @amount_dashes = how many dashes the character has
- * @after_dash = a variable that helps with reseting movement after a dash
- */
-function dash () {
-    let return_dash = 0
-    for (let i = 0; i < ground.length ; i++){
-        if (dashing && !character.intersects(ground[i])) {
-            
-            if ( keyboard.d && dash_time < 100 && amount_dashes>0) {
-            dash_time += deltaTime
-            
-        
-             return_dash = 2
-             return return_dash
-             } else if (keyboard.a && dash_time < 100 && amount_dashes>0) {
-            dash_time += deltaTime
-        
-            return_dash = -2
-            return return_dash
-            } if ( dash_time >= 100) {
-            amount_dashes--
-            dash_time = 0
-            dashing = false
-            after_dash = true
-            return_dash = -2
-            return return_dash
-            } 
-        }
-        else if (dashing && character.intersects(ground[i])) {
-            dashing = false
-            return_dash = 0
-        }
-}
-    return return_dash
-    
-}
-    
-
-
-function walk () { //standard movement in x-axis
-    if (dashing && (keyboard.a || keyboard.d) && amount_dashes > 0) { // makes it so walking doesn't affect dashing. 
-        return movement_x
-    }
-    else if (keyboard.a) {
-        return -5
-    }else if (keyboard.d ) {
-        return 5
-    }
-
-   else {
-        return 0
-}
-}
-
-/**
- * @char_y = the actual place in y-axis the character is
- * @char_x = same as above but instead x-axis
- * @movement_x = the velocity in x-axis (pixels/frame)
- * @movement_y = the velocity in y-axis
- */
-function updatePosition () { 
-char_x += movement_x 
-char_y += movement_y
-}
-
-/**
- * 
- * @char_Direction = determines which way the character is facing  
- */
-function updateCharacter(x:number, y:number, hitbox:Hitbox) {
-if (keyboard.d){
-    char_Direction = false
-    let c = ctx.drawImage(Character_RevertedImage, x -11, y-21, 50, 50)
-}
-else if (keyboard.a){
-    char_Direction = true
-    let c = ctx.drawImage(Character_Image, x -11, y-21, 50, 50)
-}
-if (!char_Direction) {
-    let c = ctx.drawImage(Character_RevertedImage, x -11, y-21, 50, 50)
-}
-else if(char_Direction) {
-    let c = ctx.drawImage(Character_Image, x -11, y-21, 50, 50)
-}
- 
-hitbox.x = x
-hitbox.y = y -15
-//hitbox.drawOutline()
-
-
-}
-
 function shoot () { // makes hitboxes for bullets 
     
     if (keyboard.enter ) { 
@@ -958,8 +778,8 @@ let Next_level = new Hitbox (W-100, 350, 100, 100)
 update = () => {
     clear()
     if (character.intersects(HellBombHitbox)) {
-        deaths++
-        char_y = -10000000000000000000
+        deaths_change(deaths + 1)
+        char_y_change(-10000000000000000000)
         
     }
     FatGnomeTrigger.drawOutline()
@@ -980,11 +800,13 @@ update = () => {
     SpiderAttack_2()
     explosion()
     explosionsound()
+    death()
+   
     if(character.intersects(SpiderTrigger)) { 
         Spiderman_change (true)
         Spiderman2_change (true)
     }
-    death()
+
     
     
     
@@ -992,29 +814,29 @@ update = () => {
     
         for(let i = 0; i < WallHitbox.length; i++) {
             if(character.intersects(WallHitbox[i]) && keyboard.d && !char_Direction && !jumping) {
-            char_x = char_x -5
-            char_y = char_y +2
+            char_x_change (char_x -5)
+            char_y_change(char_y +2)
             }
             else if(character.intersects(WallHitbox[i]) && keyboard.a && char_Direction && !jumping) {
-                char_x = char_x + 5
-                char_y = char_y +2
+                char_x_change(char_x + 5)
+                char_y_change(char_y +2)
             }
             else if(character.intersects(WallHitbox[i]) && jumping) {
-                char_y = char_y + 5
+                char_y_change(char_y + 5)
             }
             else if(character.intersects(WallHitbox[i]) && dashing && keyboard.d) {
-                char_x = char_x -10
+                char_x_change(char_x -10)
             }
             else if(character.intersects(WallHitbox[i]) && dashing && keyboard.a) {
-                char_x = char_x + 10
+                char_x_change(char_x + 10)
             }
             
         }
             //--------------
     if (character.intersects(Next_level) || keyboard.s && keyboard.v && keyboard.e && keyboard.n && Level == 0) {
         Level++
-        char_x = 50
-        char_y = 400
+        char_x_change(50)
+        char_y_change(400)
     }
     //Next_level.drawOutline()
     
@@ -1025,7 +847,7 @@ update = () => {
         blow_timer += deltaTime/100
         
         if (character.intersects(blow_hitbox)) {
-            char_x -= 1,5
+            char_x_change (char_x -1.5)
         }
         if (blow_timer > 30) {
             blowing = false
@@ -1053,10 +875,12 @@ update = () => {
             ground.push(Platform_3)
             ground.push(new Hitbox(0, 450, 250, 25))
             ground.push(new Hitbox(1025, 450, 250, 25))
-
-            gravity = 1200
-            gravity_2_jump = -300
-            fall_gravity = 800
+            
+            death_zone.push(flames)
+            death_zone.push (new Hitbox (-1000, H, 3200, 200))
+            gravity_change(1200)
+            gravity_2_jump_change(-300)
+            fall_gravity_change(800)
             SpiderTrigger.y = 200000
             GnomeHitbox.y = 200000
 
@@ -1074,10 +898,10 @@ update = () => {
     
     if (char_x > 250 && Level == 1) {
         flames.y = 430
-        flames_image_height = 350
+        flames_image_height_change(350)
     }
 
- 
+
     text ("Death count: " + deaths, 10, 20,15,"White") // a visible death count
     
     
@@ -1246,15 +1070,15 @@ update = () => {
 
             }   
             if (character.intersects(boss_Attack_hitboxes[i]["hitbox"]) || character.intersects(boss_Attack_hitboxes[i]["hitbox2"]) || character.intersects(boss_Attack_hitboxes[i]["hitbox_leftWall"]) || character.intersects(boss_Attack_hitboxes[i]["hitbox_rightWall"])) {
-                char_x = 50
-                char_y = 400
+                char_x_change(50)
+                char_y_change(400)
                 deaths_change(deaths+1)
                 boss_Health = 200
                 boss_Attack_hitboxes[i]["hitbox"].x =500
                 boss_Attack_hitboxes[i]["hitbox2"].x =525
                 boss_Attack_hitboxes.shift()
                 flames.y = 1000
-                flames_image_height = 1000
+                flames_image_height_change(1000)
                 Health_bar_width = W-842
                 boss_Currently_Attacking = true
                 Goat_Y = 600
@@ -1300,13 +1124,13 @@ update = () => {
 
             
             if (character.intersects(boss_Attack_hitboxes[i]["hitbox"]) || character.intersects(boss_Attack_hitboxes[i]["hitbox2"])  || character.intersects(boss_Attack_hitboxes[i]["hitbox3"])){
-                char_x = 50
-                char_y = 400
+                char_x_change(50)
+                char_y_change(400)
                 deaths_change (deaths + 1)
                 boss_Health = 200
                 boss_Attack_hitboxes.shift()
                 flames.y = 1000
-                flames_image_height = 1000
+                flames_image_height_change(1000)
                 Health_bar_width = W-842
                 Jesus_y = -150
                 //Goat_Y = 600
@@ -1327,8 +1151,8 @@ update = () => {
             ctx.drawImage(Spit_Projectile, boss_Attack_hitboxes[i]["hitbox3"].x -10, boss_Attack_hitboxes[i]["hitbox3"].y -20, boss_Attack_hitboxes[i]["hitbox3"].width + 40, boss_Attack_hitboxes[i]["hitbox3"].height + 50)
 
             if (character.intersects(boss_Attack_hitboxes[i]["hitbox"]) || character.intersects(boss_Attack_hitboxes[i]["hitbox2"]) || character.intersects(boss_Attack_hitboxes[i]["hitbox3"])){
-                char_x = 50
-                char_y = 400
+                char_x_change(50)
+                char_y_change(400)
                 deaths_change (deaths + 1 )
                 boss_Health = 200
                 boss.y -= 0
@@ -1340,7 +1164,7 @@ update = () => {
                 }
                 boss_Currently_Attacking = true
                 flames.y = 1000
-                flames_image_height = 1000
+                flames_image_height_change(1000)
                 Goat_Y = 600
                 boss_Attack_hitboxes.shift()
             }
@@ -1390,14 +1214,14 @@ update = () => {
         //ground[i].drawOutline()
 
     }
-    movement_x = walk() + dash() // 
-    movement_y = jump() 
+    movement_x_change(walk() + dash()) // 
+    movement_y_change(jump()) 
     if (keyboard.shift && (keyboard.a || keyboard.d)) {
         keyboard.shift = false
-        dashing = true 
+        dashing_change(true) 
         
         if(amount_dashes== 1 && dashing){
-            dash_time = 0
+            dash_time_change(0)
         }
     }
     
@@ -1407,13 +1231,13 @@ update = () => {
         keyboard.space = false 
     
      if (amount_jumps == 1 && jumping) {
-        jump_time = gravity_2_jump
+        jump_time_change(gravity_2_jump)
         
     }
     else {
-        jumping = true
+        jumping_change(true)
     }
-    amount_jumps--
+    amount_jumps_change(amount_jumps - 1) 
 }
     
     TrashTalk()
@@ -1425,12 +1249,7 @@ update = () => {
 
 
 export {boss_Which_attack, Level, char_x, char_y, character,Health_bar_width, boss, boss_Health, U, M, flames, flames_image_height, boss_Currently_Attacking, boss_Attack_hitboxes}
-export function char_x_change(nytt_värde) {
-    char_x = nytt_värde
-}
-export function char_y_change(nytt_värde) {
-    char_y = nytt_värde
-}
+
 export function Health_bar_width_change (nytt_värde) {
     Health_bar_width = nytt_värde
 }
@@ -1440,21 +1259,16 @@ export function U_change(nytt_värde) {
 export function M_change(nytt_värde) {
     M = nytt_värde
 }
-export function jump_time_change(nytt_värde) {
-    jump_time = nytt_värde
+export function u_change(nytt_värde) {
+    u = nytt_värde
 }
 export function boss_Health_change(nytt_värde) {
     boss_Health = nytt_värde
 }
-export function flames_image_height_change (nytt_värde) {
-    flames_image_height = nytt_värde
-}
+
 export function boss_Attack_hitboxes_change (nytt_värde) {
 boss_Attack_hitboxes = nytt_värde
 }
 export function boss_Currently_Attacking_change (nytt_värde) {
     boss_Currently_Attacking = nytt_värde
-}
-export function flames_y_change (nytt_värde) {
-    flames.y = nytt_värde
 }
