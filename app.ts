@@ -4,8 +4,8 @@ import {death_zone, death_zone_clear, SpiderAttack_1, SpiderAttack_2, GnomeAttac
 import {FatGnomeDeathCounter_change, deaths_change, Spiderman_change, Spiderman2_change} from "./Death"
 let amount_jumps = 2
 let amount_dashes = 2
-let char_x = 1050
-let char_y = 0
+let char_x = 100
+let char_y = 400
 let movement_x = 0
 let movement_y = 0
 let jumping = false
@@ -65,6 +65,7 @@ let Trashtalking = false
 let GnomeWhichTrashTalk = 0
 let Trashtalk_timer = 0
 
+let HellBombHitbox = new Hitbox(2000000,0,W,H)
 let GoatHellBomb = true
 let GoatHellBombTimer = 0
 let GoatTrigger = false
@@ -87,12 +88,30 @@ let Godzilla = new Audio('Audio/Godzilla.mp3')
 let Idiot = new Audio('Audio/you-are-an-idiot.mp3')
 let Pathetic = new Audio('Audio/drdisrespect_patheticguy_by_taihplays_on_twitch.mp3')
 let IdiotKid = new Audio('Audio/drdisrespect_getthisidiotkidoutofhere_by_taihplays_on_twitch.mp3')
+let Doc19931994 = new Audio('Audio/The2TimeBackToBack19931994BlockBusterVideoGameChampion.mp3')
+
 let BoratSong = new Audio('Audio/Borats Disco Dance .mp3')
 let Goat_Simulator_Theme = new Audio('Audio/GoatSimulatorTheme.mp3')
 let CP_Åke = new Audio('Audio/CP-ÅKE.mp3')
 let BakaLam = new Audio ('Audio/BakaLam.mp3')
 let LOL = new Audio ('Audio/GameOverSongIWBTB.mp3')
+let Badger = new Audio('Audio/BadgerBadgerBadgerBadgerBadgerBadgerBadgerBadgerBadgerBadgerBadgerBadgerBadgerBadgerBadgerBadgerBadger.mp3')
+let World1IWBTB = new Audio('Audio/World1IWBTB.mp3')
+let CoconutSong = new Audio('Audio/CoconutSong.mp3')
+let OOGABOOGA = new Audio('Audio/OOGABOOGA.mp3')
+let BOOGAOOGA = new Audio('Audio/BOOGAOOGA.mp3')
+let FatAnkles = new Audio('Audio/FatAnkles.mp3')
 let Terrible = new Audio('Audio/DrTerrible.mp3')
+let WayBetter = new Audio('Audio/WayBetter.mp3')
+let Slicing = new Audio('Audio/slicing.mp3')
+let Raul = new Audio('Audio/Raul.mp3')
+let Motorcycle = new Audio('Audio/Motorcycle.mp3')
+let GetTFOut = new Audio('Audio/GetTFOut.mp3')
+let Arena = new Audio('Audio/Arena.mp3')
+let Boner = new Audio('Audio/Boner.mp3')
+let BodyTrashTalk = new Audio('Audio/BodyTrashTalk.mp3')
+let WakeUp = new Audio('Audio/WakeUp.mp3')
+let Dolphin = new Audio('Audio/Dolphin.mp3')    
 let GoatBaaah = new Audio('Audio/baah.mp3')
 let HellBombSound = new Audio('Audio/Hellbomb.mp3')
 //let audio = new Audio('audio_file.mp3');
@@ -102,6 +121,12 @@ let music_1 = false
 let music_2 = false
 let music_3 = false
 let music_4 = false 
+let music_5 = false
+let music_6 = false
+let music_7 = false
+let music_8 = false
+let music_9 = false
+let music_0 = false
 let music_CP = false
 
 
@@ -160,7 +185,8 @@ function GoatAttack() {
     for(let i = 0; i < 10;i++) {
     u = u + 1
   }
-  if(u == 10 && GoatNumber != 1) {GoatNumber = random(0,10000) //changing this will change how often goat attack will happen
+  if(u == 10 && GoatNumber != 1) {
+    GoatNumber = random(0,200) //changing this will change how often goat attack will happen
     u = 0
    
 
@@ -170,7 +196,6 @@ function GoatAttack() {
    
 
     if(GoatNumber == 1 && Goat_Y > 301) {
-
         for(let i = 0; i<301; i ++) {
             Goat_Y = Goat_Y-0.003
             ctx.drawImage(Goat, 650,Goat_Y-100,800, 400)
@@ -181,15 +206,27 @@ function GoatAttack() {
             }}
             
         }
-    if(GoatTrigger) {ctx.drawImage(Goat,650,300-100,800,400)
+    if(GoatTrigger) {
+        ctx.drawImage(Goat,650,300-100,800,400)
         GoatHellBombTimer+= deltaTime/100
     }
   if (GoatHellBombTimer > 66.9999) {
-    ctx.drawImage(Explosion,-600,-1200,3000,3000)
+    HellBombHitbox.x = 0
+    ctx.drawImage(Explosion,-500,-1000,3000,3000)
+    U = 1
 } if (GoatHellBombTimer > 100) {
     GoatTrigger = false
     GoatHellBombTimer = 0
     GoatHellBomb = true
+    Goat_Y = 600
+    GoatNumber = 0
+    M = 0
+    jump_time = 0
+    HellBombHitbox.x = 200000
+    if(HellBombHitbox.x > 0) { 
+        char_x = 100
+        char_y = 400
+}
 }
     if(GoatTrigger && U == 0) {
         U = 0
@@ -208,49 +245,97 @@ ctx.drawImage(DrDisrespectLaugh, 150,340,83,83)
 }
 for(let i = 0; i<death_zone.length; i++){
 if(character.intersects(death_zone[i]) && FatGnomeDeathCounter > 9) {
-GnomeWhichTrashTalk = random(2,5)
+GnomeWhichTrashTalk = random(16,16)
 Trashtalking = true
 FatGnomeDeathCounter_change (0)
 }
 if (Trashtalking == true) {
-ctx.drawImage(Talbubbla, 200, 315, 120, 90)
+ctx.drawImage(Talbubbla, 200, 305, 120, 90)
 Trashtalk_timer += deltaTime/100
 if (Trashtalk_timer > 4000) {
     Trashtalking = false
     Trashtalk_timer = 0
 }
 if (GnomeWhichTrashTalk == 1) {
-    console.log("HEJ")
+    FatAnkles.play()
     GnomeWhichTrashTalk = 0
-    Trashtalk_timer = 0
+    Trashtalk_timer = 2350
 }
 else if (GnomeWhichTrashTalk == 2) {
     Idiot.play()
     GnomeWhichTrashTalk = 0
-    Trashtalk_timer = 500 
+    Trashtalk_timer = 2500
 }
 else if (GnomeWhichTrashTalk == 3) {
     Pathetic.play()
     GnomeWhichTrashTalk = 0
-    Trashtalk_timer = 1500
+    Trashtalk_timer = 3000
 }
 else if (GnomeWhichTrashTalk == 4) {
     IdiotKid.play()
     GnomeWhichTrashTalk = 0
-    Trashtalk_timer = 2200
+    Trashtalk_timer = 3150
 }
 else if (GnomeWhichTrashTalk == 5) {
     Terrible.play()
     GnomeWhichTrashTalk = 0
-    Trashtalk_timer = 3200
+    Trashtalk_timer = 3650
 }
-else if (GnomeWhichTrashTalk == 6) {}
-else if (GnomeWhichTrashTalk == 7) {}
-else if (GnomeWhichTrashTalk == 8) {}
-else if (GnomeWhichTrashTalk == 9) {}
-else if (GnomeWhichTrashTalk == 10) {}
-else if (GnomeWhichTrashTalk == 11) {}
-else if (GnomeWhichTrashTalk == 12) {}
+else if (GnomeWhichTrashTalk == 6) {
+    Doc19931994.play()
+    GnomeWhichTrashTalk = 0
+    Trashtalk_timer = -1000
+}
+else if (GnomeWhichTrashTalk == 7) {
+    Raul.play()
+    GnomeWhichTrashTalk = 0
+    Trashtalk_timer = 3600
+}
+else if (GnomeWhichTrashTalk == 8) { 
+    Slicing.play()
+    GnomeWhichTrashTalk = 0
+    Trashtalk_timer = 3400
+}
+else if (GnomeWhichTrashTalk == 9) {
+    WayBetter.play()
+    GnomeWhichTrashTalk = 0
+    Trashtalk_timer = 1700
+}
+else if (GnomeWhichTrashTalk == 10) {
+    GetTFOut.play()
+    GnomeWhichTrashTalk = 0
+    Trashtalk_timer = 3150
+}
+else if (GnomeWhichTrashTalk == 11) {
+    Arena.play()
+    GnomeWhichTrashTalk = 0
+    Trashtalk_timer = 3150
+}
+else if (GnomeWhichTrashTalk == 12) {
+    BodyTrashTalk.play()
+    GnomeWhichTrashTalk = 0
+    Trashtalk_timer = 1500
+}
+else if (GnomeWhichTrashTalk == 13) {
+    Dolphin.play()
+    GnomeWhichTrashTalk = 0
+    Trashtalk_timer = 3000
+}
+else if (GnomeWhichTrashTalk == 14) {
+    Boner.play()
+    GnomeWhichTrashTalk = 0
+    Trashtalk_timer = 3000
+}   
+else if (GnomeWhichTrashTalk == 15) {
+    Motorcycle.play()
+    GnomeWhichTrashTalk = 0
+    Trashtalk_timer = -600
+}
+else if (GnomeWhichTrashTalk == 16) {
+    WakeUp.play()
+    GnomeWhichTrashTalk = 0
+    Trashtalk_timer = 3000
+}
 
 }
 }
@@ -258,36 +343,138 @@ else if (GnomeWhichTrashTalk == 12) {}
 
 function Background_music () {
     if (keyboard.one) {
+        music_0 = false
         music_1 = true
         music_2 = false
         music_3 = false
         music_4 = false
+        music_5 = false
+        music_6 = false
+        music_7 = false
+        music_8 = false
+        music_9 = false
         music_CP = false
     } else if (keyboard.two) {
-        music_2 = true
+        music_0 = false
         music_1 = false
+        music_2 = true
         music_3 = false
         music_4 = false
+        music_5 = false
+        music_6 = false
+        music_7 = false
+        music_8 = false
+        music_9 = false
         music_CP = false
     } else if (keyboard.three) {
-        music_3 = true
+        music_0 = false
         music_1 = false
         music_2 = false
+        music_3 = true
         music_4 = false
+        music_5 = false
+        music_6 = false
+        music_7 = false
+        music_8 = false
+        music_9 = false
         music_CP = false
     } else if (keyboard.four) {
-        music_4 = true
+        music_0 = false
         music_1 = false
         music_2 = false
         music_3 = false
+        music_4 = true
+        music_5 = false
+        music_6 = false
+        music_7 = false
+        music_8 = false
+        music_9 = false
+        music_CP = false
+    } else if (keyboard.five) {
+        music_0 = false
+        music_1 = false
+        music_2 = false
+        music_3 = false
+        music_4 = false
+        music_5 = true
+        music_6 = false
+        music_7 = false
+        music_8 = false
+        music_9 = false
+        music_CP = false
+    } else if (keyboard.six) {
+        music_0 = false
+        music_1 = false
+        music_2 = false
+        music_3 = false
+        music_4 = false
+        music_5 = false
+        music_6 = true
+        music_7 = false
+        music_8 = false
+        music_9 = false
+        music_CP = false
+    } else if (keyboard.seven) {
+        music_0 = false
+        music_1 = false
+        music_2 = false
+        music_3 = false
+        music_4 = false
+        music_5 = false
+        music_6 = false
+        music_7 = true
+        music_8 = false
+        music_9 = false
+        music_CP = false
+    } else if (keyboard.eight) {
+        music_0 = false
+        music_1 = false
+        music_2 = false
+        music_3 = false
+        music_4 = false
+        music_5 = false
+        music_6 = false
+        music_7 = false
+        music_8 = true
+        music_9 = false
+        music_CP = false
+    } else if (keyboard.nine) {
+        music_0 = false
+        music_1 = false
+        music_2 = false
+        music_3 = false
+        music_4 = false
+        music_5 = false
+        music_6 = false
+        music_7 = false
+        music_8 = false
+        music_9 = true
+        music_CP = false
+    } else if (keyboard.zero) {
+        music_0 = true
+        music_1 = false
+        music_2 = false
+        music_3 = false
+        music_4 = false
+        music_5 = false
+        music_6 = false
+        music_7 = false
+        music_8 = false
+        music_9 = false
         music_CP = false
     } 
     else if (keyboard.c && keyboard.p) {
         music_CP = true
+        music_0 = false
         music_1 = false
         music_2 = false
         music_3 = false
         music_4 = false
+        music_5 = false
+        music_6 = false
+        music_7 = false
+        music_8 = false
+        music_9 = false
     }
     if (music_1) {
         BoratSong.play()
@@ -295,24 +482,110 @@ function Background_music () {
         CP_Åke.pause()
         BakaLam.pause()
         LOL.pause()
+        Badger.pause()
+        World1IWBTB.pause()
+        CoconutSong.pause()
+        OOGABOOGA.pause()
+        BOOGAOOGA.pause()
     } else if (music_2) {
         Goat_Simulator_Theme.play()
         BoratSong.pause()
         CP_Åke.pause()
         BakaLam.pause()
         LOL.pause()
+        Badger.pause()
+        World1IWBTB.pause()
+        CoconutSong.pause()
+        OOGABOOGA.pause()
+        BOOGAOOGA.pause()
     } else if (music_3) {
         BakaLam.play()
         Goat_Simulator_Theme.pause()
         BoratSong.pause()
         CP_Åke.pause()
         LOL.pause()
+        Badger.pause()
+        World1IWBTB.pause()
+        CoconutSong.pause()
+        OOGABOOGA.pause()
+        BOOGAOOGA.pause()
     } else if (music_4) {
         LOL.play()
         Goat_Simulator_Theme.pause()
         BoratSong.pause()
         CP_Åke.pause()
         BakaLam.pause()
+        Badger.pause()
+        World1IWBTB.pause()
+        CoconutSong.pause()
+        OOGABOOGA.pause()
+        BOOGAOOGA.pause()
+    } else if (music_5) {
+        LOL.pause()
+        Goat_Simulator_Theme.pause()
+        BoratSong.pause()
+        CP_Åke.pause()
+        BakaLam.pause()
+        Badger.play()
+        World1IWBTB.pause()
+        CoconutSong.pause()
+        OOGABOOGA.pause()
+        BOOGAOOGA.pause()
+    } else if (music_6) {
+        LOL.pause()
+        Goat_Simulator_Theme.pause()
+        BoratSong.pause()
+        CP_Åke.pause()
+        BakaLam.pause()
+        Badger.pause()
+        World1IWBTB.play()
+        CoconutSong.pause()
+        OOGABOOGA.pause()
+        BOOGAOOGA.pause()
+    } else if (music_7) {
+        LOL.pause()
+        Goat_Simulator_Theme.pause()
+        BoratSong.pause()
+        CP_Åke.pause()
+        BakaLam.pause()
+        Badger.pause()
+        World1IWBTB.pause()
+        CoconutSong.play()
+        OOGABOOGA.pause()
+        BOOGAOOGA.pause()
+    } else if (music_8) {
+        LOL.pause()
+        Goat_Simulator_Theme.pause()
+        BoratSong.pause()
+        CP_Åke.pause()
+        BakaLam.pause()
+        Badger.pause()
+        World1IWBTB.pause()
+        CoconutSong.pause()
+        OOGABOOGA.play()
+        BOOGAOOGA.pause()
+    } else if (music_9) {
+        LOL.pause()
+        Goat_Simulator_Theme.pause()
+        BoratSong.pause()
+        CP_Åke.pause()
+        BakaLam.pause()
+        Badger.pause()
+        World1IWBTB.pause()
+        CoconutSong.pause()
+        OOGABOOGA.pause()
+        BOOGAOOGA.play()
+    } else if (music_0) {
+        LOL.play()
+        Goat_Simulator_Theme.play()
+        BoratSong.play()
+        CP_Åke.play()
+        BakaLam.play()
+        Badger.play()
+        World1IWBTB.play()
+        CoconutSong.play()
+        OOGABOOGA.play()
+        BOOGAOOGA.play()
     } 
     else if (music_CP) {
         CP_Åke.play()
@@ -320,6 +593,11 @@ function Background_music () {
         Goat_Simulator_Theme.pause()
         BakaLam.pause()
         LOL.pause()
+        Badger.pause()
+        World1IWBTB.pause()
+        CoconutSong.pause()
+        OOGABOOGA.pause()
+        BOOGAOOGA.pause()
     }
 }
 
@@ -573,7 +851,6 @@ function boss_Attacks () {
 
 
 if (boss_Which_attack == 1 && boss_Health > 0) {
-    //rolf
     if (boss.y < 0 ) {
         B_attack_1 = true
     }
@@ -680,7 +957,11 @@ let Next_level = new Hitbox (W-100, 350, 100, 100)
 
 update = () => {
     clear()
-
+    if (character.intersects(HellBombHitbox)) {
+        deaths++
+        char_y = -10000000000000000000
+        
+    }
     FatGnomeTrigger.drawOutline()
     for(let i = 0; i < death_zone.length; i ++){
         death_zone[i].drawOutline()
@@ -710,11 +991,11 @@ update = () => {
     
     
         for(let i = 0; i < WallHitbox.length; i++) {
-            if(character.intersects(WallHitbox[i]) && keyboard.d && !char_Direction) {
+            if(character.intersects(WallHitbox[i]) && keyboard.d && !char_Direction && !jumping) {
             char_x = char_x -5
             char_y = char_y +2
             }
-            else if(character.intersects(WallHitbox[i]) && keyboard.a && char_Direction) {
+            else if(character.intersects(WallHitbox[i]) && keyboard.a && char_Direction && !jumping) {
                 char_x = char_x + 5
                 char_y = char_y +2
             }
@@ -730,7 +1011,7 @@ update = () => {
             
         }
             //--------------
-    if ( character.intersects(Next_level) || keyboard.s && keyboard.v && keyboard.e && keyboard.n && Level == 0) {
+    if (character.intersects(Next_level) || keyboard.s && keyboard.v && keyboard.e && keyboard.n && Level == 0) {
         Level++
         char_x = 50
         char_y = 400
