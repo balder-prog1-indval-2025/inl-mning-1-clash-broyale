@@ -1,0 +1,205 @@
+import {Level, char_x, char_y, character, Health_bar_width, boss, boss_Health, boss_Currently_Attacking, boss_Attack_hitboxes, boss_Which_attack, U, M, flames, flames_image_height, flames_image_height_change} from "./app"
+import {char_x_change, char_y_change, Health_bar_width_change, U_change, M_change, jump_time_change, boss_Health_change, boss_Attack_hitboxes_change, boss_Currently_Attacking_change, flames_y_change} from "./app"
+let death_zone: Hitbox [] = []
+let Spiderman = false
+let Spiderman2 = false
+let Spooderman = true
+let SpiderTrigger= new Hitbox(775,0, 250, 1000)
+let Spider_hitbox =  new Hitbox ( 675, -700 ,350, 50)
+let SecondSpider_hitbox = new Hitbox (-14000,-100,50,350)
+let SecondSpider_x = -14025
+let Spider_y = -725
+let Explode = true
+
+let SpiderSide = await fetchImage("images/SpiderSide.png")
+let Spider =  await fetchImage("images/Spider.png")
+let Gnome = await fetchImage("images/Gnome.png")
+let Explosion = await fetchImage("images/explosion.png")
+
+
+let g = 0 // used for explosion to stay active for a while
+let b = 0 // used for audio of explosion
+let B = 0 // Used for the Godzilla Sound
+let G = 0 // Used for audio of Gnome
+let V = 0 // Used for Gnome delay
+let J = 0 // Used for  SpiderAttack2 audio delay
+
+let Godzilla = new Audio('Audio/Godzilla.mp3')
+let GnomeWOO = new Audio('Audio/GnomeWOO.mp3') 
+let ExplosionSound = new Audio('Audio/loud-explosion.mp3')
+
+
+let deaths = 0
+let FatGnomeDeathCounter = 0 
+
+
+death_zone.push(SecondSpider_hitbox)
+death_zone.push(Spider_hitbox)
+let GnomeHitbox = new Hitbox(1015,350,25,75)
+let ExplosionHitbox = new Hitbox(5000,250,300,300)
+death_zone.push(GnomeHitbox)
+death_zone.push(ExplosionHitbox)
+let death_zone_floor = new Hitbox (-1000, 600, 3200, 200)
+//]
+// Spikes ----------------------
+//Spikes left
+//Kopiera ut allt detta senare från funktionen
+death_zone.push(new Hitbox(290, 383, 50, 15))
+death_zone.push(new Hitbox(290, 418, 50, 15))
+death_zone.push(new Hitbox(535, 425, 64, 10))
+death_zone.push(new Hitbox(565, 260, 40, 150))
+
+
+death_zone.push(new Hitbox(525, 242, 75, 17))
+death_zone.push(new Hitbox(525, 207, 75, 17))
+death_zone.push(new Hitbox(405, 555, 50, 20))
+death_zone.push(new Hitbox(450, 535, 50, 20))
+
+death_zone.push(new Hitbox(155, 145, 75, 15))
+death_zone.push(new Hitbox(155, 100, 75, 15))
+death_zone.push(new Hitbox(112, 53, 25, 8))
+
+death_zone.push(new Hitbox(1015, 425, 30, 25))
+
+
+death_zone.push(new Hitbox(1015, 0, 30, 345))
+
+
+// SpikeRightHitbox
+
+
+death_zone.push(new Hitbox(200, 545, 95, 50))
+death_zone.push(new Hitbox(250, 555, 95, 50))
+death_zone.push(new Hitbox(425, 345, 92, 10))
+death_zone.push(new Hitbox(425, 318, 75, 15))
+
+death_zone.push(new Hitbox(50, 116, 30, 210)) //RAHHHHh
+
+
+
+
+// SpikeUp
+death_zone.push(new Hitbox(100, 290, 15, 25))
+death_zone.push(new Hitbox(286, 287, 25, 25))
+death_zone.push(new Hitbox(336, 266, 25, 25))
+death_zone.push(new Hitbox(192, 296, 5, 5))
+
+death_zone.push(new Hitbox(250, 80, 140, 60))
+death_zone.push(new Hitbox(438, 80, 160, 60))
+
+
+// SpikeDownHitbox
+death_zone.push(new Hitbox(369, 445, 15, 33)) //RAHHHH2
+
+export function GnomeAttack() {
+    //GÖR KLART DETTAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+       if(Spiderman2 && Spooderman && V < 70) {
+       V = V + 1
+       }
+       if(G == 0 && V == 70) {GnomeWOO.play()
+       G = 20}
+       if(V == 70 && Spiderman2 && Spooderman) {ctx.drawImage(Gnome, 1010,350,40,70)}
+   }
+   
+   export function SpiderAttack_1() {
+       if(Spiderman) {
+      
+           ctx.drawImage(Spider, 650, Spider_y ,400, 200)
+           Spider_hitbox.y += 50
+           Spider_y += 50
+       if(Spiderman && B == 0) {
+           Godzilla.play()
+           B = 1
+       }
+       if (Spider_hitbox.y > H) {
+           Spiderman = false
+       }
+       
+   }
+   }
+   export function SpiderAttack_2() {
+       if(Spiderman2 && Spooderman) {
+       ctx.drawImage(SpiderSide, SecondSpider_x, -100, 200, 400 )
+       SecondSpider_hitbox.x +=50
+       SecondSpider_x +=50
+       if(Spiderman2 && Spooderman && J < 150) {J = J+1}
+       if(SecondSpider_x > W || Level == 1) {
+           Spiderman2 = false
+           Spooderman = false
+           GnomeHitbox.x = W+20000
+           SecondSpider_hitbox.x = W + 20000
+       }
+       if(SecondSpider_hitbox.x > -600) {
+           Godzilla.play()
+       }
+       }
+   }
+   export function explosionsound() {
+       if(SecondSpider_x > W && Explode == true && b == 0) {
+           ExplosionSound.play()
+           b = 1
+       }
+   }
+   export function explosion() {
+       if(SecondSpider_x > W && Explode == true && g < 100) {
+           ctx.drawImage(Explosion,800,150,500,500)
+           ExplosionHitbox.x = 900
+           g = g+1
+       }
+       if(g == 100) {ExplosionHitbox.x = 5000}
+   }
+   
+   export function death () {
+    for(let i = 0; i<death_zone.length; i++) {
+        if (character.intersects(death_zone[i] || death_zone_floor || flames) || keyboard.r) { // makes it so if you fall of the map or press "R" you die (reset)
+            keyboard.r = false
+            char_x_change(50)
+            char_y_change(400)
+            deaths ++
+            FatGnomeDeathCounter ++
+            Spider_hitbox.y = -700
+            Spider_y = -700
+            SecondSpider_hitbox.x = -14000
+            SecondSpider_x = -14025
+            if (Level == 0) {
+                GnomeHitbox.x = 1015
+                GnomeHitbox.y=350
+            } if (Level == 1 && boss_Health > 0){
+                boss.y = 200
+            }
+            Health_bar_width_change (W-842)
+            Spiderman = false
+            Spiderman2 = false
+            Spooderman = true
+            //GoatTrigger = false
+            U_change(0)
+            M_change(0)
+            jump_time_change(0)
+            boss_Health_change(200)
+            Health_bar_width_change (W-842)
+            flames.y = 1000
+            flames_image_height_change  (1000)
+            boss_Attack_hitboxes_change([])
+            boss_Currently_Attacking_change (true)
+        }
+        }
+}
+
+
+export function death_zone_clear () {
+    death_zone = []
+}
+export function FatGnomeDeathCounter_change (nytt_värde) {
+    FatGnomeDeathCounter = nytt_värde
+}
+export function deaths_change (nytt_värde) {
+    deaths = nytt_värde
+}
+export function Spiderman_change (nytt_värde) {
+    Spiderman = nytt_värde
+}
+export function Spiderman2_change (nytt_värde) {
+    Spiderman2 = nytt_värde
+}
+
+export {death_zone, deaths, FatGnomeDeathCounter, SpiderTrigger, GnomeHitbox}
