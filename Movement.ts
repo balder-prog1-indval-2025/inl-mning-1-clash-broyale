@@ -1,6 +1,4 @@
 import {ground, WallHitbox} from "./Map"
-import {death} from "./Death"
-
 
 let amount_jumps = 2
 let amount_dashes = 2

@@ -1,8 +1,8 @@
 import {map, map_2, draw_map, WallHitbox, WallHitbox_clear, ground, ground_clear} from "./Map"
-import {death_zone, death_zone_clear, SpiderAttack_1, SpiderAttack_2, GnomeAttack, explosion, explosionsound, FatGnomeDeathCounter, deaths, death, SpiderTrigger, GnomeHitbox, flames, flames_image_height, flames_image_height_change} from "./Death"
+import {death_zone, death_zone_clear, SpiderAttack_1, SpiderAttack_2, GnomeAttack, explosion, explosionsound, FatGnomeDeathCounter, deaths, death, SpiderTrigger, GnomeHitbox, flames, flames_image_height, GoatAttack, Hellbomb} from "./Death"
 import {jump, dash, walk, updateCharacter, updatePosition, character, amount_dashes, amount_jumps, dashing, jumping, char_x, char_y, char_Direction, gravity_2_jump} from "./Movement"
 
-import {FatGnomeDeathCounter_change, deaths_change, Spiderman_change, Spiderman2_change} from "./Death"
+import {FatGnomeDeathCounter_change, deaths_change, Spiderman_change, Spiderman2_change, flames_image_height_change, Goat_Y_change, M_change, U_change} from "./Death"
 import {char_x_change, char_y_change, jump_time_change, gravity_change, gravity_2_jump_change, fall_gravity_change, movement_x_change, movement_y_change, dash_time_change, jumping_change, dashing_change, amount_dashes_change, amount_jumps_change} from "./Movement"
 
 let StoryTell = 0 // Used once
@@ -20,9 +20,6 @@ let Boss_Background_NoJesus = await fetchImage("images/BossBackground_NoJesus.jp
 let flames_image = await fetchImage ("images/Flames.png")
 let platform_image = await fetchImage ("images/Platform.png")
 let bullet_image = await fetchImage ("images/Bullet.png")
-
-let Goat = await fetchImage("images/Goat.png")
-let Explosion = await fetchImage("images/explosion.png")
 
 
 let Spider =  await fetchImage("images/Spider.png")
@@ -48,19 +45,6 @@ let FatGnomeTrigger = new Hitbox(150,350,100,150)
 let Trashtalking = false
 let GnomeWhichTrashTalk = 0
 let Trashtalk_timer = 0
-
-let HellBombHitbox = new Hitbox(2000000,0,W,H)
-let GoatHellBomb = true
-let GoatHellBombTimer = 0
-let GoatTrigger = false
-let GoatNumber = 0
-let Goat_Y = 600
-
-
-let U = 0 // Used for goat trigger
-let u = 0 // Used for 2nd Goat trigger
-
-let M = 0 // Used for Hellbomb activation
 
 let Idiot = new Audio('Audio/you-are-an-idiot.mp3')
 let Pathetic = new Audio('Audio/drdisrespect_patheticguy_by_taihplays_on_twitch.mp3')
@@ -89,10 +73,7 @@ let Boner = new Audio('Audio/Boner.mp3')
 let BodyTrashTalk = new Audio('Audio/BodyTrashTalk.mp3')
 let WakeUp = new Audio('Audio/WakeUp.mp3')
 let Dolphin = new Audio('Audio/Dolphin.mp3')    
-let GoatBaaah = new Audio('Audio/baah.mp3')
-let HellBombSound = new Audio('Audio/Hellbomb.mp3')
-//let audio = new Audio('audio_file.mp3');
-//audio.play();
+
 
 let music_1 = false
 let music_2 = false
@@ -153,64 +134,6 @@ Platform_3.x = 825
 Platform_3.width = 50
 Platform_3.height = 25  
 
-function Hellbomb() {if(GoatNumber == 1 && M == 0 ) {
-    HellBombSound.play()
-        M = 0
-}}
-function GoatAttack() {
-  
-    for(let i = 0; i < 10;i++) {
-    u = u + 1
-  }
-  if(u == 10 && GoatNumber != 1) {
-    GoatNumber = random(0,20000) //changing this will change how often goat attack will happen
-    u = 0
-   
-
-  }
-    
-    
-   
-
-    if(GoatNumber == 1 && Goat_Y > 301) {
-        for(let i = 0; i<301; i ++) {
-            Goat_Y = Goat_Y-0.003
-            ctx.drawImage(Goat, 650,Goat_Y-100,800, 400)
-        
-            if(Goat_Y <301 && GoatHellBomb) {
-                GoatTrigger = true
-                GoatHellBomb = false
-            }}
-            
-        }
-    if(GoatTrigger) {
-        ctx.drawImage(Goat,650,300-100,800,400)
-        GoatHellBombTimer+= deltaTime/100
-    }
-  if (GoatHellBombTimer > 66.9999) {
-    HellBombHitbox.x = 0
-    ctx.drawImage(Explosion,-500,-1000,3000,3000)
-    U = 1
-} if (GoatHellBombTimer > 100) {
-    GoatTrigger = false
-    GoatHellBombTimer = 0
-    GoatHellBomb = true
-    Goat_Y = 600
-    GoatNumber = 0
-    M = 0
-    jump_time_change (0)
-    HellBombHitbox.x = 200000
-    if(HellBombHitbox.x > 0) { 
-        char_x_change (100)
-        char_y_change (400)
-}
-}
-    if(GoatTrigger && U == 0) {
-        U = 0
-        GoatBaaah.play()
-    }
-
-}
 function TrashTalk() {
 if(Level == 0 && !character.intersects(FatGnomeTrigger) && Trashtalking == false) {
 ctx.drawImage(FatGnome, 55, 344, 275, 125)
@@ -772,16 +695,295 @@ else if(boss_Which_attack == 2 && boss_Health > 0) {
 
 
 }
+function Boss_general () {
+    if (boss_Which_attack == 2 && boss_Health > 0) {
+       
+        let blow_hitbox = new Hitbox (0, -10, W, H+10)
 
+        blow_timer += deltaTime/100
+        
+        if (character.intersects(blow_hitbox)) {
+            char_x_change (char_x -1.5)
+        }
+        if (blow_timer > 30) {
+            blowing = false
+            blow_timer = 0
+        }
+    }
+
+    for(let i = 0; i < boss_Attack_hitboxes.length; i++) {
+        if (boss_Health < 0) {// makes the boss disappear
+            boss.y = 20000
+            Arms_first_y = 200000
+            Arms_second_y = 200000
+
+            boss_Attack_hitboxes = []
+            //just to make so boss doesn't move continuously
+        } else if (boss_Health > 0 && boss_Which_attack != 3 && !AttackType.FlyAttack) {
+            boss.y = 200
+        } 
+}
+
+
+    // boss_Attacks
+boss.drawOutline()
+if (boss_Which_attack == 0) {
+    ctx.drawImage(bossDefault, boss.x - 135 , boss.y - 70, 250, 350)
+}else if (boss_Which_attack == 1) {
+    ctx.drawImage(bossSpit, boss.x - 135 , boss.y - 70, 250, 350)
+}else if (boss_Which_attack == 2) {
+    ctx.drawImage(bossSlamAttack, boss.x - 200 , boss.y -240, 375, 515)
+}else if (boss_Which_attack == 3) {
+    ctx.drawImage(bossDefault, boss.x - 135 , boss.y - 70, 250, 350)
+
+} 
+
+if (Arms_firstImage == true) {
+    ctx.drawImage (bossRightArm, 250, Arms_first_y, 100, 300)
+    ctx.drawImage (bossLeftArm, 800, Arms_first_y, 100, 300)
+} 
+if (Arms_secondImage == true) {
+    ctx.drawImage (bossRightArm, 250, Arms_second_y, 100, 630)
+    ctx.drawImage (bossLeftArm, 800, Arms_second_y, 100, 630)
+}
+
+for(let i = 0; i < boss_Attack_hitboxes.length; i++) {
+
+    
+    if (boss_Attack_hitboxes[i]["type"] == AttackType.FlyAttack ){
+        boss_Attack_hitboxes[i]["hitbox_rightWall"].height += 20 
+        boss_Attack_hitboxes[i]["hitbox_leftWall"].height += 20
+        
+        boss_Attack_hitboxes[i]["hitbox2"].drawOutline()
+        boss_Attack_hitboxes[i]["hitbox_rightWall"].drawOutline()
+        boss_Attack_hitboxes[i]["hitbox_leftWall"].drawOutline()
+        B_attack_3_timer += deltaTime/100
+       //left small spiders
+        ctx.drawImage(Spider, 10, B_Spider_y - 500, 100, 50)
+        ctx.drawImage(Spider, 20, B_Spider_y + 100, 100, 50)
+        ctx.drawImage(Spider, 130, B_Spider_y + 500, 100, 50)
+        ctx.drawImage(Spider, 40, B_Spider_y - 200, 100, 50)
+        ctx.drawImage(Spider, 50, B_Spider_y + 800, 100, 50)
+        ctx.drawImage(Spider, 120, B_Spider_y -700, 100, 50)
+        ctx.drawImage(Spider, 70, B_Spider_y - 1000, 100, 50)
+        ctx.drawImage(Spider, 80, B_Spider_y + 1000, 100, 50)
+        ctx.drawImage(Spider, 90, B_Spider_y - 500, 100, 50)
+        ctx.drawImage(Spider, 100, B_Spider_y + 300, 100, 50)
+        ctx.drawImage(Spider, 20, B_Spider_y, 100, 50)
+        ctx.drawImage(Spider, 120, B_Spider_y + 200, 100, 50)
+        ctx.drawImage(Spider, 110, B_Spider_y - 100, 100, 50)
+        ctx.drawImage(Spider, 130, B_Spider_y + 700, 100, 50)
+        ctx.drawImage(Spider, 30, B_Spider_y - 200, 100, 50)
+        ctx.drawImage(Spider, 140, B_Spider_y - 700, 100, 50)
+        ctx.drawImage(Spider, 10, B_Spider_y - 1200, 100, 50)
+        ctx.drawImage(Spider, 130, B_Spider_y - 1300, 100, 50)
+        ctx.drawImage(Spider, 30, B_Spider_y - 1500, 100, 50)
+        ctx.drawImage(Spider, 40, B_Spider_y - 1550, 100, 50)
+        ctx.drawImage(Spider, 20, B_Spider_y - 1700, 100, 50)
+        ctx.drawImage(Spider, 60, B_Spider_y - 1800, 100, 50)
+        ctx.drawImage(Spider, 120, B_Spider_y - 2000, 100, 50)
+        ctx.drawImage(Spider, 80, B_Spider_y - 2100, 100, 50)
+        ctx.drawImage(Spider, 90, B_Spider_y - 2150, 100, 50)
+        ctx.drawImage(Spider, 100, B_Spider_y - 2300, 100, 50)
+        ctx.drawImage(Spider, 20, B_Spider_y - 2400, 100, 50)
+        ctx.drawImage(Spider, 120, B_Spider_y - 1100, 100, 50)
+        ctx.drawImage(Spider, 110, B_Spider_y - 2500, 100, 50)
+        ctx.drawImage(Spider, 130, B_Spider_y - 2700, 100, 50)
+        ctx.drawImage(Spider, 30, B_Spider_y - 2800, 100, 50)
+        ctx.drawImage(Spider, 140, B_Spider_y - 3000, 100, 50)
+        
+        // right small spiders
+        ctx.drawImage(Spider, W-110, B_Spider_y - 500, 100, 50)
+        ctx.drawImage(Spider, W-120, B_Spider_y + 100, 100, 50)
+        ctx.drawImage(Spider, W-220, B_Spider_y + 500, 100, 50)
+        ctx.drawImage(Spider, W-140, B_Spider_y - 200, 100, 50)
+        ctx.drawImage(Spider, W-150, B_Spider_y + 800, 100, 50)
+        ctx.drawImage(Spider, W-190, B_Spider_y -700, 100, 50)
+        ctx.drawImage(Spider, W-170, B_Spider_y - 1000, 100, 50)
+        ctx.drawImage(Spider, W-180, B_Spider_y + 1000, 100, 50)
+        ctx.drawImage(Spider, W-190, B_Spider_y - 500, 100, 50)
+        ctx.drawImage(Spider, W-200, B_Spider_y + 300, 100, 50)
+        ctx.drawImage(Spider, W-120, B_Spider_y, 100, 50)
+        ctx.drawImage(Spider, W-220, B_Spider_y + 200, 100, 50)
+        ctx.drawImage(Spider, W-210, B_Spider_y - 100, 100, 50)
+        ctx.drawImage(Spider, W-230, B_Spider_y + 700, 100, 50)
+        ctx.drawImage(Spider, W-130, B_Spider_y - 200, 100, 50)
+        ctx.drawImage(Spider, W-210, B_Spider_y - 700, 100, 50)
+        ctx.drawImage(Spider, W-110, B_Spider_y - 1200, 100, 50)
+        ctx.drawImage(Spider, W-130, B_Spider_y - 1300, 100, 50)
+        ctx.drawImage(Spider, W-130, B_Spider_y - 1500, 100, 50)
+        ctx.drawImage(Spider, W-140, B_Spider_y - 1550, 100, 50)
+        ctx.drawImage(Spider, W-120, B_Spider_y - 1700, 100, 50)
+        ctx.drawImage(Spider, W-160, B_Spider_y - 1800, 100, 50)
+        ctx.drawImage(Spider, W-210, B_Spider_y - 2000, 100, 50)
+        ctx.drawImage(Spider, W-180, B_Spider_y - 2100, 100, 50)
+        ctx.drawImage(Spider, W-190, B_Spider_y - 2150, 100, 50)
+        ctx.drawImage(Spider, W-200, B_Spider_y - 2300, 100, 50)
+        ctx.drawImage(Spider, W-120, B_Spider_y - 2400, 100, 50)
+        ctx.drawImage(Spider, W-220, B_Spider_y - 1100, 100, 50)
+        ctx.drawImage(Spider, W-210, B_Spider_y - 2500, 100, 50)
+        ctx.drawImage(Spider, W-230, B_Spider_y - 2700, 100, 50)
+        ctx.drawImage(Spider, W-120, B_Spider_y - 2800, 100, 50)
+        ctx.drawImage(Spider, W-180, B_Spider_y - 3000, 100, 50)
+    B_Spider_y += 20
+       
+        if (boss_Attack_hitboxes[i]["hitbox"].y > H-100 && !B_return) 
+            {
+                boss_Attack_hitboxes[i]["hitbox"].y -= 10
+                ctx.drawImage(bossLicking_over, boss_Attack_hitboxes[i]["hitbox"].x - 130, boss_Attack_hitboxes[i]["hitbox"].y- 220, 370, 250)
+                ctx.drawImage(bossTongue, boss_Attack_hitboxes[i]["hitbox2"].x - 70, boss_Attack_hitboxes[i]["hitbox2"].y - 50, 220, 500)
+                ctx.drawImage(bossLicking_under, boss_Attack_hitboxes[i]["hitbox"].x - 30, boss_Attack_hitboxes[i]["hitbox"].y + 30 , 150, 80)
+               
+            }
+
+        if(boss_Attack_hitboxes[i]["hitbox2"].y > 200)
+            {boss_Attack_hitboxes[i]["hitbox2"].y -= 10
+             boss_Attack_hitboxes[i]["hitbox2"].height += 10
+             ctx.drawImage(bossLicking_over, boss_Attack_hitboxes[i]["hitbox"].x - 130, boss_Attack_hitboxes[i]["hitbox"].y - 220, 370, 250)
+             ctx.drawImage(bossTongue, boss_Attack_hitboxes[i]["hitbox2"].x - 70, boss_Attack_hitboxes[i]["hitbox2"].y - 50, 220, 500)
+             ctx.drawImage(bossLicking_under, boss_Attack_hitboxes[i]["hitbox"].x - 30 , boss_Attack_hitboxes[i]["hitbox"].y + 30 , 150, 80)
+             
+            }
+        else if(boss_Attack_hitboxes[i]["hitbox2"].y < 193 && B_moving_right == false){
+            B_moving_left = true
+            ctx.drawImage(bossLicking_over, boss_Attack_hitboxes[i]["hitbox"].x - 130, boss_Attack_hitboxes[i]["hitbox"].y - 220, 370, 250)
+            ctx.drawImage(bossTongue, boss_Attack_hitboxes[i]["hitbox2"].x - 70, boss_Attack_hitboxes[i]["hitbox2"].y - 50, 220, 500)
+            ctx.drawImage(bossLicking_under, boss_Attack_hitboxes[i]["hitbox"].x - 30, boss_Attack_hitboxes[i]["hitbox"].y + 30 , 150, 80)    
+            
+        }
+                
+        if (B_moving_left) {
+            boss_Attack_hitboxes[i]["hitbox"].x -= 7
+            boss_Attack_hitboxes[i]["hitbox2"].x -= 7
+            if (boss_Attack_hitboxes[i]["hitbox"].x < 250) {
+                B_moving_left = false
+                B_moving_right = true                 
+            }
+            ctx.drawImage(bossLicking_over, boss_Attack_hitboxes[i]["hitbox"].x - 130, boss_Attack_hitboxes[i]["hitbox"].y - 220, 370, 250)
+            ctx.drawImage(bossTongue, boss_Attack_hitboxes[i]["hitbox2"].x - 70, boss_Attack_hitboxes[i]["hitbox2"].y - 50, 220, 500)
+            ctx.drawImage(bossLicking_under, boss_Attack_hitboxes[i]["hitbox"].x - 30, boss_Attack_hitboxes[i]["hitbox"].y + 30 , 150, 80)
+            
+        } else if (B_moving_right) {
+            boss_Attack_hitboxes[i]["hitbox"].x += 7
+            boss_Attack_hitboxes[i]["hitbox2"].x += 7
+            if (boss_Attack_hitboxes[i]["hitbox"].x > 900){
+                B_moving_right = false
+                B_moving_left = true
+            }
+            ctx.drawImage(bossLicking_over, boss_Attack_hitboxes[i]["hitbox"].x - 130, boss_Attack_hitboxes[i]["hitbox"].y - 220, 370, 250)
+            ctx.drawImage(bossTongue, boss_Attack_hitboxes[i]["hitbox2"].x - 70, boss_Attack_hitboxes[i]["hitbox2"].y - 50, 220, 500)
+            ctx.drawImage(bossLicking_under, boss_Attack_hitboxes[i]["hitbox"].x - 30, boss_Attack_hitboxes[i]["hitbox"].y + 30 , 150, 80)
+
+        }   
+        if (character.intersects(boss_Attack_hitboxes[i]["hitbox"]) || character.intersects(boss_Attack_hitboxes[i]["hitbox2"]) || character.intersects(boss_Attack_hitboxes[i]["hitbox_leftWall"]) || character.intersects(boss_Attack_hitboxes[i]["hitbox_rightWall"])) {
+            char_x_change(50)
+            char_y_change(400)
+            deaths_change(deaths+1)
+            boss_Health = 200
+            boss_Attack_hitboxes[i]["hitbox"].x =500
+            boss_Attack_hitboxes[i]["hitbox2"].x =525
+            boss_Attack_hitboxes.shift()
+            flames.y = 1000
+            flames_image_height_change(1000)
+            Health_bar_width = W-842
+            boss_Currently_Attacking = true
+            Goat_Y_change (600)
+            if (Level == 1 && boss_Health > 0) {
+            boss.y = 200
+            Arms_first_y = -200
+            Arms_second_y = -50
+            } 
+        } 
+        if (B_return) {
+            
+            boss_Attack_hitboxes[i]["hitbox"].y += 10
+            boss_Attack_hitboxes[i]["hitbox2"].y += 100
+            boss_Attack_hitboxes[i]["hitbox"].x += 0
+            boss_Attack_hitboxes[i]["hitbox2"].x += 0
+            
+            if (boss_Attack_hitboxes[i]["hitbox"].y > H+10 && boss.y < 200){
+                boss.y += 10
+                boss_Attack_hitboxes[i]["hitbox_leftWall"].x = 20000
+                boss_Attack_hitboxes[i]["hitbox_rightWall"].x = 20000
+                ctx.drawImage(bossLicking_over, boss_Attack_hitboxes[i]["hitbox"].x, boss_Attack_hitboxes[i]["hitbox"].y, 200, 150)
+                ctx.drawImage(bossLicking_under, boss_Attack_hitboxes[i]["hitbox"].x, boss_Attack_hitboxes[i]["hitbox"].y , 200, 150)
+            }else if (boss.y > 200){
+                boss_Attack_hitboxes[i]["hitbox"].x =500
+                boss_Attack_hitboxes[i]["hitbox2"].x =525
+                  boss_Attack_hitboxes.pop()
+                  B_Spider_y = -1000
+                  boss_Currently_Attacking = true
+                  boss_timer = 10
+                  B_return = false
+                  B_attack_3_timer = 0
+                }
+        
+        }
+            
+    }
+
+   
+
+    else if (boss_Attack_hitboxes[i]["type"] == AttackType.BigAttack ){
+        boss_Attack_hitboxes[i]["hitbox2"].drawOutline()
+        
+
+        
+        if (character.intersects(boss_Attack_hitboxes[i]["hitbox"]) || character.intersects(boss_Attack_hitboxes[i]["hitbox2"])  || character.intersects(boss_Attack_hitboxes[i]["hitbox3"])){
+            char_x_change(50)
+            char_y_change(400)
+            deaths_change (deaths + 1)
+            boss_Health = 200
+            boss_Attack_hitboxes.shift()
+            flames.y = 1000
+            flames_image_height_change(1000)
+            Health_bar_width = W-842
+            Jesus_y = -150
+            //Goat_Y = 600
+            U_change (0)
+            M_change (0)
+        }
+    }
+   
+    else if ( boss_Attack_hitboxes[i]["type"] == AttackType.SmallAttack ) {
+
+        
+        boss_Attack_hitboxes[i]["hitbox"].x -= 15
+        boss_Attack_hitboxes[i]["hitbox2"].x -= 15
+        boss_Attack_hitboxes[i]["hitbox3"].x -= 15
+
+        ctx.drawImage(Spit_Projectile, boss_Attack_hitboxes[i]["hitbox"].x -10, boss_Attack_hitboxes[i]["hitbox"].y -20, boss_Attack_hitboxes[i]["hitbox"].width + 40, boss_Attack_hitboxes[i]["hitbox"].height + 50)
+        ctx.drawImage(Spit_Projectile, boss_Attack_hitboxes[i]["hitbox2"].x -10, boss_Attack_hitboxes[i]["hitbox2"].y -20, boss_Attack_hitboxes[i]["hitbox2"].width + 40, boss_Attack_hitboxes[i]["hitbox2"].height + 50)
+        ctx.drawImage(Spit_Projectile, boss_Attack_hitboxes[i]["hitbox3"].x -10, boss_Attack_hitboxes[i]["hitbox3"].y -20, boss_Attack_hitboxes[i]["hitbox3"].width + 40, boss_Attack_hitboxes[i]["hitbox3"].height + 50)
+
+        if (character.intersects(boss_Attack_hitboxes[i]["hitbox"]) || character.intersects(boss_Attack_hitboxes[i]["hitbox2"]) || character.intersects(boss_Attack_hitboxes[i]["hitbox3"])){
+            char_x_change(50)
+            char_y_change(400)
+            deaths_change (deaths + 1 )
+            boss_Health = 200
+            boss.y -= 0
+            Health_bar_width = W-842
+            if (Level == 1 && boss_Health > 0){
+                boss.y = 200
+                Arms_first_y = -200
+                Arms_second_y = -50
+            }
+            boss_Currently_Attacking = true
+            flames.y = 1000
+            flames_image_height_change(1000)
+            Goat_Y_change (600)
+            boss_Attack_hitboxes.shift()
+        }
+    }
+    
+   
+} 
+
+}
 let Next_level = new Hitbox (W-100, 350, 100, 100)
 
 update = () => {
     clear()
-    if (character.intersects(HellBombHitbox)) {
-        deaths_change(deaths + 1)
-        char_y_change(-10000000000000000000)
-        
-    }
     FatGnomeTrigger.drawOutline()
     for(let i = 0; i < death_zone.length; i ++){
         death_zone[i].drawOutline()
@@ -839,22 +1041,7 @@ update = () => {
         char_y_change(400)
     }
     //Next_level.drawOutline()
-    
-    if (boss_Which_attack == 2 && boss_Health > 0) {
-       
-        let blow_hitbox = new Hitbox (0, -10, W, H+10)
 
-        blow_timer += deltaTime/100
-        
-        if (character.intersects(blow_hitbox)) {
-            char_x_change (char_x -1.5)
-        }
-        if (blow_timer > 30) {
-            blowing = false
-            blow_timer = 0
-        }
-    }
-    
    
    
     if (Level == 1) {
@@ -904,287 +1091,8 @@ update = () => {
 
     text ("Death count: " + deaths, 10, 20,15,"White") // a visible death count
     
-    
-    for(let i = 0; i < boss_Attack_hitboxes.length; i++) {
-        if (boss_Health < 0) {// makes the boss disappear
-            boss.y = 20000
-            Arms_first_y = 200000
-            Arms_second_y = 200000
+    Boss_general()
 
-            boss_Attack_hitboxes = []
-            //just to make so boss doesn't move continuously
-        } else if (boss_Health > 0 && boss_Which_attack != 3 && !AttackType.FlyAttack) {
-            boss.y = 200
-        } 
-}
-    
-   
-    // boss_Attacks
-    boss.drawOutline()
-    if (boss_Which_attack == 0) {
-        ctx.drawImage(bossDefault, boss.x - 135 , boss.y - 70, 250, 350)
-    }else if (boss_Which_attack == 1) {
-        ctx.drawImage(bossSpit, boss.x - 135 , boss.y - 70, 250, 350)
-    }else if (boss_Which_attack == 2) {
-        ctx.drawImage(bossSlamAttack, boss.x - 200 , boss.y -240, 375, 515)
-    }else if (boss_Which_attack == 3) {
-        ctx.drawImage(bossDefault, boss.x - 135 , boss.y - 70, 250, 350)
-
-    } 
-
-    if (Arms_firstImage == true) {
-        ctx.drawImage (bossRightArm, 250, Arms_first_y, 100, 300)
-        ctx.drawImage (bossLeftArm, 800, Arms_first_y, 100, 300)
-    } 
-    if (Arms_secondImage == true) {
-        ctx.drawImage (bossRightArm, 250, Arms_second_y, 100, 630)
-        ctx.drawImage (bossLeftArm, 800, Arms_second_y, 100, 630)
-    }
-
-    for(let i = 0; i < boss_Attack_hitboxes.length; i++) {
-  
-        
-        if (boss_Attack_hitboxes[i]["type"] == AttackType.FlyAttack ){
-            boss_Attack_hitboxes[i]["hitbox_rightWall"].height += 20 
-            boss_Attack_hitboxes[i]["hitbox_leftWall"].height += 20
-            
-            boss_Attack_hitboxes[i]["hitbox2"].drawOutline()
-            boss_Attack_hitboxes[i]["hitbox_rightWall"].drawOutline()
-            boss_Attack_hitboxes[i]["hitbox_leftWall"].drawOutline()
-            B_attack_3_timer += deltaTime/100
-           //left small spiders
-            ctx.drawImage(Spider, 10, B_Spider_y - 500, 100, 50)
-            ctx.drawImage(Spider, 20, B_Spider_y + 100, 100, 50)
-            ctx.drawImage(Spider, 130, B_Spider_y + 500, 100, 50)
-            ctx.drawImage(Spider, 40, B_Spider_y - 200, 100, 50)
-            ctx.drawImage(Spider, 50, B_Spider_y + 800, 100, 50)
-            ctx.drawImage(Spider, 120, B_Spider_y -700, 100, 50)
-            ctx.drawImage(Spider, 70, B_Spider_y - 1000, 100, 50)
-            ctx.drawImage(Spider, 80, B_Spider_y + 1000, 100, 50)
-            ctx.drawImage(Spider, 90, B_Spider_y - 500, 100, 50)
-            ctx.drawImage(Spider, 100, B_Spider_y + 300, 100, 50)
-            ctx.drawImage(Spider, 20, B_Spider_y, 100, 50)
-            ctx.drawImage(Spider, 120, B_Spider_y + 200, 100, 50)
-            ctx.drawImage(Spider, 110, B_Spider_y - 100, 100, 50)
-            ctx.drawImage(Spider, 130, B_Spider_y + 700, 100, 50)
-            ctx.drawImage(Spider, 30, B_Spider_y - 200, 100, 50)
-            ctx.drawImage(Spider, 140, B_Spider_y - 700, 100, 50)
-            ctx.drawImage(Spider, 10, B_Spider_y - 1200, 100, 50)
-            ctx.drawImage(Spider, 130, B_Spider_y - 1300, 100, 50)
-            ctx.drawImage(Spider, 30, B_Spider_y - 1500, 100, 50)
-            ctx.drawImage(Spider, 40, B_Spider_y - 1550, 100, 50)
-            ctx.drawImage(Spider, 20, B_Spider_y - 1700, 100, 50)
-            ctx.drawImage(Spider, 60, B_Spider_y - 1800, 100, 50)
-            ctx.drawImage(Spider, 120, B_Spider_y - 2000, 100, 50)
-            ctx.drawImage(Spider, 80, B_Spider_y - 2100, 100, 50)
-            ctx.drawImage(Spider, 90, B_Spider_y - 2150, 100, 50)
-            ctx.drawImage(Spider, 100, B_Spider_y - 2300, 100, 50)
-            ctx.drawImage(Spider, 20, B_Spider_y - 2400, 100, 50)
-            ctx.drawImage(Spider, 120, B_Spider_y - 1100, 100, 50)
-            ctx.drawImage(Spider, 110, B_Spider_y - 2500, 100, 50)
-            ctx.drawImage(Spider, 130, B_Spider_y - 2700, 100, 50)
-            ctx.drawImage(Spider, 30, B_Spider_y - 2800, 100, 50)
-            ctx.drawImage(Spider, 140, B_Spider_y - 3000, 100, 50)
-            
-            // right small spiders
-            ctx.drawImage(Spider, W-110, B_Spider_y - 500, 100, 50)
-            ctx.drawImage(Spider, W-120, B_Spider_y + 100, 100, 50)
-            ctx.drawImage(Spider, W-220, B_Spider_y + 500, 100, 50)
-            ctx.drawImage(Spider, W-140, B_Spider_y - 200, 100, 50)
-            ctx.drawImage(Spider, W-150, B_Spider_y + 800, 100, 50)
-            ctx.drawImage(Spider, W-190, B_Spider_y -700, 100, 50)
-            ctx.drawImage(Spider, W-170, B_Spider_y - 1000, 100, 50)
-            ctx.drawImage(Spider, W-180, B_Spider_y + 1000, 100, 50)
-            ctx.drawImage(Spider, W-190, B_Spider_y - 500, 100, 50)
-            ctx.drawImage(Spider, W-200, B_Spider_y + 300, 100, 50)
-            ctx.drawImage(Spider, W-120, B_Spider_y, 100, 50)
-            ctx.drawImage(Spider, W-220, B_Spider_y + 200, 100, 50)
-            ctx.drawImage(Spider, W-210, B_Spider_y - 100, 100, 50)
-            ctx.drawImage(Spider, W-230, B_Spider_y + 700, 100, 50)
-            ctx.drawImage(Spider, W-130, B_Spider_y - 200, 100, 50)
-            ctx.drawImage(Spider, W-210, B_Spider_y - 700, 100, 50)
-            ctx.drawImage(Spider, W-110, B_Spider_y - 1200, 100, 50)
-            ctx.drawImage(Spider, W-130, B_Spider_y - 1300, 100, 50)
-            ctx.drawImage(Spider, W-130, B_Spider_y - 1500, 100, 50)
-            ctx.drawImage(Spider, W-140, B_Spider_y - 1550, 100, 50)
-            ctx.drawImage(Spider, W-120, B_Spider_y - 1700, 100, 50)
-            ctx.drawImage(Spider, W-160, B_Spider_y - 1800, 100, 50)
-            ctx.drawImage(Spider, W-210, B_Spider_y - 2000, 100, 50)
-            ctx.drawImage(Spider, W-180, B_Spider_y - 2100, 100, 50)
-            ctx.drawImage(Spider, W-190, B_Spider_y - 2150, 100, 50)
-            ctx.drawImage(Spider, W-200, B_Spider_y - 2300, 100, 50)
-            ctx.drawImage(Spider, W-120, B_Spider_y - 2400, 100, 50)
-            ctx.drawImage(Spider, W-220, B_Spider_y - 1100, 100, 50)
-            ctx.drawImage(Spider, W-210, B_Spider_y - 2500, 100, 50)
-            ctx.drawImage(Spider, W-230, B_Spider_y - 2700, 100, 50)
-            ctx.drawImage(Spider, W-120, B_Spider_y - 2800, 100, 50)
-            ctx.drawImage(Spider, W-180, B_Spider_y - 3000, 100, 50)
-        B_Spider_y += 20
-           
-            if (boss_Attack_hitboxes[i]["hitbox"].y > H-100 && !B_return) 
-                {
-                    boss_Attack_hitboxes[i]["hitbox"].y -= 10
-                    ctx.drawImage(bossLicking_over, boss_Attack_hitboxes[i]["hitbox"].x - 130, boss_Attack_hitboxes[i]["hitbox"].y- 220, 370, 250)
-                    ctx.drawImage(bossTongue, boss_Attack_hitboxes[i]["hitbox2"].x - 70, boss_Attack_hitboxes[i]["hitbox2"].y - 50, 220, 500)
-                    ctx.drawImage(bossLicking_under, boss_Attack_hitboxes[i]["hitbox"].x - 30, boss_Attack_hitboxes[i]["hitbox"].y + 30 , 150, 80)
-                   
-                }
-
-            if(boss_Attack_hitboxes[i]["hitbox2"].y > 200)
-                {boss_Attack_hitboxes[i]["hitbox2"].y -= 10
-                 boss_Attack_hitboxes[i]["hitbox2"].height += 10
-                 ctx.drawImage(bossLicking_over, boss_Attack_hitboxes[i]["hitbox"].x - 130, boss_Attack_hitboxes[i]["hitbox"].y - 220, 370, 250)
-                 ctx.drawImage(bossTongue, boss_Attack_hitboxes[i]["hitbox2"].x - 70, boss_Attack_hitboxes[i]["hitbox2"].y - 50, 220, 500)
-                 ctx.drawImage(bossLicking_under, boss_Attack_hitboxes[i]["hitbox"].x - 30 , boss_Attack_hitboxes[i]["hitbox"].y + 30 , 150, 80)
-                 
-                }
-            else if(boss_Attack_hitboxes[i]["hitbox2"].y < 193 && B_moving_right == false){
-                B_moving_left = true
-                ctx.drawImage(bossLicking_over, boss_Attack_hitboxes[i]["hitbox"].x - 130, boss_Attack_hitboxes[i]["hitbox"].y - 220, 370, 250)
-                ctx.drawImage(bossTongue, boss_Attack_hitboxes[i]["hitbox2"].x - 70, boss_Attack_hitboxes[i]["hitbox2"].y - 50, 220, 500)
-                ctx.drawImage(bossLicking_under, boss_Attack_hitboxes[i]["hitbox"].x - 30, boss_Attack_hitboxes[i]["hitbox"].y + 30 , 150, 80)    
-                
-            }
-                    
-            if (B_moving_left) {
-                boss_Attack_hitboxes[i]["hitbox"].x -= 7
-                boss_Attack_hitboxes[i]["hitbox2"].x -= 7
-                if (boss_Attack_hitboxes[i]["hitbox"].x < 250) {
-                    B_moving_left = false
-                    B_moving_right = true                 
-                }
-                ctx.drawImage(bossLicking_over, boss_Attack_hitboxes[i]["hitbox"].x - 130, boss_Attack_hitboxes[i]["hitbox"].y - 220, 370, 250)
-                ctx.drawImage(bossTongue, boss_Attack_hitboxes[i]["hitbox2"].x - 70, boss_Attack_hitboxes[i]["hitbox2"].y - 50, 220, 500)
-                ctx.drawImage(bossLicking_under, boss_Attack_hitboxes[i]["hitbox"].x - 30, boss_Attack_hitboxes[i]["hitbox"].y + 30 , 150, 80)
-                
-            } else if (B_moving_right) {
-                boss_Attack_hitboxes[i]["hitbox"].x += 7
-                boss_Attack_hitboxes[i]["hitbox2"].x += 7
-                if (boss_Attack_hitboxes[i]["hitbox"].x > 900){
-                    B_moving_right = false
-                    B_moving_left = true
-                }
-                ctx.drawImage(bossLicking_over, boss_Attack_hitboxes[i]["hitbox"].x - 130, boss_Attack_hitboxes[i]["hitbox"].y - 220, 370, 250)
-                ctx.drawImage(bossTongue, boss_Attack_hitboxes[i]["hitbox2"].x - 70, boss_Attack_hitboxes[i]["hitbox2"].y - 50, 220, 500)
-                ctx.drawImage(bossLicking_under, boss_Attack_hitboxes[i]["hitbox"].x - 30, boss_Attack_hitboxes[i]["hitbox"].y + 30 , 150, 80)
-
-            }   
-            if (character.intersects(boss_Attack_hitboxes[i]["hitbox"]) || character.intersects(boss_Attack_hitboxes[i]["hitbox2"]) || character.intersects(boss_Attack_hitboxes[i]["hitbox_leftWall"]) || character.intersects(boss_Attack_hitboxes[i]["hitbox_rightWall"])) {
-                char_x_change(50)
-                char_y_change(400)
-                deaths_change(deaths+1)
-                boss_Health = 200
-                boss_Attack_hitboxes[i]["hitbox"].x =500
-                boss_Attack_hitboxes[i]["hitbox2"].x =525
-                boss_Attack_hitboxes.shift()
-                flames.y = 1000
-                flames_image_height_change(1000)
-                Health_bar_width = W-842
-                boss_Currently_Attacking = true
-                Goat_Y = 600
-                if (Level == 1 && boss_Health > 0) {
-                boss.y = 200
-                Arms_first_y = -200
-                Arms_second_y = -50
-                } 
-            } 
-            if (B_return) {
-                
-                boss_Attack_hitboxes[i]["hitbox"].y += 10
-                boss_Attack_hitboxes[i]["hitbox2"].y += 100
-                boss_Attack_hitboxes[i]["hitbox"].x += 0
-                boss_Attack_hitboxes[i]["hitbox2"].x += 0
-                
-                if (boss_Attack_hitboxes[i]["hitbox"].y > H+10 && boss.y < 200){
-                    boss.y += 10
-                    boss_Attack_hitboxes[i]["hitbox_leftWall"].x = 20000
-                    boss_Attack_hitboxes[i]["hitbox_rightWall"].x = 20000
-                    ctx.drawImage(bossLicking_over, boss_Attack_hitboxes[i]["hitbox"].x, boss_Attack_hitboxes[i]["hitbox"].y, 200, 150)
-                    ctx.drawImage(bossLicking_under, boss_Attack_hitboxes[i]["hitbox"].x, boss_Attack_hitboxes[i]["hitbox"].y , 200, 150)
-                }else if (boss.y > 200){
-                    boss_Attack_hitboxes[i]["hitbox"].x =500
-                    boss_Attack_hitboxes[i]["hitbox2"].x =525
-                      boss_Attack_hitboxes.pop()
-                      B_Spider_y = -1000
-                      boss_Currently_Attacking = true
-                      boss_timer = 10
-                      B_return = false
-                      B_attack_3_timer = 0
-                    }
-            
-            }
-                
-        }
-
-       
-
-        else if (boss_Attack_hitboxes[i]["type"] == AttackType.BigAttack ){
-            boss_Attack_hitboxes[i]["hitbox2"].drawOutline()
-            
-
-            
-            if (character.intersects(boss_Attack_hitboxes[i]["hitbox"]) || character.intersects(boss_Attack_hitboxes[i]["hitbox2"])  || character.intersects(boss_Attack_hitboxes[i]["hitbox3"])){
-                char_x_change(50)
-                char_y_change(400)
-                deaths_change (deaths + 1)
-                boss_Health = 200
-                boss_Attack_hitboxes.shift()
-                flames.y = 1000
-                flames_image_height_change(1000)
-                Health_bar_width = W-842
-                Jesus_y = -150
-                //Goat_Y = 600
-                U = 0
-                M = 0
-            }
-        }
-       
-        else if ( boss_Attack_hitboxes[i]["type"] == AttackType.SmallAttack ) {
-
-            
-            boss_Attack_hitboxes[i]["hitbox"].x -= 15
-            boss_Attack_hitboxes[i]["hitbox2"].x -= 15
-            boss_Attack_hitboxes[i]["hitbox3"].x -= 15
-
-            ctx.drawImage(Spit_Projectile, boss_Attack_hitboxes[i]["hitbox"].x -10, boss_Attack_hitboxes[i]["hitbox"].y -20, boss_Attack_hitboxes[i]["hitbox"].width + 40, boss_Attack_hitboxes[i]["hitbox"].height + 50)
-            ctx.drawImage(Spit_Projectile, boss_Attack_hitboxes[i]["hitbox2"].x -10, boss_Attack_hitboxes[i]["hitbox2"].y -20, boss_Attack_hitboxes[i]["hitbox2"].width + 40, boss_Attack_hitboxes[i]["hitbox2"].height + 50)
-            ctx.drawImage(Spit_Projectile, boss_Attack_hitboxes[i]["hitbox3"].x -10, boss_Attack_hitboxes[i]["hitbox3"].y -20, boss_Attack_hitboxes[i]["hitbox3"].width + 40, boss_Attack_hitboxes[i]["hitbox3"].height + 50)
-
-            if (character.intersects(boss_Attack_hitboxes[i]["hitbox"]) || character.intersects(boss_Attack_hitboxes[i]["hitbox2"]) || character.intersects(boss_Attack_hitboxes[i]["hitbox3"])){
-                char_x_change(50)
-                char_y_change(400)
-                deaths_change (deaths + 1 )
-                boss_Health = 200
-                boss.y -= 0
-                Health_bar_width = W-842
-                if (Level == 1 && boss_Health > 0){
-                    boss.y = 200
-                    Arms_first_y = -200
-                    Arms_second_y = -50
-                }
-                boss_Currently_Attacking = true
-                flames.y = 1000
-                flames_image_height_change(1000)
-                Goat_Y = 600
-                boss_Attack_hitboxes.shift()
-            }
-        }
-        
-       
-    } 
-  
-    
-    
-    
-   
-   
-   
-   
-    /*
-    for(let i = 0; i < wall.length; i++){
-    wall[i].drawOutline()        
-    }
-    */
 
 
     for(let i = 0; i < shots.length; i++){
@@ -1248,19 +1156,10 @@ update = () => {
  
 
 
-export {boss_Which_attack, Level, char_x, char_y, character,Health_bar_width, boss, boss_Health, U, M, flames, flames_image_height, boss_Currently_Attacking, boss_Attack_hitboxes}
+export {boss_Which_attack, Level, char_x, char_y, character,Health_bar_width, boss, boss_Health, flames, flames_image_height, boss_Currently_Attacking, boss_Attack_hitboxes}
 
 export function Health_bar_width_change (nytt_värde) {
     Health_bar_width = nytt_värde
-}
-export function U_change(nytt_värde) {
-    U = nytt_värde
-}
-export function M_change(nytt_värde) {
-    M = nytt_värde
-}
-export function u_change(nytt_värde) {
-    u = nytt_värde
 }
 export function boss_Health_change(nytt_värde) {
     boss_Health = nytt_värde

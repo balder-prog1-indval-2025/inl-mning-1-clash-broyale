@@ -1,5 +1,5 @@
 import {Level, boss, boss_Health} from "./app"
-import {Health_bar_width_change, U_change, M_change, u_change, boss_Health_change, boss_Attack_hitboxes_change, boss_Currently_Attacking_change,} from "./app"
+import {Health_bar_width_change, boss_Health_change, boss_Attack_hitboxes_change, boss_Currently_Attacking_change,} from "./app"
 import {char_x_change, char_y_change, jump_time_change, character} from "./Movement"
 
 let death_zone: Hitbox [] = []
@@ -15,11 +15,23 @@ let Explode = true
 let flames =  new Hitbox (0, 1050, 250, 70)
 let flames_image_height = 1000
 
+let HellBombHitbox = new Hitbox(2000000,0,W,H)
+let GoatHellBomb = true
+let GoatHellBombTimer = 0
+let GoatTrigger = false
+let GoatNumber = 0
+let Goat_Y = 600
+
+let U = 0 // Used for goat trigger
+let u = 0 // Used for 2nd Goat trigger
+
+let M = 0 // Used for Hellbomb activation
+
 let SpiderSide = await fetchImage("images/SpiderSide.png")
 let Spider =  await fetchImage("images/Spider.png")
 let Gnome = await fetchImage("images/Gnome.png")
 let Explosion = await fetchImage("images/explosion.png")
-
+let Goat = await fetchImage("images/Goat.png")
 
 let g = 0 // used for explosion to stay active for a while
 let b = 0 // used for audio of explosion
@@ -31,6 +43,9 @@ let J = 0 // Used for  SpiderAttack2 audio delay
 let Godzilla = new Audio('Audio/Godzilla.mp3')
 let GnomeWOO = new Audio('Audio/GnomeWOO.mp3') 
 let ExplosionSound = new Audio('Audio/loud-explosion.mp3')
+let GoatBaaah = new Audio('Audio/baah.mp3')
+let HellBombSound = new Audio('Audio/Hellbomb.mp3')
+
 
 
 let deaths = 0
@@ -155,6 +170,80 @@ export function GnomeAttack() {
        }
        if(g == 100) {ExplosionHitbox.x = 5000}
    }
+export function Hellbomb() {if(GoatNumber == 1 && M == 0 ) {
+    HellBombSound.play()
+        M = 0
+}}
+export function GoatAttack() {
+  
+    for(let i = 0; i < 10;i++) {
+    u = u + 1
+  }
+  if(u == 10 && GoatNumber != 1) {
+    GoatNumber = random(0,20000) //changing this will change how often goat attack will happen
+    u = 0
+   
+
+  }
+    
+    
+   
+
+    if(GoatNumber == 1 && Goat_Y > 301) {
+        for(let i = 0; i<301; i ++) {
+            Goat_Y = Goat_Y-0.003
+            ctx.drawImage(Goat, 650,Goat_Y-100,800, 400)
+        
+            if(Goat_Y <301 && GoatHellBomb) {
+                GoatTrigger = true
+                GoatHellBomb = false
+            }}
+            
+        }
+    if(GoatTrigger) {
+        ctx.drawImage(Goat,650,300-100,800,400)
+        GoatHellBombTimer+= deltaTime/100
+    }
+  if (GoatHellBombTimer > 66.9999) {
+    HellBombHitbox.x = 0
+    ctx.drawImage(Explosion,-500,-1000,3000,3000)
+    U = 1
+    if (character.intersects(HellBombHitbox)) {
+        deaths_change(deaths + 1)
+        char_y_change(-10000000000000000000)
+        
+    }
+} 
+
+if (GoatHellBombTimer > 100) {
+    GoatTrigger = false
+    GoatHellBombTimer = 0
+    GoatHellBomb = true
+    Goat_Y = 600
+    GoatNumber = 0
+    M = 0
+    jump_time_change (0)
+    HellBombHitbox.x = 200000
+    if(HellBombHitbox.x > 0) { 
+        char_x_change (50)
+        char_y_change (400)
+}
+}
+    if(GoatTrigger && U == 0) {
+        U = 0
+        GoatBaaah.play()
+    }
+
+}
+   
+   
+   
+   
+   
+   
+   
+   
+   
    
    export function death () {
     for(let i = 0; i<death_zone.length; i++) {
@@ -179,9 +268,9 @@ export function GnomeAttack() {
             Spiderman2 = false
             Spooderman = true
             //GoatTrigger = false
-            U_change(0)
-            M_change(0)
-            u_change(0)
+            U = 0
+            M = 0
+            u = 0
             jump_time_change(0)
             boss_Health_change(200)
             Health_bar_width_change (W-842)
@@ -215,5 +304,13 @@ export function flames_image_height_change (nytt_värde) {
 export function flames_y_change (nytt_värde) {
     flames.y = nytt_värde
 }
-
+export function Goat_Y_change (nytt_värde) {
+    Goat_Y = nytt_värde
+}
+export function U_change (nytt_värde) {
+    U = nytt_värde
+}
+export function M_change (nytt_värde) {
+    M= nytt_värde
+}
 export {death_zone, deaths, FatGnomeDeathCounter, SpiderTrigger, GnomeHitbox, flames, flames_image_height}
