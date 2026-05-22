@@ -1,3 +1,12 @@
+import {Level,} from "./app"
+import {char_x_change, char_y_change, character, char_x, Platform_2} from "./Movement"
+import {deaths_change, flames, flames_image_height_change, Goat_Y_change, deaths, U_change, M_change} from "./Death"
+
+enum AttackType {
+    BigAttack,
+    SmallAttack,
+    FlyAttack
+}
 //first attack
 let B_attack_1 = false
 let B_attack_1_hitboxes = true
@@ -17,7 +26,7 @@ let B_Spider_y = -1000
 
 let Health_bar_width = W-842
 let boss = new Hitbox(1150, H, 100, 250)
-let boss_Health = 200
+let boss_Health = 5
 let boss_Attack_hitboxes= []
 let boss_Currently_Attacking = true
 let boss_Which_attack = 0
@@ -40,15 +49,15 @@ let bossRightArm = await fetchImage ("images/RightArm.png")
 let bossLicking_under = await fetchImage("images/bossLicking_under.png")
 let bossLicking_over = await fetchImage("images/bossLicking_over.png") 
 let bossTongue = await fetchImage("images/Tongue.png")
+let Jesus = await fetchImage ("images/JesusFckingChrist.png")
 
 
-
-function boss_Attacks () {
+export function boss_Attacks () {
     boss_timer += deltaTime/100
     
     if(boss_Currently_Attacking && boss_timer > 30){
         boss_Currently_Attacking= false
-        boss_Which_attack = random(1,3) 
+        boss_Which_attack = random(1,1) 
         //boss_Blow_attack = random(1, 5)
         boss_timer = 0
         attack_2 = true
@@ -86,9 +95,9 @@ if (boss_Which_attack == 1 && boss_Health > 0) {
    ctx.drawImage(bossSpit, boss.x, boss.y, boss.width, boss.height)
         
    boss_Attack_hitboxes.push({
-        "hitbox": new Hitbox(1150, 325, 125, 125),
-        "hitbox2": new Hitbox(1150 + 600, 200, 125, 125),
-        "hitbox3": new Hitbox(1150 + 1200, 75, 125, 125),
+        "hitbox": new Hitbox(1150, 350, 100, 100),
+        "hitbox2": new Hitbox(1150 + 600, 175, 100, 100),
+        "hitbox3": new Hitbox(1150 + 1200, 100, 100, 100),
         "type": AttackType.SmallAttack 
     })
     
@@ -162,7 +171,7 @@ else if(boss_Which_attack == 2 && boss_Health > 0) {
 
 
 }
-function Boss_general () {
+export function Boss_general () {
     if (boss_Which_attack == 2 && boss_Health > 0) {
        
         let blow_hitbox = new Hitbox (0, -10, W, H+10)
@@ -183,7 +192,7 @@ function Boss_general () {
             boss.y = 20000
             Arms_first_y = 200000
             Arms_second_y = 200000
-
+            
             boss_Attack_hitboxes = []
             //just to make so boss doesn't move continuously
         } else if (boss_Health > 0 && boss_Which_attack != 3 && !AttackType.FlyAttack) {
@@ -414,6 +423,9 @@ for(let i = 0; i < boss_Attack_hitboxes.length; i++) {
    
     else if ( boss_Attack_hitboxes[i]["type"] == AttackType.SmallAttack ) {
 
+        boss_Attack_hitboxes[i]["hitbox"].drawOutline()
+        boss_Attack_hitboxes[i]["hitbox2"].drawOutline()
+        boss_Attack_hitboxes[i]["hitbox3"].drawOutline()
         
         boss_Attack_hitboxes[i]["hitbox"].x -= 15
         boss_Attack_hitboxes[i]["hitbox2"].x -= 15
@@ -446,4 +458,21 @@ for(let i = 0; i < boss_Attack_hitboxes.length; i++) {
    
 } 
 
+}
+export {boss_Which_attack, boss, boss_Health, Health_bar_width}
+export function Health_bar_width_change (nytt_värde) {
+    Health_bar_width = nytt_värde
+}
+export function boss_Health_change(nytt_värde) {
+    boss_Health = nytt_värde
+}
+
+export function boss_Attack_hitboxes_change (nytt_värde) {
+boss_Attack_hitboxes = nytt_värde
+}
+export function boss_Currently_Attacking_change (nytt_värde) {
+    boss_Currently_Attacking = nytt_värde
+}
+export function boss_y_change (nytt_värde) {
+    boss.y = nytt_värde
 }

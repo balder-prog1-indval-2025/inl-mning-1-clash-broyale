@@ -1,4 +1,4 @@
-import {boss_Which_attack} from "./app"
+import {boss_Which_attack} from "./Boss"
 
 
 

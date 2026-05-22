@@ -1,12 +1,17 @@
-import {ground, WallHitbox} from "./Map"
+import {ground, WallHitbox,} from "./Map"
+
+
+
+
 
 let amount_jumps = 2
 let amount_dashes = 2
-let char_x = 50
-let char_y = 400
+let char_x = 1050
+let char_y = 0
 let movement_x = 0
 let movement_y = 0
 let jumping = false
+
 let jump_time = 0
 let jump_reset = true
 let gravity = 18000
@@ -19,9 +24,30 @@ let after_dash = false
 let fall_time = 0
 let char_Direction = false
 
-
+let platform_image = await fetchImage ("images/Platform.png")
 let Character_RevertedImage = await fetchImage ("images/Character_reverted.png")
 let Character_Image = await fetchImage ("images/Character.png")
+
+let Platforms: Hitbox[] = []
+let Platform_1 = new Sprite(platform_image, 1, 1)
+Platform_1.y = 300
+Platform_1.x = 275
+Platform_1.width = 50
+Platform_1.height = 25
+
+
+let Platform_2 = new Sprite(platform_image, 1, 1)
+Platform_2.y = 300
+Platform_2.x = 550
+Platform_2.width = 50
+Platform_2.height = 25  
+
+
+let Platform_3 = new Sprite(platform_image, 1, 1)
+Platform_3.y = 499
+Platform_3.x = 825
+Platform_3.width = 50
+Platform_3.height = 25  
 
 
 export function walk () { //standard movement in x-axis
@@ -96,6 +122,27 @@ hitbox.y = y -15
     }
     export function jump () {// Determines everything that has with the characters movement in y-axis to do.
         let return_jump = 0
+        
+        Platforms.forEach(platform => {
+            
+            
+            if (character.intersects(platform)) {
+                char_y = platform.y - character.height +12 
+               
+                if (jumping) {jumping = false} // The character can't jump 
+                
+                dashing = false // ... or "dash"
+                fall_time = 0
+                jump_time = 0
+                jump_reset = true
+                //movement_y= 0 // all momentum i y-led blir 0,
+                amount_jumps = 2
+                amount_dashes = 2
+                //return_jump = 0
+                }
+           })
+        
+        
         for (let i = 0; i < ground.length ; i++){
             if (dashing && (keyboard.d || keyboard.a) && amount_dashes > 0 ) { // the gravity doesn't affect the character while dashing
                 
@@ -109,6 +156,7 @@ hitbox.y = y -15
             } 
             else if(jumping && !character.intersects(ground[i]) && after_dash == false) { // the actual jump
                 if (jump_reset) {
+                    char_y -= 5
                     jump_time = 0
                     jump_reset = false
                 }
@@ -145,37 +193,19 @@ hitbox.y = y -15
         return return_jump
     }
 
+    
+
     export function updatePosition () { 
         char_x += movement_x 
         char_y += movement_y
         }
     
-    /*    for(let i = 0; i < WallHitbox.length; i++) {
-            if(character.intersects(WallHitbox[i]) && keyboard.d && !char_Direction && !jumping) {
-            char_x = char_x -5
-            char_y = char_y +2
-            }
-            else if(character.intersects(WallHitbox[i]) && keyboard.a && char_Direction && !jumping) {
-                char_x = char_x + 5
-                char_y = char_y +2
-            }
-            else if(character.intersects(WallHitbox[i]) && jumping) {
-                char_y = char_y + 5
-            }
-            else if(character.intersects(WallHitbox[i]) && dashing && keyboard.d) {
-                char_x = char_x -10
-            }
-            else if(character.intersects(WallHitbox[i]) && dashing && keyboard.a) {
-                char_x = char_x + 10
-            }
-            
-        }
-*/
 
 
 
 
-    export {character, amount_dashes, dashing, amount_jumps, jumping, char_x, char_y, char_Direction, gravity_2_jump}
+
+    export {character, amount_dashes, dashing, amount_jumps, jumping, char_x, char_y, char_Direction, gravity_2_jump, gravity, fall_time, fall_gravity, Platforms, Platform_1, Platform_2, Platform_3}
 
     export function char_x_change(nytt_värde) {
         char_x = nytt_värde
