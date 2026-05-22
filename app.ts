@@ -21,6 +21,7 @@ let char_Direction = false
 let StoryTell = 0 // Used once
 let Level = 0
 let Level_change = true
+let Level_2_change = true
 enum AttackType {
     BigAttack,
     SmallAttack,
@@ -161,7 +162,6 @@ let Jesus_y = -150
 
 let flames =  new Hitbox (0, 1050, 250, 70)
 let flames_image_height = 1000
-
 
 
 let Platform_1 = new Sprite(platform_image, 1, 1)
@@ -739,7 +739,7 @@ function GoatAttack() {
     u = u + 1
   }
   if(u == 10 && GoatNumber != 1) {
-    GoatNumber = random(0,200) //changing this will change how often goat attack will happen
+    GoatNumber = random(0,20000) //changing this will change how often goat attack will happen
     u = 0
     if(GoatNumber == 1) {u == 15}
 
@@ -788,17 +788,17 @@ function GoatAttack() {
 
 }
 function TrashTalk() {
-if(Level == 0 && !character.intersects(FatGnomeTrigger) && Trashtalking == false) {
+if(Level == 0 || Level == 1 && !character.intersects(FatGnomeTrigger) && Trashtalking == false) {
 ctx.drawImage(FatGnome, 55, 344, 275, 125)
 ctx.drawImage(DrDisrespect, 150,340,83,83)
 }
-else if(character.intersects(FatGnomeTrigger) && StoryTell == 0 && Level == 0 || Trashtalking == true) {
+else if(character.intersects(FatGnomeTrigger) && StoryTell == 0 && Level == 0 || Trashtalking == true || Level == 1) {
 ctx.drawImage(FatGnomeLaugh,55,344,275,125) // Story voiceline here
 ctx.drawImage(DrDisrespectLaugh, 150,340,83,83)
 }
 for(let i = 0; i<death_zone.length; i++){
 if(character.intersects(death_zone[i]) && FatGnomeDeathCounter > 9) {
-GnomeWhichTrashTalk = random(16,16)
+GnomeWhichTrashTalk = random(1,16)
 Trashtalking = true
 FatGnomeDeathCounter = 0
 }
@@ -887,7 +887,7 @@ else if (GnomeWhichTrashTalk == 15) {
 else if (GnomeWhichTrashTalk == 16) {
     WakeUp.play()
     GnomeWhichTrashTalk = 0
-    Trashtalk_timer = 3000
+    Trashtalk_timer = 3400
 }
 
 }
@@ -2014,7 +2014,6 @@ function Platform_move () {
 
 
 function GnomeAttack() {
- //GÖR KLART DETTAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
     if(Spiderman2 && Spooderman && V < 70) {
     V = V + 1
     }
@@ -2070,19 +2069,6 @@ function explosion() {
     }
     if(g == 100) {ExplosionHitbox.x = 5000}
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -2550,7 +2536,7 @@ update = () => {
         rectangle(410, 112, W-842, 25, "black")
         rectangle(410, 112, Health_bar_width, 25, "darkgreen")
         ctx.drawImage(Health_bar_image, 340, 30, 550, 200)
-        text ("Sven in his dreams", 410, 102, 30 )
+        text ("Sven in his dreams", 463, 133, 30 )
         
         
         if(Level_change){
@@ -2586,7 +2572,51 @@ update = () => {
         flames.y = 430
         flames_image_height = 350
     }
+//------------------------------------
+if (Level == 2) {
+    if(Level_2_change){
+        boss.y = 20000
+        ground.push(new Hitbox(0,450,W,25)),
+        WallHitbox = []
+        death_zone = []
+        wall = []
+        Platform_1.y = 10000
+        Platform_2.y = 10000
+        Platform_3.y = 10000
+        flames.y = 10000
 
+        gravity = 1200
+        gravity_2_jump = -300
+        fall_gravity = 800
+        SpiderTrigger.y = 200000
+        GnomeHitbox.y = 200000
+        FatGnomeTrigger.y = 10000
+
+}
+    Level_2_change = false
+    for (let i = 0; i<=51; i++) {// Determines the length (x-axis) of the map
+
+        ctx.drawImage(grassblock1, i*25, 450, 25,25)
+        ctx.drawImage(stoneblock1, i*25, 550, 25, 25)
+        ctx.drawImage(Dirtblock, i*25, 500, 25, 25)
+        ctx.drawImage(Dirtblock, i*25, 475, 25, 25)
+        ctx.drawImage(stoneblock1,i*25,550,25,25)
+        ctx.drawImage(stoneblock1,i*25,575,25,25)
+        ctx.drawImage(stoneblock1,i*25,600,25,25)
+        
+        
+        if (lager_3[i] == 1 || lager_3[i] > 2) {ctx.drawImage(Dirtblock,i*25,500,25,25)} // If a block doesn't have the value of 2 
+        
+        else if(lager_3[i] == 2 ) {ctx.drawImage(stoneblock1,i*25,500,25,25)} // If a block on row 3 has the value of 2 (determined before), creates an overlay of a stoneblock
+        
+        if(lager_4[i]==2) {ctx.drawImage(Dirtblock,i*25,525,25,25)}
+        else if(lager_4[i]==1 || lager_4[i]>2) {ctx.drawImage(stoneblock1,i*25,525,25,25)}// If a block on row 4 doesn't have the value of 2, also creates an overlay of a stoneblock
+        }
+        
+        
+    
+}
+//----------------------
     if (character.intersects(death_zone_floor) || keyboard.r || character.intersects(flames)) { // makes it so if you fall of the map or press "R" you die (reset)
         keyboard.r = false
         char_x = 50
