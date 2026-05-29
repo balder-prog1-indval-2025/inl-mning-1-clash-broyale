@@ -1,6 +1,6 @@
 import {Level,} from "./app"
 import {char_x_change, char_y_change, jump_time_change, character} from "./Movement"
-import {boss, boss_Health, Health_bar_width_change, boss_Health_change, boss_Attack_hitboxes_change, boss_Currently_Attacking_change,} from "./Boss"
+import {boss, boss_Health, Health_bar_width_change, boss_Health_change, boss_Attack_hitboxes_change, boss_Currently_Attacking_change, boss_Attack_hitboxes} from "./Boss"
 let death_zone: Hitbox [] = []
 let Spiderman = false
 let Spiderman2 = false
