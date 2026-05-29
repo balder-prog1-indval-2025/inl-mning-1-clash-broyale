@@ -1,7 +1,7 @@
-import {map, map_2, draw_map, WallHitbox, WallHitbox_clear, ground, ground_clear} from "./Map"
-import {death_zone, death_zone_clear, SpiderAttack_1, SpiderAttack_2, GnomeAttack, explosion, explosionsound, FatGnomeDeathCounter, deaths, death, SpiderTrigger, GnomeHitbox, flames, flames_image_height, GoatAttack, Hellbomb} from "./Death"
+import {map, map_2, draw_map, WallHitbox, WallHitbox_clear, ground, ground_clear, grassblock1, Dirtblock, Dirtoverlayblock, stoneblock1, lager_3, lager_4} from "./Map"
+import {death_zone, death_zone_clear, SpiderAttack_1, SpiderAttack_2, GnomeAttack, explosion, explosionsound, FatGnomeDeathCounter, deaths, death, SpiderTrigger, GnomeHitbox, flames, flames_image_height, GoatAttack, Hellbomb, deaths_change} from "./Death"
 import {jump, dash, walk, updateCharacter, updatePosition, character, amount_dashes, amount_jumps, dashing, jumping, char_x, char_y, char_Direction, gravity_2_jump, Platforms, Platform_1, Platform_2, Platform_3} from "./Movement"
-import {boss_Attacks, Boss_general, boss_Which_attack, boss, boss_Health, Health_bar_width,boss_Currently_Attacking_change, boss_Health_change, boss_Attack_hitboxes_change, Health_bar_width_change, boss_y_change} from "./Boss"
+import {boss_Attacks, Boss_general, boss_Which_attack, boss, boss_Health, Health_bar_width, boss_Health_change, Health_bar_width_change, boss_y_change, boss_Attack_hitboxes} from "./Boss"
 
 import {FatGnomeDeathCounter_change, Spiderman_change, Spiderman2_change, flames_image_height_change, } from "./Death"
 import {char_x_change, char_y_change, jump_time_change, gravity_change, gravity_2_jump_change, fall_gravity_change, movement_x_change, movement_y_change, dash_time_change, jumping_change, dashing_change, amount_dashes_change, amount_jumps_change} from "./Movement"
@@ -88,16 +88,17 @@ let shots = []
 
 
 function TrashTalk() {
-if(Level == 0 || Level == 1 && !character.intersects(FatGnomeTrigger) && Trashtalking == false) {
+if((Level == 0 || Level == 1) && !character.intersects(FatGnomeTrigger) && Trashtalking == false) {
 ctx.drawImage(FatGnome, 55, 344, 275, 125)
 ctx.drawImage(DrDisrespect, 150,340,83,83)
 }
-else if(character.intersects(FatGnomeTrigger) && StoryTell == 0 && Level == 0 || Trashtalking == true || Level == 1) {
+else if(character.intersects(FatGnomeTrigger) && StoryTell == 0 /*&& Level == 0 */|| Trashtalking == true /*|| Level == 1*/) {
 ctx.drawImage(FatGnomeLaugh,55,344,275,125) // Story voiceline here
 ctx.drawImage(DrDisrespectLaugh, 150,340,83,83)
 }
+
 for(let i = 0; i<death_zone.length; i++){
-if(character.intersects(death_zone[i]) && FatGnomeDeathCounter > 9) {
+if(FatGnomeDeathCounter > 9) {
 GnomeWhichTrashTalk = random(1,16)
 Trashtalking = true
 FatGnomeDeathCounter_change (0)
@@ -105,6 +106,7 @@ FatGnomeDeathCounter_change (0)
 if (Trashtalking == true) {
 ctx.drawImage(Talbubbla, 200, 305, 120, 90)
 Trashtalk_timer += deltaTime/100
+if(Level == 0) {
 if (Trashtalk_timer > 4000) {
     Trashtalking = false
     Trashtalk_timer = 0
@@ -189,6 +191,93 @@ else if (GnomeWhichTrashTalk == 16) {
     GnomeWhichTrashTalk = 0
     Trashtalk_timer = 3400
 }
+}
+ else if(Level == 1) {
+    if (Trashtalk_timer > 2470) {
+        Trashtalking = false
+        Trashtalk_timer = 0
+    }
+    if (GnomeWhichTrashTalk == 1) {
+        FatAnkles.play()
+        GnomeWhichTrashTalk = 0
+        Trashtalk_timer = 2350
+    }
+    else if (GnomeWhichTrashTalk == 2) {
+        Idiot.play()
+        GnomeWhichTrashTalk = 0
+        Trashtalk_timer = 2360
+    }
+    else if (GnomeWhichTrashTalk == 3) {
+        Pathetic.play()
+        GnomeWhichTrashTalk = 0
+        Trashtalk_timer = 2390
+    }
+    else if (GnomeWhichTrashTalk == 4) {
+        IdiotKid.play()
+        GnomeWhichTrashTalk = 0
+        Trashtalk_timer = 2415
+    }
+    else if (GnomeWhichTrashTalk == 5) {
+        Terrible.play()
+        GnomeWhichTrashTalk = 0
+        Trashtalk_timer = 2450
+    }
+    else if (GnomeWhichTrashTalk == 6) {
+        Doc19931994.play()
+        GnomeWhichTrashTalk = 0
+        Trashtalk_timer = 2135
+    }
+    else if (GnomeWhichTrashTalk == 7) {
+        Raul.play()
+        GnomeWhichTrashTalk = 0
+        Trashtalk_timer = 2450
+    }
+    else if (GnomeWhichTrashTalk == 8) { 
+        Slicing.play()
+        GnomeWhichTrashTalk = 0
+        Trashtalk_timer = 2444
+    }
+    else if (GnomeWhichTrashTalk == 9) {
+        WayBetter.play()
+        GnomeWhichTrashTalk = 0
+        Trashtalk_timer = 2325
+    }
+    else if (GnomeWhichTrashTalk == 10) {
+        GetTFOut.play()
+        GnomeWhichTrashTalk = 0
+        Trashtalk_timer = 2410
+    }
+    else if (GnomeWhichTrashTalk == 11) {
+        Arena.play()
+        GnomeWhichTrashTalk = 0
+        Trashtalk_timer = 2410
+    }
+    else if (GnomeWhichTrashTalk == 12) {
+        BodyTrashTalk.play()
+        GnomeWhichTrashTalk = 0
+        Trashtalk_timer = 2305
+    }
+    else if (GnomeWhichTrashTalk == 13) {
+        Dolphin.play()
+        GnomeWhichTrashTalk = 0
+        Trashtalk_timer = 2290
+    }
+    else if (GnomeWhichTrashTalk == 14) {
+        Boner.play()
+        GnomeWhichTrashTalk = 0
+        Trashtalk_timer = 2405
+    }   
+    else if (GnomeWhichTrashTalk == 15) {
+        Motorcycle.play()
+        GnomeWhichTrashTalk = 0
+        Trashtalk_timer = 2150
+    }
+    else if (GnomeWhichTrashTalk == 16) {
+        WakeUp.play()
+        GnomeWhichTrashTalk = 0
+        Trashtalk_timer = 2435
+    }
+    }
 
 }
 }
@@ -614,27 +703,24 @@ update = () => {
     if (char_x > 250 && Level == 1) {
         flames.y = 430
         flames_image_height_change(350)
-    }
-
-
-        flames_image_height = 350
+   
     }
 //------------------------------------
 if (Level == 2) {
     if(Level_2_change){
         boss.y = 20000
         ground.push(new Hitbox(0,450,W,25)),
-        WallHitbox = []
-        death_zone = []
+        WallHitbox_clear()
+        death_zone_clear()
         wall = []
         Platform_1.y = 10000
         Platform_2.y = 10000
         Platform_3.y = 10000
         flames.y = 10000
 
-        gravity = 1200
-        gravity_2_jump = -300
-        fall_gravity = 800
+        gravity_change (1200)
+        gravity_2_jump_change (-300)
+        fall_gravity_change (800)
         SpiderTrigger.y = 200000
         GnomeHitbox.y = 200000
         FatGnomeTrigger.y = 10000
@@ -664,14 +750,14 @@ if (Level == 2) {
     
 }
 //----------------------
-    if (character.intersects(death_zone_floor) || keyboard.r || character.intersects(flames)) { // makes it so if you fall of the map or press "R" you die (reset)
+   /* if (character.intersects(death_zone_floor) || keyboard.r || character.intersects(flames)) { // makes it so if you fall of the map or press "R" you die (reset)
         keyboard.r = false
-        char_x = 50
-        char_y = 400
-        jump_time = 0
-        deaths ++
-        boss_Health = 200
-        Health_bar_width = W-842
+        char_x_change (50)
+        char_y_change (400)
+        jump_time_change (0)
+        deaths_change (deaths + 1)
+        boss_Health_change (200)
+        Health_bar_width_change (W-842)
         if (Level == 1 && boss_Health > 0){
             boss.y = 200
         } if ( Level == 0) {
@@ -693,7 +779,7 @@ if (Level == 2) {
         M = 0
         U = 0
         u = 0
-    }
+    }*/
     text ("Death count: " + deaths, 10, 20,15,"White") // a visible death count
     
     if (boss_Health > 0) {Boss_general()}

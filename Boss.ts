@@ -1,6 +1,6 @@
 import {Level,} from "./app"
 import {char_x_change, char_y_change, character, char_x, Platform_2} from "./Movement"
-import {deaths_change, flames, flames_image_height_change, Goat_Y_change, deaths, U_change, M_change} from "./Death"
+import {deaths_change, flames, flames_image_height_change, Goat_Y_change, deaths, U_change, M_change, FatGnomeDeathCounter, FatGnomeDeathCounter_change} from "./Death"
 
 enum AttackType {
     BigAttack,
@@ -26,7 +26,7 @@ let B_Spider_y = -1000
 
 let Health_bar_width = W-842
 let boss = new Hitbox(1150, H, 100, 250)
-let boss_Health = 5
+let boss_Health = 200
 let boss_Attack_hitboxes= []
 let boss_Currently_Attacking = true
 let boss_Which_attack = 0
@@ -50,6 +50,7 @@ let bossLicking_under = await fetchImage("images/bossLicking_under.png")
 let bossLicking_over = await fetchImage("images/bossLicking_over.png") 
 let bossTongue = await fetchImage("images/Tongue.png")
 let Jesus = await fetchImage ("images/JesusFckingChrist.png")
+let HolyShit = await fetchImage ("images/HolyShit.png")
 
 
 export function boss_Attacks () {
@@ -57,7 +58,7 @@ export function boss_Attacks () {
     
     if(boss_Currently_Attacking && boss_timer > 30){
         boss_Currently_Attacking= false
-        boss_Which_attack = random(1,1) 
+        boss_Which_attack = random(2,2) 
         //boss_Blow_attack = random(1, 5)
         boss_timer = 0
         attack_2 = true
@@ -109,7 +110,7 @@ if (boss_Which_attack == 1 && boss_Health > 0) {
 } 
 else if(boss_Which_attack == 2 && boss_Health > 0) {
     B_attack_2_timer += deltaTime/100
-    ctx.drawImage(Jesus, 420, Jesus_y, 300, 250)
+    ctx.drawImage(Jesus, 424, Jesus_y, 300, 250)
     Platform_2.draw()
     if(Jesus_y < 120) {
         Jesus_y += 8
@@ -126,7 +127,7 @@ else if(boss_Which_attack == 2 && boss_Health > 0) {
         if (B_attack_2_timer > 14 ) {
             Arms_firstImage = false
             Arms_secondImage = true
-            
+            ctx.drawImage(HolyShit, 75, 0, 1000, H + 55)
             boss_Attack_hitboxes.push ({
                 "hitbox":new Hitbox (275, 0, 50, 1000),
                 "hitbox2": new Hitbox (550, 0, 50, 1000),
@@ -363,11 +364,11 @@ for(let i = 0; i < boss_Attack_hitboxes.length; i++) {
             flames_image_height_change(1000)
             Health_bar_width = W-842
             boss_Currently_Attacking = true
-            Goat_Y_change (600)
             if (Level == 1 && boss_Health > 0) {
             boss.y = 200
             Arms_first_y = -200
             Arms_second_y = -50
+            FatGnomeDeathCounter_change (FatGnomeDeathCounter + 1)
             } 
         } 
         if (B_return) {
@@ -418,6 +419,7 @@ for(let i = 0; i < boss_Attack_hitboxes.length; i++) {
             //Goat_Y = 600
             U_change (0)
             M_change (0)
+            FatGnomeDeathCounter_change (FatGnomeDeathCounter + 1)
         }
     }
    
@@ -450,7 +452,7 @@ for(let i = 0; i < boss_Attack_hitboxes.length; i++) {
             boss_Currently_Attacking = true
             flames.y = 1000
             flames_image_height_change(1000)
-            Goat_Y_change (600)
+            FatGnomeDeathCounter_change (FatGnomeDeathCounter + 1)
             boss_Attack_hitboxes.shift()
         }
     }
@@ -459,7 +461,7 @@ for(let i = 0; i < boss_Attack_hitboxes.length; i++) {
 } 
 
 }
-export {boss_Which_attack, boss, boss_Health, Health_bar_width}
+export {boss_Which_attack, boss, boss_Health, Health_bar_width, boss_Attack_hitboxes}
 export function Health_bar_width_change (nytt_värde) {
     Health_bar_width = nytt_värde
 }

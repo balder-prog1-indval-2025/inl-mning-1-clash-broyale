@@ -6,15 +6,15 @@ import {ground, WallHitbox,} from "./Map"
 
 let amount_jumps = 2
 let amount_dashes = 2
-let char_x = 1050
-let char_y = 0
+let char_x = 0
+let char_y = 450
 let movement_x = 0
 let movement_y = 0
 let jumping = false
 
 let jump_time = 0
 let jump_reset = true
-let gravity = 18000
+let gravity = 15000
 let gravity_2_jump = -6500
 let fall_gravity = 10000
 let character = new Hitbox (char_x,char_y, 25, 40)
@@ -180,7 +180,7 @@ hitbox.y = y -15
             fall_time +=deltaTime
             if (fall_time> fall_gravity){ // A little delay so that the character doesn't fall immediately
                 jump_time += deltaTime
-                return_jump = 8 * jump_time/gravity 
+                return_jump = 6 * jump_time/gravity 
                 }
         }
             

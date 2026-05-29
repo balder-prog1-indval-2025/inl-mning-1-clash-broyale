@@ -1373,4 +1373,4 @@ export function ground_clear () {
 }
 
 
-export {WallHitbox, ground}
+export {WallHitbox, ground, grassblock1, stoneblock1, Dirtblock, Dirtoverlayblock, lager_3, lager_4}
