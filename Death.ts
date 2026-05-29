@@ -256,7 +256,7 @@ if (GoatHellBombTimer > 100) {
             Spider_y = -700
             SecondSpider_hitbox.x = -14000
             SecondSpider_x = -14025
-            if (Level == 0) {
+            if (Level == 0 ) {
                 GnomeHitbox.x = 1015
                 GnomeHitbox.y=350
             } if (Level == 1 && boss_Health > 0){

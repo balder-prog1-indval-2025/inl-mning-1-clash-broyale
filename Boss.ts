@@ -26,14 +26,12 @@ let B_Spider_y = -1000
 
 let Health_bar_width = W-842
 let boss = new Hitbox(1150, H, 100, 250)
-let boss_Health = 5
+let boss_Health = 200
 let boss_Attack_hitboxes= []
 let boss_Currently_Attacking = true
 let boss_Which_attack = 0
-let boss_Blow_attack = 0
 let boss_timer = 0
 let blow_timer = 0
-let blowing = false
 let Arms_first_y = -200
 let Arms_second_y = -50
 let Jesus_y = -150
@@ -57,7 +55,7 @@ export function boss_Attacks () {
     
     if(boss_Currently_Attacking && boss_timer > 30){
         boss_Currently_Attacking= false
-        boss_Which_attack = random(1,1) 
+        boss_Which_attack = random(2,2) 
         //boss_Blow_attack = random(1, 5)
         boss_timer = 0
         attack_2 = true
@@ -182,7 +180,6 @@ export function Boss_general () {
             char_x_change (char_x -1.5)
         }
         if (blow_timer > 30) {
-            blowing = false
             blow_timer = 0
         }
     }
@@ -329,8 +326,8 @@ for(let i = 0; i < boss_Attack_hitboxes.length; i++) {
         }
                 
         if (B_moving_left) {
-            boss_Attack_hitboxes[i]["hitbox"].x -= 7
-            boss_Attack_hitboxes[i]["hitbox2"].x -= 7
+            boss_Attack_hitboxes[i]["hitbox"].x -= 8
+            boss_Attack_hitboxes[i]["hitbox2"].x -= 8
             if (boss_Attack_hitboxes[i]["hitbox"].x < 250) {
                 B_moving_left = false
                 B_moving_right = true                 
@@ -340,8 +337,8 @@ for(let i = 0; i < boss_Attack_hitboxes.length; i++) {
             ctx.drawImage(bossLicking_under, boss_Attack_hitboxes[i]["hitbox"].x - 30, boss_Attack_hitboxes[i]["hitbox"].y + 30 , 150, 80)
             
         } else if (B_moving_right) {
-            boss_Attack_hitboxes[i]["hitbox"].x += 7
-            boss_Attack_hitboxes[i]["hitbox2"].x += 7
+            boss_Attack_hitboxes[i]["hitbox"].x += 8
+            boss_Attack_hitboxes[i]["hitbox2"].x += 8
             if (boss_Attack_hitboxes[i]["hitbox"].x > 900){
                 B_moving_right = false
                 B_moving_left = true
@@ -363,7 +360,6 @@ for(let i = 0; i < boss_Attack_hitboxes.length; i++) {
             flames_image_height_change(1000)
             Health_bar_width = W-842
             boss_Currently_Attacking = true
-            Goat_Y_change (600)
             if (Level == 1 && boss_Health > 0) {
             boss.y = 200
             Arms_first_y = -200
@@ -415,7 +411,6 @@ for(let i = 0; i < boss_Attack_hitboxes.length; i++) {
             flames_image_height_change(1000)
             Health_bar_width = W-842
             Jesus_y = -150
-            //Goat_Y = 600
             U_change (0)
             M_change (0)
         }
@@ -450,7 +445,7 @@ for(let i = 0; i < boss_Attack_hitboxes.length; i++) {
             boss_Currently_Attacking = true
             flames.y = 1000
             flames_image_height_change(1000)
-            Goat_Y_change (600)
+            //Goat_Y_change (600)
             boss_Attack_hitboxes.shift()
         }
     }

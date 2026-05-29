@@ -858,7 +858,7 @@ export function map_2() {
     if (boss_Which_attack != 2) {
         ctx.drawImage (Boss_Background_Jesus, 0, 0, W, H) 
     } else if (boss_Which_attack == 2) {
-        ctx.drawImage (Boss_Background_NoJesus, 0, 0, W, H)
+        ctx.drawImage (Boss_Background_NoJesus, 0, 0, W , H)
     }
 }
 
