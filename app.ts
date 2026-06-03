@@ -603,6 +603,13 @@ let Next_level = new Hitbox (W-100, 350, 100, 100)
 update = () => {
     clear()
     FatGnomeTrigger.drawOutline()
+    if (Level == 2) {
+        if (char_x > 300 ) {
+           char_x_change(305) 
+           char_y_change(400)
+        }
+    }
+    
     for(let i = 0; i < death_zone.length; i ++){
         death_zone[i].drawOutline()
     }
@@ -668,7 +675,11 @@ update = () => {
             ctx.drawImage(Health_bar_image, 340, 30, 550, 200)
             text ("Sven in his dreams", 463, 133, 30 )
         }
-        
+        if (boss_Health < 0) {
+            death_zone_clear()
+            death_zone.push (new Hitbox (-1000, H, 3200, 200))
+        }
+
         if(Level_change){
             boss_y_change (200)
             ground_clear()
@@ -682,6 +693,7 @@ update = () => {
             
             death_zone.push(flames)
             death_zone.push (new Hitbox (-1000, H, 3200, 200))
+            death_zone.push (new Hitbox (W-150, 300, 150, 150))
             gravity_change(600)
             gravity_2_jump_change(-100)
             fall_gravity_change(200)
@@ -709,7 +721,7 @@ update = () => {
 if (Level == 2) {
     if(Level_2_change){
         boss.y = 20000
-        ground.push(new Hitbox(0,450,W,25)),
+        ground.push(new Hitbox(0,450,W,25))
         WallHitbox_clear()
         death_zone_clear()
         wall = []
@@ -718,9 +730,9 @@ if (Level == 2) {
         Platform_3.y = 10000
         flames.y = 10000
 
-        gravity_change (1200)
-        gravity_2_jump_change (-300)
-        fall_gravity_change (800)
+        gravity_change (800)
+        gravity_2_jump_change (-100)
+        fall_gravity_change (200)
         SpiderTrigger.y = 200000
         GnomeHitbox.y = 200000
         FatGnomeTrigger.y = 10000

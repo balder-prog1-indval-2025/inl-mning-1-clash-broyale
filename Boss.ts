@@ -1,6 +1,6 @@
 import {Level,} from "./app"
 import {char_x_change, char_y_change, character, char_x, Platform_2} from "./Movement"
-import {deaths_change, flames, flames_image_height_change, Goat_Y_change, deaths, U_change, M_change, FatGnomeDeathCounter, FatGnomeDeathCounter_change} from "./Death"
+import {deaths_change, flames, flames_image_height_change, Goat_Y_change, deaths, U_change, M_change, FatGnomeDeathCounter, FatGnomeDeathCounter_change, death_zone, death_zone_clear} from "./Death"
 
 enum AttackType {
     BigAttack,
@@ -26,7 +26,7 @@ let B_Spider_y = -1000
 
 let Health_bar_width = W-842
 let boss = new Hitbox(1150, H, 100, 250)
-let boss_Health = 200
+let boss_Health = 3
 let boss_Attack_hitboxes= []
 let boss_Currently_Attacking = true
 let boss_Which_attack = 0
@@ -56,7 +56,7 @@ export function boss_Attacks () {
     
     if(boss_Currently_Attacking && boss_timer > 30){
         boss_Currently_Attacking= false
-        boss_Which_attack = random(2,2) 
+        boss_Which_attack = random(1,3) 
         //boss_Blow_attack = random(1, 5)
         boss_timer = 0
         attack_2 = true
@@ -190,7 +190,6 @@ export function Boss_general () {
             boss.y = 20000
             Arms_first_y = 200000
             Arms_second_y = 200000
-            
             boss_Attack_hitboxes = []
             //just to make so boss doesn't move continuously
         } else if (boss_Health > 0 && boss_Which_attack != 3 && !AttackType.FlyAttack) {
@@ -200,7 +199,7 @@ export function Boss_general () {
 
 
     // boss_Attacks
-boss.drawOutline()
+
 if (boss_Which_attack == 0) {
     ctx.drawImage(bossDefault, boss.x - 135 , boss.y - 70, 250, 350)
 }else if (boss_Which_attack == 1) {
@@ -228,7 +227,7 @@ for(let i = 0; i < boss_Attack_hitboxes.length; i++) {
         boss_Attack_hitboxes[i]["hitbox_rightWall"].height += 20 
         boss_Attack_hitboxes[i]["hitbox_leftWall"].height += 20
         
-        boss_Attack_hitboxes[i]["hitbox2"].drawOutline()
+
         boss_Attack_hitboxes[i]["hitbox_rightWall"].drawOutline()
         boss_Attack_hitboxes[i]["hitbox_leftWall"].drawOutline()
         B_attack_3_timer += deltaTime/100
@@ -399,7 +398,6 @@ for(let i = 0; i < boss_Attack_hitboxes.length; i++) {
    
 
     else if (boss_Attack_hitboxes[i]["type"] == AttackType.BigAttack ){
-        boss_Attack_hitboxes[i]["hitbox2"].drawOutline()
         
 
         
@@ -421,10 +419,6 @@ for(let i = 0; i < boss_Attack_hitboxes.length; i++) {
    
     else if ( boss_Attack_hitboxes[i]["type"] == AttackType.SmallAttack ) {
 
-        boss_Attack_hitboxes[i]["hitbox"].drawOutline()
-        boss_Attack_hitboxes[i]["hitbox2"].drawOutline()
-        boss_Attack_hitboxes[i]["hitbox3"].drawOutline()
-        
         boss_Attack_hitboxes[i]["hitbox"].x -= 15
         boss_Attack_hitboxes[i]["hitbox2"].x -= 15
         boss_Attack_hitboxes[i]["hitbox3"].x -= 15

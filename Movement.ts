@@ -1,3 +1,4 @@
+import { Level } from "./app"
 import {ground, WallHitbox,} from "./Map"
 
 
@@ -196,8 +197,14 @@ hitbox.y = y -15
     
 
     export function updatePosition () { 
-        char_x += movement_x 
-        char_y += movement_y
+        if (Level == 2 && char_x > 300) {
+            char_x = char_x
+            char_y = 421
+        }
+        else {
+            char_x += movement_x 
+            char_y += movement_y
+        } 
         }
     
 
