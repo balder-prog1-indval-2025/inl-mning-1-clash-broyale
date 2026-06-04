@@ -38,7 +38,7 @@ let Jesus_y = -150
 
 let HolyErape = new Audio('Audio/HolyErape.mp3')
 let Vomit = new Audio('Audio/Vomit.mp3')
-let Spit_sound_timer = 0
+
 
 let Spider =  await fetchImage("images/Spider.png")
 let Health_bar_image = await fetchImage ("images/Hpbarfinish.png")
@@ -66,7 +66,7 @@ export function boss_Attacks () {
         attack_2 = true
         B_attack_1_hitboxes = true
         B_attack_3_timer = 0
-        Spit_sound_timer = 0
+
 }
 /*if (boss_Blow_attack == 1 && boss_Health > 0){
     blowing = true
@@ -83,16 +83,7 @@ if (boss_Which_attack == 1 && boss_Health > 0) {
     } else {boss.y += 5
 
     }
-    /*if (Spit_sound_timer> 0) {
-        Vomit.play()
-    }
-    else if (Spit_sound_timer > 5) {
-        Vomit.play()
-    }
-     else if (Spit_sound_timer > 10) {
-        Vomit.play()
-    }    
-    */
+
     if (boss.y > 205){
         boss.y = 200
 
@@ -104,10 +95,6 @@ if (boss_Which_attack == 1 && boss_Health > 0) {
     }
     if(B_attack_1_hitboxes) {
    ctx.drawImage(bossSpit, boss.x, boss.y, boss.width, boss.height)
-   Spit_sound_timer += deltaTime/100
- 
-
-
    boss_Attack_hitboxes.push({
         "hitbox": new Hitbox(1150, 350, 100, 100),
         "hitbox2": new Hitbox(1150 + 550, 175, 100, 100),

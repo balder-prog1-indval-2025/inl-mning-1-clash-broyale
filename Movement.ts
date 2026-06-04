@@ -1,4 +1,4 @@
-import { Level } from "./app"
+import { Level, Dodge, Dodged, Splat } from "./app"
 import {ground, WallHitbox,} from "./Map"
 
 
@@ -7,8 +7,9 @@ import {ground, WallHitbox,} from "./Map"
 
 let amount_jumps = 2
 let amount_dashes = 2
-let char_x = 0
+let char_x = 10
 let char_y = 450
+let Character_Image_height = 50
 let movement_x = 0
 let movement_y = 0
 let jumping = false
@@ -66,19 +67,20 @@ export function walk () { //standard movement in x-axis
 }
 }
 export function updateCharacter(x:number, y:number, hitbox:Hitbox) {
+    
     if (keyboard.d){
         char_Direction = false
-        let c = ctx.drawImage(Character_RevertedImage, x -11, y-21, 50, 50)
+        let c = ctx.drawImage(Character_RevertedImage, x -11, y-21, 50, Character_Image_height)
     }
     else if (keyboard.a){
         char_Direction = true
-        let c = ctx.drawImage(Character_Image, x -11, y-21, 50, 50)
+        let c = ctx.drawImage(Character_Image, x -11, y-21, 50, Character_Image_height)
     }
     if (!char_Direction) {
-        let c = ctx.drawImage(Character_RevertedImage, x -11, y-21, 50, 50)
+        let c = ctx.drawImage(Character_RevertedImage, x -11, y-21, 50, Character_Image_height)
     }
     else if(char_Direction) {
-        let c = ctx.drawImage(Character_Image, x -11, y-21, 50, 50)
+        let c = ctx.drawImage(Character_Image, x -11, y-21, 50, Character_Image_height)
     }
 hitbox.x = x
 hitbox.y = y -15
@@ -197,9 +199,21 @@ hitbox.y = y -15
     
 
     export function updatePosition () { 
-        if (Level == 2 && char_x > 300) {
+        if(Dodged == true) {
+            char_x += movement_x 
+            char_y += movement_y
+            console.log("ye")
+        } 
+        else if (Level == 2 && char_x > 300 && Dodge == false && Splat == false) {
             char_x = char_x
             char_y = 421
+        }else if (Level == 2 && char_x > 300 && Dodge == true && Splat == false) {
+            if(char_x < 420) {char_x += 10} 
+            char_y = 421
+            
+        }else if(Splat == true) {
+            char_y = 470
+            Character_Image_height = 10
         }
         else {
             char_x += movement_x 

@@ -10,6 +10,7 @@ let StoryTell = 0 // Used once
 let Level = 0
 let Level_change = true
 let Level_2_change = true
+
 enum AttackType {
     BigAttack,
     SmallAttack,
@@ -20,14 +21,11 @@ enum AttackType {
 
 let Boss_Background_Jesus = await fetchImage("images/BossBackground_Jesus.png")
 let Boss_Background_NoJesus = await fetchImage("images/BossBackground_NoJesus.jpg")
-
+let McDonalds = await fetchImage ("images/MC DONALDO.png")
 let flames_image = await fetchImage ("images/Flames.png")
 let bullet_image = await fetchImage ("images/Bullet.png")
-
 let Health_bar_image = await fetchImage ("images/Hpbarfinish.png")
-
 let Talbubbla = await fetchImage ("images/Talbubbla.png")
-
 let FatGnome = await fetchImage("images/FatGnome.png")
 let DrDisrespect = await fetchImage("images/The2TimeBackToBack19931994BlockBusterVideoGameChampion.png")
 let DrDisrespectLaugh = await fetchImage("images/The2TimeBackToBack19931994BlockBusterVideoGameChampionLaugh.png")
@@ -37,7 +35,13 @@ let FatGnomeTrigger = new Hitbox(150,350,100,150)
 let Trashtalking = false
 let GnomeWhichTrashTalk = 0
 let Trashtalk_timer = 0
-
+let Ending_Gnome_Y = -125
+let Which_letter = 0
+let Dodge = false
+let Dodged = false
+let Splat = false
+let Gnome_death = false
+let Ending_letter = true
 let Idiot = new Audio('Audio/you-are-an-idiot.mp3')
 let Pathetic = new Audio('Audio/drdisrespect_patheticguy_by_taihplays_on_twitch.mp3')
 let IdiotKid = new Audio('Audio/drdisrespect_getthisidiotkidoutofhere_by_taihplays_on_twitch.mp3')
@@ -86,6 +90,7 @@ let shotStop = {"left": new Hitbox (-100, 0, 100, H),
 }
 let shots = []
 
+let Ending_Gnome_Hitbox = new Hitbox (190, Ending_Gnome_Y -50, 275, 115)
 
 function TrashTalk() {
 if((Level == 0 || Level == 1) && !character.intersects(FatGnomeTrigger) && Trashtalking == false) {
@@ -599,17 +604,17 @@ function shoot () { // makes hitboxes for bullets
 }
 
 let Next_level = new Hitbox (W-100, 350, 100, 100)
-
+let Letter = ["a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z"]
 update = () => {
     clear()
     FatGnomeTrigger.drawOutline()
-    if (Level == 2) {
+   /* if (Level == 2) {
         if (char_x > 300 ) {
            char_x_change(305) 
            char_y_change(400)
         }
-    }
-    
+    }*/
+
     for(let i = 0; i < death_zone.length; i ++){
         death_zone[i].drawOutline()
     }
@@ -620,7 +625,7 @@ update = () => {
     GnomeHitbox.drawOutline()
     if (Level == 0) {map()}
     if (Level == 1) {map_2()}
-    GoatAttack()
+    if (Level != 2) {GoatAttack()}
     Hellbomb()
     GnomeAttack()
     SpiderAttack_1()
@@ -729,7 +734,6 @@ if (Level == 2) {
         Platform_2.y = 10000
         Platform_3.y = 10000
         flames.y = 10000
-
         gravity_change (800)
         gravity_2_jump_change (-100)
         fall_gravity_change (200)
@@ -739,6 +743,217 @@ if (Level == 2) {
 
 }
     Level_2_change = false
+    if (char_x > 300) {
+       /*if (Dodge = false) {
+        char_x_change(305) 
+   
+       }else {
+        if(char_x < 350) {char_x_change(char_x +10)} 
+   
+       }*/
+ 
+     ctx.drawImage(FatGnome, 190, Ending_Gnome_Y, 275, 125)
+     ctx.drawImage(DrDisrespect, 285 ,Ending_Gnome_Y-4,83,83)
+     if (Ending_letter) {
+        Which_letter = random(1,26)
+        Ending_letter = false 
+     }
+    if(Ending_Gnome_Y > -136 && Ending_Gnome_Y < 51) {
+        Ending_Gnome_Y += 5
+        if(Which_letter == 1) {
+            text("PRESS A", 10, 100, 100)
+            if (keyboard.a == true) {
+                Dodge = true
+            }
+        } 
+        else if(Which_letter == 2) {
+            text("PRESS B", 10, 100, 100)
+            if (keyboard.b == true) {
+                Dodge = true
+            }
+        }
+        else if(Which_letter == 3) {
+            text("PRESS C", 10, 100, 100)
+            if (keyboard.c == true) {
+                Dodge = true
+            }
+        }
+        else if(Which_letter == 4) {
+            text("PRESS D", 10, 100, 100)
+            if (keyboard.d == true) {
+                Dodge = true
+            }
+        }
+        else if(Which_letter == 5) {
+            text("PRESS E", 10, 100, 100)
+            if (keyboard.e == true) {
+                Dodge = true
+            }
+        }
+        else if(Which_letter == 6) {
+            text("PRESS F", 10, 100, 100)
+            if (keyboard.f == true) {
+                Dodge = true
+            }
+        }
+        else if(Which_letter == 7) {
+            text("PRESS G", 10, 100, 100)
+            if (keyboard.g == true) {
+                Dodge = true
+            }
+        }
+        else if(Which_letter == 8) {
+            text("PRESS H", 10, 100, 100)
+            if (keyboard.h == true) {
+                Dodge = true
+            }
+        }
+        else if(Which_letter == 9) {
+            text("PRESS I", 10, 100, 100)
+            if (keyboard.i == true) {
+                Dodge = true
+            }
+        }
+        else if(Which_letter == 10) {
+            text("PRESS J", 10, 100, 100)
+            if (keyboard.j == true) {
+                Dodge = true
+            }
+        }
+        else if(Which_letter == 11) {
+            text("PRESS K", 10, 100, 100)
+            if (keyboard.k == true) {
+                Dodge = true
+            }
+        }
+        else if(Which_letter == 12) {
+            text("PRESS L", 10, 100, 100)
+            if (keyboard.l == true) {
+                Dodge = true
+            }
+        }
+        else if(Which_letter == 13) {
+            text("PRESS M", 10, 100, 100)
+            if (keyboard.m == true) {
+                Dodge = true
+            }
+        }
+        else if(Which_letter == 14) {
+            text("PRESS N", 10, 100, 100)
+            if (keyboard.n == true) {
+                Dodge = true
+            }
+        }
+        else if(Which_letter == 15) {
+            text("PRESS O", 10, 100, 100)
+            if (keyboard.o == true) {
+                Dodge = true
+            }
+        }
+        else if(Which_letter == 16) {
+            text("PRESS P", 10, 100, 100)
+            if (keyboard.p == true) {
+                Dodge = true
+            }
+        }
+        else if(Which_letter == 17) {
+            text("PRESS Q", 10, 100, 100)
+            if (keyboard.q == true) {
+                Dodge = true
+            }
+        }
+        else if(Which_letter == 18) {
+            text("PRESS R", 10, 100, 100)
+            if (keyboard.r == true) {
+                Dodge = true
+            }
+        }
+        else if(Which_letter == 19) {
+            text("PRESS S", 10, 100, 100)
+            if (keyboard.s == true) {
+                Dodge = true
+            }
+        }
+        else if(Which_letter == 20) {
+            text("PRESS T", 10, 100, 100)
+            if (keyboard.t == true) {
+                Dodge = true
+            }
+        }
+        else if(Which_letter == 21) {
+            text("PRESS U", 10, 100, 100)
+            if (keyboard.u == true) {
+                Dodge = true
+            }
+        }
+        else if(Which_letter == 22) {
+            text("PRESS V", 10, 100, 100)
+            if (keyboard.v == true) {
+                Dodge = true
+            }
+        }
+        else if(Which_letter == 23) {
+            text("PRESS W", 10, 100, 100)
+            if (keyboard.w == true) {
+                Dodge = true
+            }
+        }
+        else if(Which_letter == 24) {
+            text("PRESS X", 10, 100, 100)
+            if (keyboard.x == true) {
+                Dodge = true
+            }
+        }
+        else if(Which_letter == 25) {
+            text("PRESS Y", 10, 100, 100)
+            if (keyboard.y == true) {
+                Dodge = true
+            }
+        }
+        else if(Which_letter == 26) {
+            text("PRESS Z", 10, 100, 100)
+            if (keyboard.z == true) {
+                Dodge = true
+            }
+        }
+
+
+
+
+        /*for (let i = 0; i < 26; i++){
+            if (Which_letter == i) {
+                if(keyboard.Letter[i]) {
+
+                }
+            }
+        }*/
+    }
+    else if (Ending_Gnome_Y >= 50 && Ending_Gnome_Y < 301) {
+        Ending_Gnome_Y += 10
+    } else if (Ending_Gnome_Y >300) {
+        if (Gnome_death == false) {
+            Ending_Gnome_Y = 340
+        } else (
+            Ending_Gnome_Y = 999999
+  
+        )
+
+        if (Dodge == false) {
+            Splat = true
+        } else {
+           Dodged = true
+           Ending_Gnome_Hitbox.x = 275
+           if(Gnome_death == false){
+                Ending_Gnome_Hitbox.y = 340
+            }else {Ending_Gnome_Hitbox.y = 999999}  
+           Ending_Gnome_Hitbox.width = 125
+        }
+    }
+    }
+
+    
+    
+    ctx.drawImage(McDonalds, W-700, -250, 1000, 850)
     for (let i = 0; i<=51; i++) {// Determines the length (x-axis) of the map
 
         ctx.drawImage(grassblock1, i*25, 450, 25,25)
@@ -761,6 +976,17 @@ if (Level == 2) {
         
     
 }
+for (let i = 0; i < shots.length; i++) {
+    if (Dodged && shots[i]["hitbox"].intersects(Ending_Gnome_Hitbox)) {
+        Gnome_death = true
+        shots.shift()
+    }
+}
+if (Gnome_death) {
+
+}
+//console.log(Ending_Gnome_Hitbox.x, Ending_Gnome_Hitbox.y)
+Ending_Gnome_Hitbox.drawOutline()
 //----------------------
    /* if (character.intersects(death_zone_floor) || keyboard.r || character.intersects(flames)) { // makes it so if you fall of the map or press "R" you die (reset)
         keyboard.r = false
@@ -860,5 +1086,5 @@ if (Level == 2) {
  
 
 
-export { Level, char_x, char_y, character, flames, flames_image_height, }
+export { Level, char_x, char_y, character, flames, flames_image_height, Dodge, Dodged, Splat}
 
