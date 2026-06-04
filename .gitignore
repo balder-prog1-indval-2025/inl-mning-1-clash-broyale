@@ -11,4 +11,6 @@ tsconfig.json
 package-lock.json
 
 # BalderJS assets
-assets
+assets/cards
+assets/chess
+assets/dice
